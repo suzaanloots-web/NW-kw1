@@ -1,0 +1,2016 @@
+<!DOCTYPE html>
+<html lang="af">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Graad 5 Natuurwetenskap — Flitskaarte · Kwartaal 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #e8f4f0;
+    font-family: 'Nunito', sans-serif;
+    color: #1a2a3a;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* TOP BAR */
+  #top-bar {
+    background: linear-gradient(135deg, #1a3a5a, #2a5a7a);
+    color: #e0f0ff;
+    padding: 0.6rem 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+    border-bottom: 3px solid #2a7a4a;
+  }
+
+  .level-badge {
+    background: rgba(0,0,0,0.3);
+    border-radius: 12px;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .xp-container {
+    flex: 1;
+    min-width: 120px;
+    max-width: 300px;
+  }
+
+  .xp-label {
+    font-size: 0.65rem;
+    color: #80c0a0;
+    margin-bottom: 2px;
+  }
+
+  .xp-bar-outer {
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+    height: 14px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .xp-bar-inner {
+    background: linear-gradient(90deg, #2a7a4a, #40c070);
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+
+  .xp-bar-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 0.6rem;
+    line-height: 14px;
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 0 2px rgba(0,0,0,0.5);
+  }
+
+  .streak-badge {
+    background: rgba(255,100,0,0.3);
+    border-radius: 12px;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .top-btn {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #e0f0ff;
+    border-radius: 8px;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.75rem;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .top-btn:hover { background: rgba(255,255,255,0.25); }
+  .top-btn.active { background: rgba(42,122,74,0.4); border-color: #2a7a4a; }
+
+  .tool-divider {
+    color: rgba(255,255,255,0.2);
+    font-size: 0.8rem;
+    user-select: none;
+    flex-shrink: 0;
+  }
+
+  .tool-link {
+    background: rgba(42,122,74,0.2) !important;
+    border-color: rgba(42,122,74,0.4) !important;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .tool-link:hover {
+    background: rgba(42,122,74,0.4) !important;
+  }
+
+  #master-test-btn {
+    background: rgba(220,60,60,0.25);
+    border-color: rgba(255,100,100,0.4);
+    white-space: nowrap;
+  }
+  #master-test-btn:hover { background: rgba(220,60,60,0.4); }
+  #master-test-btn.active {
+    background: rgba(220,60,60,0.5);
+    border-color: #e05050;
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #1a3a5a, #2a5a7a);
+    color: #e0f0ff;
+    text-align: center;
+    padding: 0.8rem 1rem;
+    border-bottom: 2px solid #2a7a4a;
+  }
+
+  header .label {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #80c0a0;
+    margin-bottom: 0.2rem;
+  }
+
+  header h1 {
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    font-weight: 800;
+  }
+
+  /* NAV BAR */
+  #nav-bar {
+    background: #0e2a40;
+    border-bottom: 2px solid #2a7a4a;
+    padding: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.35rem;
+    position: sticky;
+    top: 52px;
+    z-index: 99;
+  }
+
+  .nav-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.3rem 0.7rem;
+    border-radius: 20px;
+    border: 1.5px solid #3a8a5a;
+    background: transparent;
+    color: #80c0a0;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .nav-btn:hover { background: rgba(42,122,74,0.2); color: #b0e8c0; border-color: #2a7a4a; }
+  .nav-btn.active { background: #2a7a4a; color: #0e2a40; border-color: #2a7a4a; }
+  .nav-btn.completed { border-color: #40c070; }
+  .nav-btn.completed::after {
+    content: '\2713';
+    position: absolute;
+    top: -6px;
+    right: -4px;
+    font-size: 0.6rem;
+    background: #2a7a4a;
+    color: white;
+    border-radius: 50%;
+    width: 14px;
+    height: 14px;
+    line-height: 14px;
+    text-align: center;
+  }
+
+  .nav-btn .hard-count {
+    display: inline-block;
+    background: #d05030;
+    color: white;
+    font-size: 0.55rem;
+    border-radius: 8px;
+    padding: 0 4px;
+    margin-left: 3px;
+    min-width: 14px;
+    text-align: center;
+    line-height: 14px;
+    vertical-align: middle;
+  }
+
+  /* FILTER BAR */
+  #filter-bar {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.45rem 1rem;
+    border-radius: 10px;
+    border: 2px solid #2a6a5a;
+    background: white;
+    color: #1a3a5a;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .filter-btn:hover { background: #d0f0e0; border-color: #1a5a4a; }
+
+  .filter-btn.active-filter {
+    background: #d05030;
+    color: white;
+    border-color: #b03020;
+  }
+
+  .filter-btn.active-filter:hover {
+    background: #c04020;
+  }
+
+  .filter-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .filter-btn .hard-badge {
+    background: #d05030;
+    color: white;
+    font-size: 0.7rem;
+    border-radius: 8px;
+    padding: 0 6px;
+    min-width: 18px;
+    text-align: center;
+    line-height: 18px;
+  }
+
+  .filter-btn.active-filter .hard-badge {
+    background: rgba(255,255,255,0.3);
+  }
+
+  /* COLLECTIBLE COLLECTION */
+  #animal-bar {
+    background: #f0faf5;
+    border-bottom: 2px solid #c0e0d0;
+    padding: 0.5rem 0.8rem;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.4rem;
+    justify-content: center;
+    overflow-x: auto;
+  }
+
+  .animal-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #2a5a4a;
+    margin-right: 0.3rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  #animal-slots {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .animal-slot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s;
+    border: 2px solid transparent;
+    flex-shrink: 0;
+  }
+
+  .animal-slot.discovered {
+    background: #ffffff;
+    border-color: #2a7a4a;
+    animation: animalPop 0.5s ease;
+  }
+
+  .animal-slot.locked {
+    filter: grayscale(1) opacity(0.3);
+  }
+
+  @keyframes animalPop {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+  }
+
+  /* TIMER BAR */
+  #timer-bar-container {
+    height: 6px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 0 1rem;
+    display: none;
+  }
+
+  #timer-bar-fill {
+    height: 100%;
+    width: 100%;
+    border-radius: 3px;
+    background: #2a7a4a;
+    transition: width 0.1s linear, background 0.3s;
+  }
+
+  /* MAIN AREA */
+  main {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+
+  #section-title {
+    text-align: center;
+    font-size: clamp(0.85rem, 2vw, 1.1rem);
+    font-weight: 800;
+    color: #1a5a4a;
+    margin-bottom: 0.5rem;
+  }
+
+  .progress-bar-outer {
+    background: #c0e0d0;
+    border-radius: 8px;
+    height: 8px;
+    overflow: hidden;
+    margin-bottom: 0.3rem;
+  }
+
+  .progress-bar-fill {
+    background: linear-gradient(90deg, #1a5a4a, #2a7a4a);
+    height: 100%;
+    border-radius: 8px;
+    transition: width 0.4s;
+    width: 0%;
+  }
+
+  #progress-text {
+    text-align: center;
+    font-size: 0.7rem;
+    color: #5a8a7a;
+    margin-bottom: 0.8rem;
+  }
+
+  /* CARD */
+  #card-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    perspective: 1000px;
+  }
+
+  #card-row {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    max-width: 900px;
+    align-items: flex-start;
+    margin-bottom: 0.8rem;
+  }
+
+  .card-wrap {
+    width: 100%;
+    flex: 1;
+    max-width: 560px;
+    aspect-ratio: 5/3;
+    min-height: 200px;
+    cursor: pointer;
+    position: relative;
+    margin: 0 auto;
+  }
+
+  .card-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition: transform 0.5s;
+    transform-style: preserve-3d;
+  }
+
+  .card-container.flipped { transform: rotateY(180deg); }
+
+  .card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+    border: 3px solid #2a7a4a;
+  }
+
+  .card-front {
+    background: linear-gradient(145deg, #ffffff, #e8f4f0);
+    color: #1a2a3a;
+    font-size: clamp(0.9rem, 2.2vw, 1.15rem);
+    font-weight: 700;
+    line-height: 1.5;
+  }
+
+  .card-front::before {
+    content: 'VRAAG';
+    position: absolute;
+    top: 8px;
+    left: 12px;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    color: #2a7a4a;
+    font-weight: 800;
+  }
+
+  .card-back {
+    background: linear-gradient(145deg, #e0f5ea, #d0eee0);
+    color: #1a2a3a;
+    transform: rotateY(180deg);
+    font-size: clamp(0.8rem, 1.8vw, 1rem);
+    line-height: 1.55;
+  }
+
+  .card-back::before {
+    content: 'ANTWOORD';
+    position: absolute;
+    top: 8px;
+    left: 12px;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    color: #1a5a4a;
+    font-weight: 800;
+  }
+
+  .card-face ul, .card-face ol {
+    text-align: left;
+    padding-left: 1.2rem;
+    margin-top: 0.3rem;
+  }
+
+  .card-face li { margin-bottom: 0.2rem; }
+
+  .tap-hint {
+    font-size: 0.6rem;
+    color: #8ab0a0;
+    margin-top: 0.5rem;
+  }
+
+  /* SCORE BUTTONS */
+  .score-btns {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+    width: 100%;
+    max-width: 560px;
+    justify-content: center;
+  }
+
+  .score-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 800;
+    padding: 0.6rem 1.5rem;
+    border-radius: 12px;
+    border: 2px solid;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex: 1;
+    max-width: 200px;
+    position: relative;
+  }
+
+  .btn-know {
+    background: #e0f5ea;
+    border-color: #2a7a4a;
+    color: #1a4a2a;
+  }
+
+  .btn-know:hover { background: #2a7a4a; color: white; }
+
+  .btn-dunno {
+    background: #fde8e8;
+    border-color: #e05050;
+    color: #a03030;
+  }
+
+  .btn-dunno:hover { background: #e05050; color: white; }
+
+  .score-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    filter: grayscale(0.5);
+  }
+
+  .score-btn:disabled:hover {
+    background: inherit;
+    color: inherit;
+  }
+
+  .btn-know:disabled:hover { background: #e0f5ea; color: #1a4a2a; }
+  .btn-dunno:disabled:hover { background: #fde8e8; color: #a03030; }
+
+  .xp-preview {
+    font-size: 0.6rem;
+    font-weight: 600;
+    display: block;
+    margin-top: 2px;
+    opacity: 0.7;
+  }
+
+  /* NAV ARROWS */
+  .card-nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .arrow-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 800;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #2a7a4a;
+    background: #f0faf5;
+    color: #1a5a4a;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .arrow-btn:hover:not(:disabled) { background: #2a7a4a; color: white; }
+  .arrow-btn:disabled { opacity: 0.3; cursor: default; }
+
+  #card-counter {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #2a5a4a;
+  }
+
+  /* STATS ROW */
+  .stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-know { color: #2a7a4a; }
+  .stat-dunno { color: #d04040; }
+
+  /* XP FLOAT */
+  .xp-float {
+    position: fixed;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #2a7a4a;
+    pointer-events: none;
+    z-index: 200;
+    animation: floatUp 1.2s ease forwards;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+
+  @keyframes floatUp {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-80px) scale(1.3); }
+  }
+
+  /* SUMMARY */
+  #summary {
+    display: none;
+    text-align: center;
+    padding: 2rem 1rem;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  .summary-card {
+    background: linear-gradient(145deg, #ffffff, #e8f4f0);
+    border: 3px solid #2a7a4a;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+
+  .summary-card h2 {
+    font-size: 1.3rem;
+    color: #1a5a4a;
+    margin-bottom: 0.5rem;
+  }
+
+  .summary-big {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #2a7a4a;
+    margin: 0.5rem 0;
+  }
+
+  .summary-detail {
+    font-size: 0.85rem;
+    color: #3a5a4a;
+    margin: 0.3rem 0;
+  }
+
+  .summary-xp {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #1a5a4a;
+    margin: 0.5rem 0;
+  }
+
+  .summary-animal {
+    font-size: 2.5rem;
+    margin: 0.5rem 0;
+  }
+
+  .summary-btns {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  .summary-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.5rem 1.2rem;
+    border-radius: 10px;
+    border: 2px solid;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-retry {
+    background: #e0f5ea;
+    border-color: #2a7a4a;
+    color: #1a4a2a;
+  }
+
+  .btn-retry:hover { background: #2a7a4a; color: white; }
+
+  .btn-hard-only {
+    background: #fde8e8;
+    border-color: #e05050;
+    color: #a03030;
+  }
+
+  .btn-hard-only:hover { background: #e05050; color: white; }
+
+  /* ACHIEVEMENT TOAST */
+  .toast-container {
+    position: fixed;
+    top: 60px;
+    right: 10px;
+    z-index: 300;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .toast {
+    background: linear-gradient(135deg, #ffffff, #e8f4f0);
+    border: 2px solid #2a7a4a;
+    border-radius: 12px;
+    padding: 0.6rem 1rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    animation: slideIn 0.4s ease, fadeOut 0.4s ease 2.6s forwards;
+    max-width: 280px;
+    font-size: 0.8rem;
+  }
+
+  .toast-title {
+    font-weight: 800;
+    color: #1a5a4a;
+  }
+
+  .toast-desc {
+    font-size: 0.7rem;
+    color: #3a6a5a;
+  }
+
+  @keyframes slideIn {
+    from { transform: translateX(120%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  @keyframes fadeOut {
+    to { opacity: 0; transform: translateX(50px); }
+  }
+
+  /* ACHIEVEMENT PANEL */
+  #badge-panel {
+    max-width: 700px;
+    margin: 0.5rem auto;
+    padding: 0 1rem;
+  }
+
+  .badge-toggle {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: #c8e8d8;
+    border: 2px solid #2a7a4a;
+    border-radius: 10px;
+    padding: 0.4rem 1rem;
+    cursor: pointer;
+    color: #1a4a3a;
+    width: 100%;
+    text-align: left;
+    transition: background 0.2s;
+  }
+
+  .badge-toggle:hover { background: #a8d8c0; }
+
+  .badge-grid {
+    display: none;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+  }
+
+  .badge-grid.open { display: grid; }
+
+  .badge-item {
+    background: #d8f0e0;
+    border: 2px solid #a0d0b8;
+    border-radius: 10px;
+    padding: 0.5rem;
+    text-align: center;
+    font-size: 0.7rem;
+    transition: all 0.3s;
+  }
+
+  .badge-item.earned {
+    border-color: #2a7a4a;
+    background: linear-gradient(145deg, #ffffff, #e8f4f0);
+  }
+
+  .badge-item.locked {
+    opacity: 0.4;
+    filter: grayscale(0.5);
+  }
+
+  .badge-emoji {
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+
+  .badge-name {
+    font-weight: 800;
+    color: #1a4a3a;
+  }
+
+  /* RESET BTN */
+  .reset-area {
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .reset-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    background: transparent;
+    border: 1px solid #8ab0a0;
+    border-radius: 8px;
+    padding: 0.3rem 0.8rem;
+    color: #5a8a7a;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .reset-btn:hover { background: #d05030; color: white; border-color: #d05030; }
+
+  /* CONFETTI CANVAS */
+  #confetti-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 400;
+  }
+
+  /* LEVEL UP OVERLAY */
+  .level-up-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 350;
+    animation: fadeInOverlay 0.3s ease;
+  }
+
+  .level-up-box {
+    background: linear-gradient(145deg, #ffffff, #e8f4f0);
+    border: 4px solid #2a7a4a;
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+    animation: popIn 0.4s ease;
+    max-width: 320px;
+  }
+
+  .level-up-box h2 {
+    color: #2a7a4a;
+    font-size: 1.5rem;
+  }
+
+  .level-up-emoji {
+    font-size: 3rem;
+    margin: 0.5rem 0;
+  }
+
+  .level-up-name {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #1a5a4a;
+  }
+
+  @keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+  /* KEYBOARD HINTS */
+  .kb-hints {
+    text-align: center;
+    font-size: 0.6rem;
+    color: #8ab0a0;
+    padding: 0.3rem;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    #top-bar {
+      padding: 0.3rem 0.5rem;
+      gap: 0.3rem;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .level-badge { font-size: 0.7rem; padding: 0.2rem 0.45rem; }
+    .streak-badge { font-size: 0.7rem; padding: 0.2rem 0.45rem; }
+    .xp-container { min-width: 80px; max-width: 120px; }
+    .top-btn { font-size: 0.6rem; padding: 0.2rem 0.35rem; white-space: nowrap; }
+    #master-test-btn .master-label { display: none; }
+    .tool-label { display: none; }
+    .tool-divider { display: none; }
+
+    header { padding: 0.5rem 0.8rem; }
+    header h1 { font-size: 0.95rem; }
+    header .label { font-size: 0.55rem; }
+
+    #nav-bar {
+      padding: 0.35rem 0.5rem;
+      gap: 0.25rem;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      justify-content: flex-start;
+    }
+    .nav-btn { font-size: 0.58rem; padding: 0.25rem 0.55rem; white-space: nowrap; flex-shrink: 0; }
+
+    #animal-bar { padding: 0.3rem 0.5rem; gap: 0.3rem; }
+    .animal-label { font-size: 0.65rem; }
+    .animal-slot { width: 28px; height: 28px; }
+    .animal-slot .animal-emoji { font-size: 1rem; }
+
+    main { padding: 0.5rem; max-width: 100%; }
+    #card-row { flex-direction: column; gap: 0.5rem; }
+    .card-wrap { min-height: 160px; aspect-ratio: auto; }
+    .card-face { padding: 1rem; }
+    .score-btn { font-size: 0.8rem; padding: 0.5rem 0.8rem; }
+  }
+
+  @media (max-width: 380px) {
+    .xp-container { min-width: 60px; max-width: 90px; }
+    .card-wrap { min-height: 140px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div id="top-bar">
+  <div class="level-badge" id="level-badge">🔬 Leerling</div>
+  <div class="xp-container">
+    <div class="xp-label" id="xp-label">0 / 300 XP</div>
+    <div class="xp-bar-outer">
+      <div class="xp-bar-inner" id="xp-bar"></div>
+      <div class="xp-bar-text" id="xp-bar-text">0 XP</div>
+    </div>
+  </div>
+  <div class="streak-badge" id="streak-badge">🔥 0</div>
+  <button class="top-btn" id="timer-btn" onclick="toggleTimer()">⏱ Af</button>
+  <button class="top-btn" id="sound-btn" onclick="toggleSound()">🔊</button>
+  <button class="top-btn" id="master-test-btn" onclick="loadMasterTest()" title="Hersien alle moeilike kaarte van alle sessies">📝 <span class="master-label">Toets </span>(<span id="master-count">0</span>)</button>
+  <span class="tool-divider">|</span>
+  <a href="index.html" class="top-btn tool-link" title="Studiegids" style="background:rgba(42,122,74,0.25)!important;border-left:3px solid #2a7a4a!important;">📋 <span class="tool-label">Studiegids</span></a>
+  <a href="breinkaart.html" class="top-btn tool-link" title="Breinkaart">🧠 <span class="tool-label">Breinkaart</span></a>
+  <a href="vergelyk.html" class="top-btn tool-link" title="Vergelyking">⚖️ <span class="tool-label">Vergelyk</span></a>
+  <a href="prosesse.html" class="top-btn tool-link" title="Prosesse">🔄 <span class="tool-label">Prosesse</span></a>
+  <a href="habitats.html" class="top-btn tool-link" title="Habitats">🌍 <span class="tool-label">Habitats</span></a>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="label">Graad 5 Natuurwetenskap · Kwartaal 1</div>
+  <h1>Wetenskap Flitskaarte 🔬</h1>
+</header>
+
+<!-- NAV -->
+<div id="nav-bar"></div>
+
+<!-- COLLECTIBLE COLLECTION -->
+<div id="animal-bar">
+  <span class="animal-label">Versameling:</span>
+  <div id="animal-slots"></div>
+</div>
+
+<!-- TIMER BAR -->
+<div id="timer-bar-container">
+  <div id="timer-bar-fill"></div>
+</div>
+
+<!-- MAIN -->
+<main>
+  <div id="section-title"></div>
+
+  <div id="filter-bar">
+    <button class="filter-btn" onclick="loadSection(currentSection)">🔁 Begin oor</button>
+    <button class="filter-btn" id="hard-filter-btn" onclick="toggleHardOnly()" disabled>
+      ❌ Net moeilikes <span class="hard-badge" id="hard-badge-count">0</span>
+    </button>
+  </div>
+
+  <div class="progress-bar-outer">
+    <div class="progress-bar-fill" id="progress-fill"></div>
+  </div>
+  <div id="progress-text"></div>
+
+  <div id="card-area">
+    <div id="card-row">
+      <div class="card-wrap" onclick="flipCard()">
+        <div class="card-container" id="card-container">
+          <div class="card-face card-front">
+            <div id="q-text"></div>
+            <div class="tap-hint">Tik om te draai (Spasie)</div>
+          </div>
+          <div class="card-face card-back">
+            <div id="a-text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="score-btns">
+      <button class="score-btn btn-know" id="btn-know" onclick="markCard('know')" disabled>
+        &#10004; Ken dit!
+        <span class="xp-preview" id="xp-preview-know">+10 XP</span>
+      </button>
+      <button class="score-btn btn-dunno" id="btn-dunno" onclick="markCard('dunno')" disabled>
+        &#10008; Leer nog
+        <span class="xp-preview">0 XP</span>
+      </button>
+    </div>
+
+    <div class="card-nav">
+      <button class="arrow-btn" id="btn-prev" onclick="prevCard()">&#9664;</button>
+      <span id="card-counter">1 / 5</span>
+      <button class="arrow-btn" id="btn-next" onclick="nextCard()">&#9654;</button>
+    </div>
+
+    <div class="stats-row">
+      <span class="stat-know">&#10004; Ken: <span id="know-count">0</span></span>
+      <span class="stat-dunno">&#10008; Leer: <span id="dunno-count">0</span></span>
+    </div>
+  </div>
+
+  <div id="summary"></div>
+</main>
+
+<!-- BADGE PANEL -->
+<div id="badge-panel">
+  <button class="badge-toggle" id="badge-toggle" onclick="toggleBadges()">🏅 Prestasies (0/12) ▼</button>
+  <div class="badge-grid" id="badge-grid"></div>
+</div>
+
+<!-- RESET -->
+<div class="reset-area">
+  <button class="reset-btn" onclick="resetProgress()">🗑 Vee Vordering Uit</button>
+</div>
+
+<div class="kb-hints">⌨ Sleutels: ← → Navigeer · Spasie Draai · 1 Ken dit · 2 Leer nog · T Tydhouer · H Moeilikes</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- CONFETTI CANVAS -->
+<canvas id="confetti-canvas"></canvas>
+
+<script>
+// ===================== ALL FLASHCARD DATA =====================
+const sections = [
+  {
+    id: "sleutelwoorde-o1e1",
+    nav: "Sleutelwoorde O1E1",
+    title: "O1E1 — Sleutelwoorde: Habitats & Biodiversiteit",
+    cards: [
+      { q: "Wat beteken 'habitats'?", a: "Die natuurlike blyplek (woonplek) van 'n plant of dier." },
+      { q: "Wat beteken 'biodiversiteit'?", a: "Die verskeidenheid van <b>al die plante en diere</b> op aarde." },
+      { q: "Wat beteken 'inheems'?", a: "Plante en diere wat <b>nog altyd</b> in 'n sekere gebied woon." },
+      { q: "Wat vorm die totale biodiversiteit op aarde?", a: "Plante en diere en hulle <b>habitats</b> saam." },
+      { q: "Wat is Suid-Afrika se rol in biodiversiteit?", a: "Suid-Afrika het 'n <b>wye verskeidenheid</b> van inheemse plante en diere." },
+      { q: "Kan inheemse organismes in meer as een habitat voorkom?", a: "Ja, inheemse organismes kan in <b>verskillende habitats</b> voorkom." }
+    ]
+  },
+  {
+    id: "habitats",
+    nav: "Habitats",
+    title: "O1E1 — Habitats",
+    cards: [
+      { q: "Wat is 'n habitat?", a: "Die <b>natuurlike woonplek</b> van 'n plant of dier." },
+      { q: "Wat bepaal die eienskappe van 'n organisme?", a: "Die <b>habitat</b> van die organisme bepaal sy eienskappe in daardie spesifieke habitat." },
+      { q: "Watter spesiale eienskappe besit plante en diere?", a: "Hulle besit spesiale eienskappe om in 'n <b>spesifieke habitat</b> te oorleef." },
+      { q: "Wat kry organismes in hulle habitats? (4 dinge)", a: "<ul><li>Kos</li><li>Water</li><li>Lug</li><li>Skuiling (beskerming teen roofdiere)</li></ul>" },
+      { q: "Wat is die verskil tussen land- en waterhabitats?", a: "Sommige organismes leef in <b>water</b> (visse, paddas) en ander op <b>land</b> (sebras, loeries). Elkeen het spesiale aanpassings vir sy habitat." }
+    ]
+  },
+  {
+    id: "plante-habitats",
+    nav: "Plante Habitats",
+    title: "O1E1 — Plante in Verskillende Habitats",
+    cards: [
+      { q: "Waar leef die waterlelie en hoe is dit aangepas?", a: "Die waterlelie lewe <b>in water</b>. Dit het groot, plat blare wat <b>dryf</b> op die water." },
+      { q: "Waar leef die aalwyn en hoe is dit aangepas?", a: "Die aalwyn leef in <b>droë gebiede</b>. Die dik en <b>vleesagtige blare</b> gaar water op." },
+      { q: "Waar groei rooibosplante en hoe is hulle aangepas?", a: "Rooibosplante groei in <b>droë, sanderige grond</b>. Die blare is <b>dun en klein</b>, daarom vind minder waterverlies plaas." },
+      { q: "Hoekom het die waterlelie groot plat blare?", a: "Sodat die blare op die water kan <b>dryf</b> en sonlig kan vang." },
+      { q: "Hoekom is die aalwyn se blare dik en vleesagtig?", a: "Om <b>water op te gaar</b> vir oorlewing in droë gebiede." },
+      { q: "Hoekom het die rooibosplant klein, dun blare?", a: "Klein, dun blare beteken <b>minder waterverlies</b> in droë toestande." }
+    ]
+  },
+  {
+    id: "diere-habitats",
+    nav: "Diere Habitats",
+    title: "O1E1 — Diere in Verskillende Habitats",
+    cards: [
+      { q: "Waar leef die padda en hoe is dit aangepas?", a: "Die padda leef <b>in water</b>. Sy vingers en tone is <b>geweb</b> sodat hy kan swem." },
+      { q: "Hoe is visse aangepas by hulle habitat?", a: "Visse het <b>vinne</b> om hulle te help swem in water." },
+      { q: "Waar woon sebras en hoe is hulle aangepas?", a: "Sebras woon in <b>grasvelde</b>. Hulle het bene om mee te loop en te hardloop. Die <b>wit strepe</b> op hulle lywe verblind roofdiere (soos leeus) tydelik wanneer hulle weghardloop." },
+      { q: "Waar woon loeries en hoe is hulle aangepas?", a: "Loeries woon in <b>woude</b>. Hulle het <b>vlerke</b> om mee te vlieg en <b>bene</b> om op takke rond te spring." },
+      { q: "Hoekom verblind sebras se strepe roofdiere?", a: "Wanneer sebras weghardloop, verblind die <b>wit strepe</b> op hulle lywe die roofdiere (soos leeus) <b>tydelik</b>." },
+      { q: "Hoekom is gewebde tone vir 'n padda belangrik?", a: "Gewebde tone help die padda om effektief in water te <b>swem</b>." }
+    ]
+  },
+  {
+    id: "sleutelwoorde-o1e2",
+    nav: "Sleutelwoorde O1E2",
+    title: "O1E2 — Sleutelwoorde: Interafhanklikheid",
+    cards: [
+      { q: "Wat beteken 'interafhanklikheid'?", a: "Twee of meer dinge wat <b>op mekaar staatmaak</b>." },
+      { q: "Wat beteken 'versprei'?", a: "Verplaas of skuif van <b>een plek na 'n ander</b>." },
+      { q: "Wat beteken 'skuiling'?", a: "'n Plek wat <b>beskerming</b> bied teen slegte weer en gevaar." }
+    ]
+  },
+  {
+    id: "interafhanklikheid",
+    nav: "Interafhanklikheid",
+    title: "O1E2 — Interafhanklikheid",
+    cards: [
+      { q: "Wat beteken interafhanklikheid in 'n habitat?", a: "Dat plante en diere in een habitat <b>op mekaar staatmaak</b> — twee of meer dinge hou met mekaar verband." },
+      { q: "Wat is 'n gasheerplant? Gee 'n voorbeeld.", a: "'n Plant wat kos, water en beskerming aan 'n ander plant gee. Bv. <b>voëlent</b> het nie regte wortels nie en groei in bome — kry voedingstowwe van die gasheerplante." },
+      { q: "Hoe groei orgideë en waarvandaan kry hulle vog?", a: "Orgideë groei op <b>boomstamme</b> in vogtige gebiede soos woude. Hulle het <b>lugwortels</b> wat vog uit die lug absorbeer." },
+      { q: "Hoe help vlinders met bestuiwing?", a: "Vlinders drink die <b>nektar</b> van blomme vir kos. In ruil daarvoor <b>bestuif</b> die vlinder die blom." },
+      { q: "Hoe versprei sommige plante hulle sade met diere?", a: "Sommige sade het <b>hakies</b> wat aan die pelse van diere vashaak. Die sade word so <b>versprei</b>." },
+      { q: "Hoekom maak baie diere op plante staat?", a: "Hulle eet die <b>blare of vrugte</b> van plante om voedingstowwe en energie te kry om aan die lewe te bly." },
+      { q: "Hoe help renostervoëls ander diere?", a: "Renostervoëls help diere om van <b>bosluise</b> ontslae te raak. Die bok kry verligting van bosluise en die voël kry <b>kos</b>." },
+      { q: "Hoe help die sjirurgynvis seeskilpaaie?", a: "Die sjirurgynvis eet <b>alge en parasiete</b> van seeskilpaaie af. Die vis hou die dop van die skilpad <b>skoon</b>." },
+      { q: "Hoe versorg macaw-papegaaie mekaar?", a: "Macaw-papegaaie versorg mekaar se <b>vere</b> en sorg dat dit skoon bly van insekte en parasiete. So vorm hulle ook <b>bande en verhoudings</b>." },
+      { q: "Wat is hulpbronne? Noem 4 voorbeelde.", a: "Nie-lewende dinge wat lewende dinge gebruik vir oorlewing of ondersteuning:<ul><li>Lug</li><li>Water</li><li>Grond</li><li>Ander plekke in hulle habitat</li></ul>" },
+      { q: "Wat het plante nodig om gesond te bly? (3 dinge)", a: "Plante het nie-lewende dinge nodig:<ul><li><b>Water</b></li><li><b>Lug</b></li><li><b>Sonskyn</b></li></ul>" },
+      { q: "Wat is indringerplante en hoekom is hulle skadelik?", a: "Indringerplante gebruik <b>meer water</b> as wat die omgewing kan voorsien. Hulle groei baie vinnig en neem die <b>spasie</b> van inheemse plante in. Inheemse plante en diere het dan nie genoeg hulpbronne om te oorleef nie." },
+      { q: "Hoekom moet uitheemse plante verwyder word?", a: "Sodat die <b>natuurlike habitat</b> van inheemse plante en diere <b>in stand gehou</b> word." },
+      { q: "Hoe gebruik diere nie-lewende dinge?", a: "Diere gebruik nie-lewende dinge vir <b>beskerming</b> en om <b>voort te plant</b>. Bv. 'n houtkapper bou sy nes hoog in 'n boomstam." }
+    ]
+  },
+  {
+    id: "sleutelwoorde-o1e3",
+    nav: "Sleutelwoorde O1E3",
+    title: "O1E3 — Sleutelwoorde: Soorte Diere",
+    cards: [
+      { q: "Wat is 'n eksoskelet?", a: "'n Harde laag of skulp aan die <b>buitekant</b> van diere." },
+      { q: "Wat is ongewerweldes?", a: "Diere wat <b>nie</b> 'n ruggraat van been het nie." },
+      { q: "Wat beteken 'vervel'?", a: "Om die buitenste laag vel af te gooi om sodoende 'n <b>nuwe, beter een</b> te laat groei." },
+      { q: "Wat is 'n endoskelet?", a: "'n Skelet wat aan die <b>binnekant</b> van diere se liggame gevind word." },
+      { q: "Wat is gewerweldes?", a: "Diere met 'n <b>beenagtige ruggraat</b>." },
+      { q: "Wat is kraakbeen?", a: "Buigbare, sterk stof wat as <b>kussinkies</b> dien tussen die bene en gewrigte." }
+    ]
+  },
+  {
+    id: "eksoskelet",
+    nav: "Eksoskelet",
+    title: "O1E3 — Eksoskelet",
+    cards: [
+      { q: "Waaruit bestaan 'n eksoskelet?", a: "Harde plate wat <b>aanmekaar geheg</b> is om 'n harde dop te vorm." },
+      { q: "Waar is 'n eksoskelet dun en sag?", a: "Net <b>waar dit moet buig</b>, bv. by die beengewrigte." },
+      { q: "Noem 2 voordele van 'n eksoskelet.", a: "<ol><li>Dit <b>ondersteun en beskerm</b> die sagte interne dele van die dier.</li><li>Dit is <b>waterdig</b> — beskerm die dier teen uitdroging.</li></ol>" },
+      { q: "Noem 2 nadele van 'n eksoskelet.", a: "<ol><li>Dit kan <b>nie groei</b> nie — die dier moet vervel.</li><li>Die nuwe eksoskelet is <b>sag</b> na vervelling — die dier kan maklik aangeval word.</li></ol>" },
+      { q: "Noem 7 diere met eksoskelette.", a: "<ul><li>Insekte</li><li>Spinnekoppe</li><li>Bosluise</li><li>Krappe</li><li>Krewe</li><li>Garnale</li><li>Skerpioen, kriek, tor, duisendpoot, kakkerlak</li></ul>" },
+      { q: "Hoe onthou jy: EKSOSKELET = ?", a: "<b>EKSOSKELET = EXIT = BUITE</b><br>Die skelet is aan die buitekant van die dier." }
+    ]
+  },
+  {
+    id: "endoskelet",
+    nav: "Endoskelet",
+    title: "O1E3 — Endoskelet",
+    cards: [
+      { q: "Noem die 5 groepe diere met endoskelette.", a: "<ol><li>Soogdiere</li><li>Voëls</li><li>Visse</li><li>Reptiele</li><li>Amfibieë</li></ol>" },
+      { q: "Wat is rugwerwels?", a: "Kleiner beentjies waaruit die <b>ruggraat</b> van gewerweldes gemaak is." },
+      { q: "Hoe word 'n endoskelet bedek?", a: "'n Endoskelet is met <b>spiere en sagte liggaamsweefsel</b> bedek." },
+      { q: "Wat is die voordeel van 'n endoskelet bo 'n eksoskelet?", a: "Dit kan <b>groter liggame en meer gewig</b> ondersteun. Dit <b>groei saam</b> met die dier — vervelling vind nie plaas nie." },
+      { q: "Wat is die nadeel van 'n endoskelet?", a: "Dit beskerm nie 'n dier <b>so goed</b> soos 'n eksoskelet nie." },
+      { q: "Waar word kraakbeen in die liggaam gevind?", a: "In die <b>gewrigte</b> — plekke waar bene ontmoet. Dit is buigbaar maar baie sterk." },
+      { q: "Hoe onthou jy: ENDOSKELET = ?", a: "<b>ENDOSKELET = DOG = Diere soos honde, BINNE rugwerwel</b><br>Die skelet is aan die binnekant." },
+      { q: "Vergelyk eksoskelet en endoskelet: bestaan uit?", a: "<b>Eksoskelet:</b> harde plate wat 'n harde dop vorm.<br><b>Endoskelet:</b> kleiner beentjies (rugwerwels), been en kraakbeen." },
+      { q: "Vergelyk eksoskelet en endoskelet: diere word genoem?", a: "<b>Eksoskelet:</b> ongewerwelde diere<br><b>Endoskelet:</b> gewerwelde diere" }
+    ]
+  },
+  {
+    id: "sleutelwoorde-o2e1",
+    nav: "Sleutelwoorde O2E1",
+    title: "O2E1 — Sleutelwoorde: Diereskelette",
+    cards: [
+      { q: "Wat is 'n gewrig?", a: "Die plek waar <b>twee of meer bene</b> bymekaarkom." },
+      { q: "Wat is hooforgane?", a: "Organe in die liggaam wat <b>absoluut noodsaaklik</b> is om te kan lewe." },
+      { q: "Wat is 'n ledemaat?", a: "'n Been, arm of stert." },
+      { q: "Wat is die romp?", a: "Die liggaam van 'n dier <b>sonder die kop of ledemate</b>." },
+      { q: "Wat is die skouergordel?", a: "Stel bene waaraan die <b>voorste ledemate</b> geheg is." },
+      { q: "Wat is die heupgordel?", a: "Deel van die skelet wat bestaan uit heupbene wat die <b>agterste ledemate</b> ondersteun." },
+      { q: "Wat is 'n kenmerk?", a: "Iets wat jou help om tussen goed te <b>onderskei</b> of dit te identifiseer." }
+    ]
+  },
+  {
+    id: "skelet-funksies",
+    nav: "Skelet Funksies",
+    title: "O2E1 — Skelet Funksies",
+    cards: [
+      { q: "Noem 3 funksies van die skelet.", a: "<ol><li><b>Ondersteun</b> die liggaam en verleen vorm</li><li><b>Beskerm</b> die sagte organe</li><li>Vorm sterk <b>raamstrukture</b></li></ol>" },
+      { q: "Hoe beskerm die ribbekas die liggaam?", a: "Die ribbekas <b>omhul en beskerm</b> die belangrikste organe: die <b>hart</b> en die <b>longe</b>." },
+      { q: "Wat beskerm die skedel?", a: "Die skedel beskerm die <b>brein</b> en sagter dele van die gesig (oë)." },
+      { q: "Wat is die hooffunksie van die ruggraat?", a: "Die ruggraat beskerm die <b>rugmurg</b> wat maklik beskadig kan word en wat deur die werwels loop." },
+      { q: "Wat doen die rugmurg?", a: "Die rugmurg stuur <b>seine</b> vanaf die brein na <b>alle dele</b> van die liggaam." },
+      { q: "Waaruit bestaan die ruggraat?", a: "Die ruggraat bestaan uit <b>verskeie werwels</b> en eindig by baie diere in 'n <b>stert</b>." },
+      { q: "Hoekom is bene hard en onbuigsaam?", a: "Sodat hulle die <b>gewig</b> van die gewerwelde kan dra. <b>Kalsium</b> en ander minerale maak hulle baie hard en sterk." },
+      { q: "Wat gebeur as bene breek?", a: "Bene is lewend — hulle kan <b>groei en weer aangroei</b> na 'n breuk." },
+      { q: "Hoekom is kalsium in jou dieet belangrik?", a: "Om jou bene <b>sterk en gesond</b> te hou. Jou bene stoor ook kalsium en ander minerale wat regdeur jou liggaam gebruik word." },
+      { q: "Is die ribbekas by alle diere dieselfde?", a: "Nee, die strukture van die ribbekas kan <b>verskil</b>, maar die <b>funksie bly dieselfde</b>. Bv. slange se ribbes bied ondersteuning vir die hele liggaam." }
+    ]
+  },
+  {
+    id: "ledemate-gordels",
+    nav: "Ledemate & Gordels",
+    title: "O2E1 — Ledemate, Gordels & Menslike Skelet",
+    cards: [
+      { q: "Waar is die boonste ledemate aan die liggaam geheg?", a: "By die <b>skouergordel</b>." },
+      { q: "Waar is die onderste ledemate aan die liggaam geheg?", a: "By die <b>heupgordel</b>." },
+      { q: "Wat is die funksie van die gordels? (2 dinge)", a: "<ol><li>Dien as <b>skokbrekers</b> wanneer die dier hardloop of spring</li><li>Help om die <b>sagte organe</b> te beskerm</li></ol>" },
+      { q: "Hoeveel ledemate het gewerweldes?", a: "Sommige het <b>4 ledemate</b>, ander <b>2</b> en sommiges het <b>niks</b>." },
+      { q: "Noem 6 bene van die menslike skelet.", a: "<ul><li><b>Skedel</b> (kopbeen)</li><li><b>Klavikel</b> (sleutelbeen)</li><li><b>Humerus</b> (boarmbeen)</li><li><b>Femur</b> (dybeen)</li><li><b>Patella</b> (knieskyf)</li><li><b>Tibia</b> (skeenbeen)</li></ul>" },
+      { q: "Noem nog 5 bene van die menslike skelet.", a: "<ul><li><b>Blad</b> (bladbeen)</li><li><b>Werwelkolom</b> (ruggraat)</li><li><b>Radius</b> (onderarmbeen)</li><li><b>Bekken</b> (heupbeen)</li><li><b>Voetwortelbeen</b> (enkelbeen)</li></ul>" }
+    ]
+  },
+  {
+    id: "sleutelwoorde-o2e2",
+    nav: "Sleutelwoorde O2E2",
+    title: "O2E2 — Sleutelwoorde: Beweging",
+    cards: [
+      { q: "Wat is spiere?", a: "Massas taai, <b>rekbare weefsel</b> wat ons bene trek wanneer ons beweeg." },
+      { q: "Wat is senings?", a: "Taai koorde wat die <b>bene aan die spiere</b> vasheg." },
+      { q: "Wat is ligamente?", a: "Bande wat <b>been aan been</b> heg en die gewrig versterk." },
+      { q: "Wat is 'n aanpassing?", a: "Veranderinge in 'n liggaam met verloop van tyd om by die <b>omgewing aan te pas</b>." }
+    ]
+  },
+  {
+    id: "spiere-beweging",
+    nav: "Spiere & Beweging",
+    title: "O2E2 — Spiere, Gewrigte & Beweging",
+    cards: [
+      { q: "Hoe is spiere aan bene geheg?", a: "Spiere word deur sterk koorde genaamd <b>senings</b> aan bene geheg." },
+      { q: "Hoe werk spiere in pare?", a: "As een spier <b>saamtrek</b> (korter en dikker word), trek dit aan die been. Die ander spier in die paar raak <b>langer en ontspan</b>." },
+      { q: "Gee 'n voorbeeld van spiere wat in pare werk.", a: "<b>Biseps</b> trek saam en trek aan die been → arm buig.<br><b>Triseps</b> ontspan. En omgekeerd wanneer die arm strek." },
+      { q: "Wat is gewrigte en hoekom is hulle belangrik?", a: "Gewrigte kom voor waar <b>twee of meer bene bymekaarkom</b>. Hulle maak ons skelette <b>buigsaam</b> — ons sou nie sonder gewrigte kon beweeg nie." },
+      { q: "Hoe verbind ligamente bene?", a: "Ligamente is bande wat <b>been aan been</b> heg en die gewrig versterk." },
+      { q: "Laat alle gewrigte dieselfde tipe beweging toe?", a: "Nee. Sommige gewrigte laat slegs <b>beperkte beweging</b> toe (bv. ruggraatwerwels), terwyl ander <b>vrylik</b> kan beweeg (bv. skouergewrig)." },
+      { q: "Wat sou gebeur sonder spiere?", a: "Jy sou nie in staat wees om 'n bal te <b>skop</b>, jou oë te <b>knip</b> of 'n boek oop en toe te <b>maak</b> nie." }
+    ]
+  },
+  {
+    id: "diere-beweging",
+    nav: "Diere Beweging",
+    title: "O2E2 — Hoe Diere Beweeg",
+    cards: [
+      { q: "Wat was die eerste landlewende gewerweldes?", a: "<b>Amfibieë</b> — hulle moes by die lewe op land aanpas. Hulle vinne het in <b>ledemate</b> verander en hulle het 'n <b>nek</b> ontwikkel." },
+      { q: "Wat is 'n aanpassing by diere?", a: "Veranderinge in 'n liggaam wat oor 'n <b>lang tydperk</b> ontwikkel sodat die dier beter in sy <b>omgewing</b> kan oorleef." },
+      { q: "Hoe is voëls se bene aangepas vir vlieg?", a: "Voëls se bene is <b>hol</b> — dit maak hulle ligter. Hulle het sterk <b>spiere</b> wat aan hulle bene geheg is om die vlerke te beweeg." },
+      { q: "Hoe is visse aangepas vir swem?", a: "Visse se liggame is <b>vaartbelyn</b> en die skelet bestaan uit baie <b>fyn bene</b>. Hulle swem deur hulle liggaam en stert met die <b>stertvin</b> te beweeg." },
+      { q: "Hoekom is die jagluiperd die vinnigste landdier?", a: "Dit het klein <b>sleutelbene</b> en bladbene sodat dit lang tree kan gee. Die <b>buigsame ruggraat</b> dien as vere vir die kragtige agterbene." },
+      { q: "Hoe verskil amfibieë se beweging?", a: "Amfibieë het minder bene as ander gewerweldes. Sommige <b>loop of hardloop</b>, ander <b>hop of spring</b>, sommige <b>swem</b>, en sommige <b>sweef</b> selfs deur die lug." },
+      { q: "Hoe is paddas aangepas om te spring?", a: "Paddas het lang, sterk <b>agterbene</b> met springspiere. Hulle gebruik hulle <b>voorbene</b> om saggies te land wanneer hulle spring." },
+      { q: "Hoe beweeg salamanders?", a: "Salamanders loop of hardloop met hulle liggame baie <b>naby aan die grond</b>, met hulle voorbene wat van die liggaam af uitstaan." }
+    ]
+  },
+  {
+    id: "sleutelwoorde-o3",
+    nav: "Sleutelwoorde O3",
+    title: "O3 — Sleutelwoorde: Skelette as Strukture",
+    cards: [
+      { q: "Wat is stutte?", a: "Sterk strukture wat baie <b>gewig</b> kan dra." },
+      { q: "Wat is raamstrukture?", a: "Raamwerk van stutte wat in <b>driehoekvorms</b> geheg is." },
+      { q: "Wat is 'n dopstruktuur?", a: "'n Struktuur met 'n sterk <b>buitenste laag</b> wat homself regop hou." }
+    ]
+  },
+  {
+    id: "raam-dop",
+    nav: "Raam & Dop",
+    title: "O3E1 — Raam- en Dopstrukture",
+    cards: [
+      { q: "Hoe kan ons sterk raamstrukture bou?", a: "Ons kan stutte in <b>driehoekvorms</b> heg om sterk raamstrukture soos <b>brûe</b> en <b>hyskrane</b> te bou." },
+      { q: "Hoekom is die gewerwelde se skelet 'n raamstruktuur?", a: "Die bene word aan mekaar geheg om <b>raamstrukture</b> te vorm wat sterk genoeg is om hulle gewig te dra. Net soos stutte van 'n kragmas." },
+      { q: "Wat is 'n dopstruktuur? Hoe verskil dit van 'n raamstruktuur?", a: "'n Dopstruktuur het 'n sterk <b>buitenste laag</b> wat homself regop hou. Dit word <b>nie versterk</b> deur stutte soos 'n raamstruktuur nie." },
+      { q: "Noem 3 voorbeelde van dopstrukture.", a: "<ul><li><b>Igloe</b></li><li><b>Metaalbeker</b></li><li><b>Kartondoos</b></li></ul>" },
+      { q: "Hoekom is 'n eksoskelet 'n dopstruktuur?", a: "Die krap se liggaam word deur 'n sterk eksoskelet <b>bedek</b>. Dit beskerm die liggaam en organe en gee die krap sy <b>vorm</b> — net soos 'n dopstruktuur." },
+      { q: "Noem nog voorbeelde van diere met dopstrukture.", a: "<ul><li>Weekdiere en oesters</li><li>Seesterre</li><li>Krewe</li><li>Slakke</li></ul>Almal het eksoskelette wat dopstrukture is." },
+      { q: "Noem 3 voorbeelde van raamstrukture.", a: "<ul><li><b>Brûe</b> (met driehoeke)</li><li><b>Hyskrane</b></li><li><b>Klimrame</b></li></ul>En die gewerwelde se skelet!" }
+    ]
+  },
+  {
+    id: "sleutelwoorde-o4",
+    nav: "Sleutelwoorde O4",
+    title: "O4 — Sleutelwoorde: Voedselkettings",
+    cards: [
+      { q: "Wat is 'n stof?", a: "Enige soort <b>vastestof, vloeistof of gas</b>." },
+      { q: "Wat is voedingstowwe?", a: "Stowwe wat lewende dinge help om te <b>groei</b>." },
+      { q: "Wat is herbivore?", a: "Diere wat <b>net plante</b> eet." },
+      { q: "Wat is karnivore?", a: "Diere wat <b>net vleis</b> of ander diere eet." },
+      { q: "Wat is omnivore?", a: "Diere wat <b>vleis en plante</b> eet." },
+      { q: "Wat is vervaardigers?", a: "Plante wat hulle eie voedsel <b>vervaardig of maak</b>." },
+      { q: "Wat is 'n voedselketting?", a: "Die volgorde waarin diere plante of ander diere eet om <b>energie</b> te kry." }
+    ]
+  },
+  {
+    id: "plante-voedsel",
+    nav: "Plante Voedsel",
+    title: "O4E1 — Hoe Plante Voedsel Maak",
+    cards: [
+      { q: "Hoe maak groen plante voedsel?", a: "Groen plante gebruik die <b>ligenergie van sonlig</b> saam met <b>water</b> en <b>koolstofdioksied</b> om voedsel te maak." },
+      { q: "Wat gee plante af wanneer hulle voedsel maak?", a: "Plante gee <b>suurstof</b> af. Lewende dinge het suurstof nodig om asem te haal." },
+      { q: "Waarvoor gebruik plante hulle voedsel?", a: "Om te <b>groei</b> en om hulle takke, stamme en ander dele soos wortels, blomme en vrugte te bou." },
+      { q: "Watter rol speel water vir plante? (3 dinge)", a: "<ul><li>Plante het water nodig om <b>voedsel te maak</b></li><li>Water <b>ondersteun</b> die plant</li><li>Water <b>vervoer</b> stowwe in die plant</li></ul>" },
+      { q: "Watter rol speel grond vir plante? (2 dinge)", a: "<ul><li>Daar is <b>voedingstowwe</b> soos minerale en soute in die grond</li><li>Die grond dien as 'n <b>anker</b> om plante stewig in die grond te hou</li></ul>" },
+      { q: "Watter gas neem plante uit die lug op?", a: "<b>Koolstofdioksied</b> — plante neem dit deur hulle blare in om voedsel te vervaardig." },
+      { q: "Hoe neem plante water en minerale op?", a: "Plante gebruik hulle <b>wortels</b> om water en mineraalsoute uit die <b>grond</b> op te neem." }
+    ]
+  },
+  {
+    id: "diere-voedsel",
+    nav: "Herbivoor/Karnivoor",
+    title: "O4E1 — Herbivore, Karnivore & Omnivore",
+    cards: [
+      { q: "Hoekom moet diere kos eet?", a: "Diere kan nie hulle eie voedsel maak nie. Kos gee diere <b>energie</b> vir hulle lewensprosesse." },
+      { q: "Noem 7 lewensprosesse waarvoor diere energie gebruik.", a: "<ul><li>Groei</li><li>Beweeg</li><li>Voortplant</li><li>Eet</li><li>Die omgewing aanvoel</li><li>Afvalstowwe uitskei</li><li>Asemhaal</li></ul>" },
+      { q: "Wat is herbivore? Gee voorbeelde.", a: "Diere wat net <b>plante</b> eet. Voorbeelde: <b>kameelperde</b> en <b>slakke</b>." },
+      { q: "Wat is karnivore? Gee voorbeelde.", a: "Diere wat net <b>vleis</b> (ander diere) eet. Voorbeelde: <b>arende</b> en <b>luiperds</b>." },
+      { q: "Wat is omnivore? Gee 'n voorbeeld.", a: "Diere wat <b>vleis en plante</b> eet. Voorbeelde: <b>bobbejane</b> eet plantwortels maar ook insekte." },
+      { q: "Wat eet karnivore?", a: "Karnivore eet <b>herbivore</b> (en soms ander karnivore)." }
+    ]
+  },
+  {
+    id: "voedselketting",
+    nav: "Voedselketting",
+    title: "O4E2 — Voedselkettings",
+    cards: [
+      { q: "Hoekom noem ons plante 'vervaardigers'?", a: "Omdat plante hulle <b>eie kos maak</b> (vervaardig) met sonlig-energie." },
+      { q: "Wat wys 'n voedselketting?", a: "Die <b>volgorde</b> waarin diere, plante en ander diere eet om <b>energie</b> te kry." },
+      { q: "In watter rigting wys die pyltjies in 'n voedselketting?", a: "Die pyltjies wys altyd in die rigting waarin die <b>energie oorgedra</b> word." },
+      { q: "Wat is die volgorde in 'n voedselketting?", a: "<b>Plant → herbivoor → karnivoor</b> (→ karnivoor)" },
+      { q: "Waarmee begin 'n voedselketting altyd?", a: "'n Voedselketting begin altyd met 'n <b>plant</b> wat kos maak, en minstens een dier." },
+      { q: "Gee 'n voorbeeld van 'n voedselketting.", a: "<b>Plant → wurm → slang → arend</b><br>Die pyltjies wys die rigting van energie-oordrag." },
+      { q: "Wie voorsien plante van energie?", a: "Die <b>son</b> voorsien plante van energie om kos te maak sodat hulle kan groei." }
+    ]
+  },
+  {
+    id: "sleutelwoorde-o5",
+    nav: "Sleutelwoorde O5",
+    title: "O5 — Sleutelwoorde: Lewensiklusse",
+    cards: [
+      { q: "Wat is 'n lewensiklus?", a: "Die fases waardeur 'n lewende ding in sy lewe gaan." },
+      { q: "Wat beteken 'bestuif'?", a: "Wanneer stuifmeel van die <b>manlike deel</b> van 'n plant na die <b>vroulike deel</b> oorgedra word." },
+      { q: "Wat beteken 'ontkiem'?", a: "Om 'n loot te vorm en te groei, of om 'n <b>nuwe plant uit 'n saadjie</b> te vorm." },
+      { q: "Wat beteken 'bevrug'?", a: "Wanneer manlike selletjies in die stuifmeel en die eiertjies in die vroulike deel van die blom <b>saamsmelt</b> om saadjies te vorm." },
+      { q: "Wat is voortplanting?", a: "Die proses wanneer plante en diere <b>babas voortbring</b>." },
+      { q: "Wat beteken 'uitsterf'?", a: "Wanneer <b>al die individue</b> van 'n soort plant of dier uitsterf en daar niks meer oor is nie." },
+      { q: "Wat is inwendige bevrugting?", a: "Wanneer manlike selle met vroulike eiertjies saamsmelt <b>binne-in</b> die liggaam." },
+      { q: "Wat is uitwendige bevrugting?", a: "Die samesmelting van manlike selle en vroulike eiertjies <b>buite</b> die liggaam." },
+      { q: "Wat is 'n volgorde?", a: "Die orde waarin dinge <b>gebeur</b>." }
+    ]
+  },
+  {
+    id: "plant-lewensiklus",
+    nav: "Plant Lewensiklus",
+    title: "O5E1 — Lewensiklus van 'n Plant",
+    cards: [
+      { q: "Waarmee begin die lewensiklus van 'n blomplant?", a: "Feitlik al die blomplante begin die lewe as 'n klein <b>saadjie</b>." },
+      { q: "Noem die 6 stadiums van 'n plant se lewensiklus.", a: "<ol><li>Saad <b>ontkiem</b> (water opneem, swel, breek oop)</li><li><b>Kiemwortel</b> groei afwaarts</li><li><b>Stam</b> groei opwaarts, blare vorm</li><li>Volwasse plant vorm <b>blomme</b>, bestuiwing vind plaas</li><li><b>Bevrugting</b> — sade word gevorm, blomme word vrugte</li><li>Vrugte word <b>ryp</b>, sade word versprei, siklus begin weer</li></ol>" },
+      { q: "Wat gebeur tydens ontkieming?", a: "Die saadjie neem <b>water</b> op, swel totdat die buitekant oopbreek. 'n Klein eerste worteltjie (kiemwortel) groei <b>afwaarts</b>." },
+      { q: "Wat doen die kiemwortel?", a: "Dit groei <b>afwaarts</b> in die grond op soek na water. Dit hou ook die plantjie <b>stewig</b> in die grond." },
+      { q: "Kan 'n plant in enige stadium doodgaan?", a: "Ja! Die plant kan in <b>enige stadium</b> van die siklus doodgaan — bv. dit kan deur 'n dier geëet word, of sade kan deur voëls geëet word." },
+      { q: "Hoekom kan plante doodgaan?", a: "Plante kan doodgaan as hulle nie genoeg <b>voedingstowwe, water of lug</b> kry nie, of as hulle deur diere geëet word." }
+    ]
+  },
+  {
+    id: "blom-dele",
+    nav: "Blom Dele",
+    title: "O5E1 — Dele van 'n Blom",
+    cards: [
+      { q: "Wat is die funksie van kroonblare?", a: "Kroonblare trek <b>voëls en insekte</b> na die blom toe aan." },
+      { q: "Wat is die stempel en wat doen dit?", a: "Die stempel is die taaierige <b>vroulike deel</b> wat stuifmeel opvang. Die stuifmeel maak 'n dun pypie (stuifmeelbuis) tot in die vrugbeginsel." },
+      { q: "Wat is die helmknoppie en wat doen dit?", a: "Die helmknoppie is die <b>manlike deel</b> wat <b>stuifmeel</b> maak. Insekte, voëls en wind help om stuifmeel van blom tot blom te dra." },
+      { q: "Wat is die styl?", a: "Die styl <b>ondersteun</b> die stempel en lei na die vrugbeginsel." },
+      { q: "Wat is die helmdraad?", a: "Die helmdraad <b>ondersteun</b> die helmknoppie." },
+      { q: "Wat is die vrugbeginsel en wat gebeur daarmee?", a: "Die vrugbeginsel hou die <b>saadknoppies</b> wat sade sal vorm as dit bevrug word. Na bevrugting groei die vrugbeginsel om 'n <b>vrug</b> te word." },
+      { q: "Wat is kelkblare?", a: "Kelkblare <b>beskerm</b> die blom as dit bot." },
+      { q: "Hoe word sade versprei? (4 maniere)", a: "Die sade binne-in die vrug word versprei deur:<ul><li><b>Wind</b></li><li><b>Water</b></li><li><b>Diere</b></li><li><b>Voëls</b></li></ul>" },
+      { q: "Noem al 7 dele van 'n blom.", a: "<ol><li><b>Kroonblare</b></li><li><b>Stempel</b></li><li><b>Helmknoppie</b></li><li><b>Styl</b></li><li><b>Helmdraad</b></li><li><b>Vrugbeginsel</b></li><li><b>Kelkblare</b></li></ol>" }
+    ]
+  },
+  {
+    id: "dier-lewensiklus",
+    nav: "Dier Lewensiklus",
+    title: "O5E1 — Lewensiklus van Diere",
+    cards: [
+      { q: "Hoekom moet alle lewende dinge voortplant?", a: "Voortplanting verseker dat verskillende lewende dinge <b>nie uitsterf</b> nie." },
+      { q: "Wat is 'n soogdier?", a: "'n Soogdier is 'n <b>gewerwelde</b> dier wat 'n <b>warmbloedige</b> dier met 'n ruggraat is." },
+      { q: "Noem die 5 stadiums in die lewensiklus van 'n koei.", a: "<ol><li>Die bul <b>dek</b> die koei — bevrugting vind plaas</li><li>Die embrio groei binne die koei — koei is <b>dragtig</b></li><li>Na <b>285 dae</b> word die kalfie gebore</li><li>Die koei <b>versorg</b> die kalfie — voed met melk</li><li>Die kalf word 'n <b>volwasse</b> bul/koei (3-4 jaar) — kan weer voortplant</li></ol>" },
+      { q: "Hoe lank is 'n koei dragtig?", a: "<b>285 dae</b>." },
+      { q: "Kan 'n dier in enige stadium doodgaan?", a: "Ja, 'n dier kan in <b>enige fase</b> van sy lewensiklus doodgaan — deur siekte, gejag word, of ouderdom." },
+      { q: "Wat is 'n siklus?", a: "Stappe wat <b>een na die ander</b> gebeur en dan <b>herhaal</b>. Wanneer die laaste stap bereik word, gaan die siklus terug na die eerste stap." }
+    ]
+  },
+  {
+    id: "bevrugting",
+    nav: "Bevrugting",
+    title: "O5E1 — Bevrugting by Diere",
+    cards: [
+      { q: "Wat het 'n dier nodig om voort te plant?", a: "'n <b>Maat</b>: die pa (manlike maat maak sperm) en die ma (vroulike maat maak eiertjies)." },
+      { q: "Wat is bevrugting?", a: "Wanneer die <b>sperm</b> en die <b>eiertjie</b> bymekaarkom om 'n nuwe lewe te vorm." },
+      { q: "Wat is inwendige bevrugting?", a: "Wanneer die manlike maat sy sperm in die liggaam van die vroulike maat plaas. Die eier word <b>binne die liggaam</b> bevrug." },
+      { q: "Noem diere wat inwendige bevrugting gebruik.", a: "<ul><li>Alle <b>soogdiere</b> (koeie, mense, olifante, katte)</li><li><b>Voëls</b>, slange, akkedisse, skilpaaie</li><li><b>Insekte</b> en spinnekoppe</li></ul>" },
+      { q: "Wat is uitwendige bevrugting?", a: "Die ma lê haar eiers in <b>water</b>, die pa versprei sy sperm oor die eiers. Bevrugting vind <b>buite die liggaam</b> plaas." },
+      { q: "Noem diere wat uitwendige bevrugting gebruik.", a: "<b>Visse</b> en <b>paddas</b> bevrug hulle eiers buite die ma se liggaam." },
+      { q: "Hoe ontwikkel die embrio by soogdiere?", a: "Die embrio ontwikkel <b>binne die ma se liggaam</b>. Die ma voorsien die embrio van alles wat dit nodig het. Die meeste ouers gee geboorte aan <b>lewendige babas</b>." },
+      { q: "Hoe verskil voëls en reptiele se voortplanting?", a: "Voëls en reptiele <b>lê eiers</b> en skenk nie geboorte aan lewendige babas nie. Die embrio ontwikkel binne-in 'n eier met 'n harde, beskermende <b>dop</b>." }
+    ]
+  },
+  {
+    id: "versorging",
+    nav: "Versorging",
+    title: "O5E1 — Versorging van Kleintjies",
+    cards: [
+      { q: "Hoekom versorg baie diere hulle kleintjies?", a: "Om hulle <b>groot te kry</b> sodat hulle later dalk hulle eie kleintjies kan kry." },
+      { q: "Hoe voed soogdiere hulle kleintjies?", a: "Soogdiere voed hulle kleintjies met <b>melk</b> en daarom bly hulle naby hulle mammas." },
+      { q: "Wat doen soogdier-ouers vir hulle babas? (3 dinge)", a: "<ul><li><b>Voer</b> hulle kleintjies met melk</li><li><b>Beskerm</b> die kleintjies</li><li><b>Leer</b> die kleintjies om te oorleef</li></ul>" },
+      { q: "Noem diere wat NIE hulle kleintjies versorg nie.", a: "<b>Paddas, insekte en skilpaaie</b> — hulle steek hulle eiers weg om dit veilig te hou, maar bly nie naby hulle nadat hulle gebore is nie." },
+      { q: "Wanneer verlaat jong diere die ma?", a: "Wanneer die jong diere <b>volwasse genoeg</b> is, verlaat hulle die ma om die wêreld op hulle eie aan te durf." },
+      { q: "Kan sommige pasgebore soogdiere dadelik staan?", a: "Ja, sommiges soos <b>perde</b> kan feitelik dadelik op hulle voete staan en binne 'n halfuur hardloop." }
+    ]
+  }
+];
+
+// ===================== COLLECTIBLE MAP (nature themed) =====================
+const animalMap = {
+  "sleutelwoorde-o1e1": { emoji: "\uD83C\uDF31", name: "Saailing" },
+  "habitats": { emoji: "\uD83C\uDFD4\uFE0F", name: "Berg" },
+  "plante-habitats": { emoji: "\uD83C\uDF3F", name: "Blaar" },
+  "diere-habitats": { emoji: "\uD83E\uDD93", name: "Sebra" },
+  "sleutelwoorde-o1e2": { emoji: "\uD83D\uDCD6", name: "Boek" },
+  "interafhanklikheid": { emoji: "\uD83E\uDD1D", name: "Samewerking" },
+  "sleutelwoorde-o1e3": { emoji: "\uD83D\uDD2C", name: "Mikroskoop" },
+  "eksoskelet": { emoji: "\uD83E\uDD80", name: "Krap" },
+  "endoskelet": { emoji: "\uD83E\uDDB4", name: "Been" },
+  "sleutelwoorde-o2e1": { emoji: "\uD83C\uDFF7\uFE0F", name: "Etiket" },
+  "skelet-funksies": { emoji: "\uD83D\uDC80", name: "Skedel" },
+  "ledemate-gordels": { emoji: "\uD83E\uDDB5", name: "Ledemaat" },
+  "sleutelwoorde-o2e2": { emoji: "\uD83D\uDCCF", name: "Liniaal" },
+  "spiere-beweging": { emoji: "\uD83D\uDCAA", name: "Spier" },
+  "diere-beweging": { emoji: "\uD83D\uDC38", name: "Padda" },
+  "sleutelwoorde-o3": { emoji: "\uD83D\uDD3A", name: "Driehoek" },
+  "raam-dop": { emoji: "\uD83C\uDFD7\uFE0F", name: "Bouwerk" },
+  "sleutelwoorde-o4": { emoji: "\uD83D\uDCE6", name: "Pakkie" },
+  "plante-voedsel": { emoji: "\uD83C\uDF31", name: "Groen Plant" },
+  "diere-voedsel": { emoji: "\uD83E\uDD81", name: "Leeu" },
+  "voedselketting": { emoji: "\uD83D\uDD17", name: "Ketting" },
+  "sleutelwoorde-o5": { emoji: "\uD83D\uDCDA", name: "Studienotas" },
+  "plant-lewensiklus": { emoji: "\uD83C\uDF38", name: "Blom" },
+  "blom-dele": { emoji: "\uD83C\uDF3A", name: "Hibiskus" },
+  "dier-lewensiklus": { emoji: "\uD83D\uDC04", name: "Koei" },
+  "bevrugting": { emoji: "\uD83E\uDDEC", name: "DNS" },
+  "versorging": { emoji: "\uD83D\uDC76", name: "Baba" }
+};
+
+// ===================== LEVELS =====================
+const levels = [
+  { name: "Leerling", emoji: "\uD83D\uDD2C", xp: 0 },
+  { name: "Navorser", emoji: "\uD83D\uDD0D", xp: 300 },
+  { name: "Wetenskaplike", emoji: "\uD83E\uDDEA", xp: 800 },
+  { name: "Professor", emoji: "\uD83C\uDF93", xp: 1600 },
+  { name: "Meester", emoji: "\uD83D\uDC51", xp: 2500 },
+];
+
+// ===================== ACHIEVEMENTS =====================
+const achievementDefs = [
+  { id: "eerste_afdeling", emoji: "\uD83C\uDFC5", name: "Eerste Ontdekking", desc: "Voltooi 1 afdeling met 80%+" },
+  { id: "op_dreef", emoji: "\uD83D\uDD25", name: "Op Dreef", desc: "10-streak" },
+  { id: "onstuitbaar", emoji: "\uD83D\uDCA5", name: "Onstuitbaar", desc: "20-streak" },
+  { id: "blitsvinnig", emoji: "\u26A1", name: "Blitsvinnig", desc: "10 kaarte binne 5 sekondes elk" },
+  { id: "halfpad", emoji: "\uD83D\uDEA9", name: "Halfpad", desc: "14 afdelings met 80%+" },
+  { id: "perfekte_telling", emoji: "\uD83C\uDF1F", name: "Perfekte Telling", desc: "1 afdeling met 100%" },
+  { id: "perfekte_vyf", emoji: "\u2B50", name: "Perfekte Vyf", desc: "5 afdelings met 100%" },
+  { id: "nul_moeilikes", emoji: "\uD83E\uDDE0", name: "Nul Moeilikes", desc: "Geen moeilike kaarte oor" },
+  { id: "versamelaar", emoji: "\uD83C\uDFFA", name: "Versamelaar", desc: "20 artefakte versamel" },
+  { id: "meester", emoji: "\uD83C\uDFDB\uFE0F", name: "Meester", desc: "Al 27 artefakte versamel" },
+  { id: "studie_held", emoji: "\uD83D\uDCDA", name: "Studie Held", desc: "1500 totale XP" },
+  { id: "meester_wetenskaplike", emoji: "\uD83D\uDC51", name: "Meester Wetenskaplike", desc: "ALLE 27 afdelings met 80%+" },
+];
+
+// ===================== APP STATE =====================
+let currentSection = 0;
+let currentCard = 0;
+let deck = [];
+let scores = {};
+let knowCount = 0;
+let dunnoCount = 0;
+let totalXP = 0;
+let currentLevel = 0;
+let streak = 0;
+let bestStreak = 0;
+let achievements = {};
+let discoveredAnimals = {};
+let bestScores = {};
+let hardCards = {};
+let masterHardCards = {};
+let hardOnlyMode = false;
+let masterTestMode = false;
+let fastAnswerCount = 0;
+let cardFlipTime = 0;
+let timerEnabled = false;
+let timerInterval = null;
+let timerRemaining = 30;
+let soundEnabled = true;
+let audioCtx = null;
+
+const LS_PREFIX = "nw-kw1-";
+const TOTAL_SECTIONS = sections.length;
+
+// ===================== LOCALSTORAGE =====================
+function saveProgress() {
+  const data = { totalXP, currentLevel, achievements, discoveredAnimals, bestScores, bestStreak, hardCards };
+  try { localStorage.setItem(LS_PREFIX + "progress", JSON.stringify(data)); } catch(e) {}
+}
+
+function saveMasterHard() {
+  try { localStorage.setItem(LS_PREFIX + "master_hard", JSON.stringify(masterHardCards)); } catch(e) {}
+}
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(LS_PREFIX + "progress");
+    if (raw) {
+      const data = JSON.parse(raw);
+      totalXP = data.totalXP || 0; currentLevel = data.currentLevel || 0;
+      achievements = data.achievements || {}; discoveredAnimals = data.discoveredAnimals || {};
+      bestScores = data.bestScores || {}; bestStreak = data.bestStreak || 0;
+      hardCards = data.hardCards || {};
+    }
+  } catch(e) {}
+  try {
+    const raw2 = localStorage.getItem(LS_PREFIX + "master_hard");
+    if (raw2) masterHardCards = JSON.parse(raw2);
+  } catch(e) {}
+}
+
+function resetProgress() {
+  if (confirm("Is jy seker jy wil al jou vordering uitvee? Dit sluit XP, vlakke, prestasies en artefakteversameling in.")) {
+    localStorage.removeItem(LS_PREFIX + "progress");
+    totalXP = 0; currentLevel = 0; streak = 0; bestStreak = 0;
+    achievements = {}; discoveredAnimals = {}; bestScores = {};
+    hardCards = {}; scores = {};
+    hardOnlyMode = false; fastAnswerCount = 0; cardFlipTime = 0;
+    updateTopBar(); renderAnimalBar(); renderBadges(); buildNav(); loadSection(0);
+  }
+}
+
+// ===================== ADMIN RESET =====================
+let adminPressTimer = null;
+function initAdminReset() {
+  const header = document.querySelector("header");
+  const startPress = () => {
+    adminPressTimer = setTimeout(() => {
+      adminPressTimer = null;
+      const answer = prompt("\uD83D\uDD12 Admin: Tik RESET om ALLES uit te vee\n(insluitend Toets Net Moeilikes)");
+      if (answer && answer.trim().toUpperCase() === "RESET") {
+        localStorage.removeItem(LS_PREFIX + "progress");
+        localStorage.removeItem(LS_PREFIX + "master_hard");
+        totalXP = 0; currentLevel = 0; streak = 0; bestStreak = 0;
+        achievements = {}; discoveredAnimals = {}; bestScores = {};
+        hardCards = {}; masterHardCards = {}; scores = {};
+        hardOnlyMode = false; masterTestMode = false;
+        fastAnswerCount = 0; cardFlipTime = 0;
+        document.getElementById("master-test-btn").classList.remove("active");
+        document.getElementById("filter-bar").style.display = "";
+        updateTopBar(); updateMasterCount();
+        renderAnimalBar(); renderBadges(); buildNav();
+        loadSection(0);
+        showToast("\uD83D\uDDD1\uFE0F", "Admin Reset", "Alle data is uitgevee.");
+      }
+    }, 3000);
+  };
+  const cancelPress = () => { if (adminPressTimer) { clearTimeout(adminPressTimer); adminPressTimer = null; } };
+  header.addEventListener("mousedown", startPress);
+  header.addEventListener("mouseup", cancelPress);
+  header.addEventListener("mouseleave", cancelPress);
+  header.addEventListener("touchstart", startPress, { passive: true });
+  header.addEventListener("touchend", cancelPress);
+  header.addEventListener("touchcancel", cancelPress);
+}
+
+// ===================== SOUND =====================
+function getAudioCtx() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); return audioCtx; }
+function playTone(freq, duration, type, volume) {
+  if (!soundEnabled) return;
+  try {
+    const ctx = getAudioCtx(); const osc = ctx.createOscillator(); const gain = ctx.createGain();
+    osc.type = type || "sine"; osc.frequency.value = freq; gain.gain.value = volume || 0.15;
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    osc.stop(ctx.currentTime + duration);
+  } catch(e) {}
+}
+function soundCorrect() { playTone(523, 0.15, "sine", 0.12); setTimeout(() => playTone(659, 0.2, "sine", 0.12), 100); }
+function soundWrong() { playTone(200, 0.3, "sawtooth", 0.08); }
+function soundLevelUp() { playTone(523, 0.15, "sine", 0.12); setTimeout(() => playTone(659, 0.15, "sine", 0.12), 120); setTimeout(() => playTone(784, 0.15, "sine", 0.12), 240); setTimeout(() => playTone(1047, 0.3, "sine", 0.15), 360); }
+function soundAchievement() { playTone(880, 0.1, "sine", 0.1); setTimeout(() => playTone(1100, 0.1, "sine", 0.1), 80); setTimeout(() => playTone(1320, 0.2, "sine", 0.12), 160); }
+function soundStreak() { playTone(440, 0.08, "square", 0.08); setTimeout(() => playTone(550, 0.08, "square", 0.08), 60); setTimeout(() => playTone(660, 0.08, "square", 0.08), 120); setTimeout(() => playTone(880, 0.15, "square", 0.1), 180); }
+function toggleSound() { soundEnabled = !soundEnabled; document.getElementById("sound-btn").textContent = soundEnabled ? "\uD83D\uDD0A" : "\uD83D\uDD07"; }
+
+// ===================== CONFETTI =====================
+let confettiParticles = [];
+let confettiAnimId = null;
+function launchConfetti(duration) {
+  const canvas = document.getElementById("confetti-canvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  confettiParticles = [];
+  const colors = ["#2a7a4a", "#40c070", "#1a5a4a", "#60d090", "#80e0b0", "#3090d0", "#1a3a5a"];
+  for (let i = 0; i < 120; i++) {
+    confettiParticles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height - canvas.height, w: Math.random() * 8 + 4, h: Math.random() * 5 + 3, color: colors[Math.floor(Math.random() * colors.length)], vx: (Math.random() - 0.5) * 4, vy: Math.random() * 3 + 2, rot: Math.random() * 360, rotSpeed: (Math.random() - 0.5) * 10, life: 1 });
+  }
+  const startTime = Date.now(); const dur = duration || 2500;
+  function animate() {
+    const elapsed = Date.now() - startTime;
+    if (elapsed > dur && confettiParticles.every(p => p.y > canvas.height)) { ctx.clearRect(0, 0, canvas.width, canvas.height); confettiAnimId = null; return; }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    confettiParticles.forEach(p => { if (elapsed > dur) p.life -= 0.02; p.x += p.vx; p.y += p.vy; p.vy += 0.05; p.rot += p.rotSpeed; if (p.life <= 0) return; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate((p.rot * Math.PI) / 180); ctx.globalAlpha = Math.max(0, p.life); ctx.fillStyle = p.color; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.restore(); });
+    confettiAnimId = requestAnimationFrame(animate);
+  }
+  if (confettiAnimId) cancelAnimationFrame(confettiAnimId);
+  animate();
+}
+
+// ===================== TOAST =====================
+function showToast(emoji, title, desc) {
+  const container = document.getElementById("toast-container");
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.innerHTML = '<div class="toast-title">' + emoji + ' ' + title + '</div><div class="toast-desc">' + desc + '</div>';
+  container.appendChild(toast);
+  setTimeout(() => { if (toast.parentNode) toast.remove(); }, 3000);
+}
+
+// ===================== XP FLOAT =====================
+function showXPFloat(amount, x, y) {
+  const el = document.createElement("div"); el.className = "xp-float";
+  el.textContent = "+" + amount + " XP"; el.style.left = x + "px"; el.style.top = y + "px";
+  document.body.appendChild(el); setTimeout(() => el.remove(), 1200);
+}
+
+// ===================== LEVEL UP =====================
+function showLevelUp(level) {
+  const overlay = document.createElement("div"); overlay.className = "level-up-overlay";
+  overlay.innerHTML = '<div class="level-up-box"><h2>Vlak Op!</h2><div class="level-up-emoji">' + level.emoji + '</div><div class="level-up-name">' + level.name + '</div></div>';
+  overlay.onclick = () => overlay.remove();
+  document.body.appendChild(overlay); soundLevelUp(); launchConfetti(3000);
+  setTimeout(() => { if (overlay.parentNode) overlay.remove(); }, 3500);
+}
+
+// ===================== XP SYSTEM =====================
+function getLevel(xp) { let lvl = 0; for (let i = levels.length - 1; i >= 0; i--) { if (xp >= levels[i].xp) { lvl = i; break; } } return lvl; }
+function getStreakMultiplier() { if (streak >= 20) return 4; if (streak >= 10) return 3; if (streak >= 5) return 2; return 1; }
+function calcXPForCorrect() { let base = 10; let mult = getStreakMultiplier(); let speedBonus = 0; const timeSinceFlip = (Date.now() - cardFlipTime) / 1000; if (cardFlipTime > 0 && timeSinceFlip <= 10) speedBonus = 5; return (base * mult) + speedBonus; }
+function addXP(amount, evt) {
+  const oldLevel = getLevel(totalXP); totalXP += amount; const newLevel = getLevel(totalXP); currentLevel = newLevel;
+  let x = window.innerWidth / 2 - 30; let y = window.innerHeight / 2;
+  if (evt) { const rect = evt.target.getBoundingClientRect(); x = rect.left + rect.width / 2; y = rect.top; }
+  showXPFloat(amount, x, y);
+  if (newLevel > oldLevel) showLevelUp(levels[newLevel]);
+  if (totalXP >= 1500) grantAchievement("studie_held");
+  updateTopBar(); saveProgress();
+}
+
+// ===================== ACHIEVEMENTS =====================
+function grantAchievement(id) {
+  if (achievements[id]) return;
+  achievements[id] = true;
+  const def = achievementDefs.find(a => a.id === id);
+  if (def) { showToast(def.emoji, def.name, def.desc); soundAchievement(); }
+  renderBadges(); saveProgress();
+}
+function renderBadges() {
+  const grid = document.getElementById("badge-grid");
+  const earned = Object.keys(achievements).length;
+  document.getElementById("badge-toggle").textContent = "\uD83C\uDFC5 Prestasies (" + earned + "/" + achievementDefs.length + ") \u25BC";
+  grid.innerHTML = "";
+  achievementDefs.forEach(a => {
+    const div = document.createElement("div");
+    div.className = "badge-item " + (achievements[a.id] ? "earned" : "locked");
+    div.innerHTML = '<span class="badge-emoji">' + a.emoji + '</span><div class="badge-name">' + a.name + '</div><div style="font-size:0.6rem;color:#5a8a7a">' + a.desc + '</div>';
+    grid.appendChild(div);
+  });
+}
+function toggleBadges() { document.getElementById("badge-grid").classList.toggle("open"); }
+
+// ===================== COLLECTIBLES =====================
+function renderAnimalBar() {
+  const container = document.getElementById("animal-slots"); container.innerHTML = "";
+  sections.forEach(s => {
+    const info = animalMap[s.id]; if (!info) return;
+    const slot = document.createElement("div");
+    slot.className = "animal-slot " + (discoveredAnimals[s.id] ? "discovered" : "locked");
+    const emojiSpan = document.createElement("span"); emojiSpan.className = "animal-emoji";
+    emojiSpan.textContent = info.emoji; slot.appendChild(emojiSpan);
+    slot.title = info.name + (discoveredAnimals[s.id] ? " (Ontdek!)" : " (Gesluit)");
+    container.appendChild(slot);
+  });
+}
+function discoverAnimal(sectionId) {
+  if (discoveredAnimals[sectionId]) return;
+  discoveredAnimals[sectionId] = true;
+  const info = animalMap[sectionId];
+  if (info) showToast(info.emoji, info.name + " ontdek!", "Jy het hierdie artefak by jou versameling gevoeg!");
+  renderAnimalBar(); saveProgress();
+  const discoveredCount = Object.keys(discoveredAnimals).length;
+  if (discoveredCount >= 20) grantAchievement("versamelaar");
+  if (discoveredCount >= TOTAL_SECTIONS) grantAchievement("meester");
+}
+
+// ===================== TIMER =====================
+function toggleTimer() {
+  timerEnabled = !timerEnabled;
+  const btn = document.getElementById("timer-btn");
+  btn.textContent = timerEnabled ? "\u23F1 Aan" : "\u23F1 Af";
+  btn.classList.toggle("active", timerEnabled);
+  document.getElementById("timer-bar-container").style.display = timerEnabled ? "block" : "none";
+  if (timerEnabled) startTimer(); else stopTimer();
+}
+function startTimer() { stopTimer(); if (!timerEnabled) return; timerRemaining = 30; updateTimerBar(); timerInterval = setInterval(() => { timerRemaining -= 0.1; if (timerRemaining <= 0) { timerRemaining = 0; stopTimer(); markCard("dunno"); } updateTimerBar(); }, 100); }
+function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
+function updateTimerBar() { const fill = document.getElementById("timer-bar-fill"); const pct = (timerRemaining / 30) * 100; fill.style.width = pct + "%"; if (pct > 50) fill.style.background = "#2a7a4a"; else if (pct > 25) fill.style.background = "#d0a030"; else fill.style.background = "#d05030"; }
+
+// ===================== TOP BAR =====================
+function updateTopBar() {
+  const lvl = levels[currentLevel] || levels[0]; const nextLvl = levels[currentLevel + 1];
+  document.getElementById("level-badge").textContent = lvl.emoji + " " + lvl.name;
+  const xpInLevel = totalXP - lvl.xp; const xpNeeded = nextLvl ? (nextLvl.xp - lvl.xp) : 1;
+  const pct = nextLvl ? Math.min(100, Math.round((xpInLevel / xpNeeded) * 100)) : 100;
+  document.getElementById("xp-bar").style.width = pct + "%";
+  document.getElementById("xp-label").textContent = totalXP + " XP" + (nextLvl ? (" / " + nextLvl.xp + " XP") : " (MAKS)");
+  document.getElementById("xp-bar-text").textContent = totalXP + " XP";
+  const streakBadge = document.getElementById("streak-badge");
+  streakBadge.textContent = "\uD83D\uDD25 " + streak;
+  if (streak >= 10) streakBadge.style.background = "rgba(255,50,0,0.4)";
+  else if (streak >= 5) streakBadge.style.background = "rgba(255,100,0,0.35)";
+  else if (streak >= 3) streakBadge.style.background = "rgba(200,100,0,0.3)";
+  else streakBadge.style.background = "rgba(200,80,0,0.2)";
+  const previewEl = document.getElementById("xp-preview-know");
+  if (previewEl) { const xpAmount = calcXPForCorrect(); const mult = getStreakMultiplier(); let txt = "+" + xpAmount + " XP"; if (mult > 1) txt += " (" + mult + "x)"; previewEl.textContent = txt; }
+}
+
+// ===================== NAV =====================
+function buildNav() {
+  const bar = document.getElementById("nav-bar"); bar.innerHTML = "";
+  sections.forEach((s, i) => {
+    const btn = document.createElement("button");
+    btn.className = "nav-btn" + (i === currentSection ? " active" : "");
+    if (bestScores[s.id] && bestScores[s.id] >= 80) btn.className += " completed";
+    const hardCount = getHardCardsForSection(i).length;
+    btn.innerHTML = s.nav + (hardCount > 0 ? ' <span class="hard-count">' + hardCount + '</span>' : '');
+    btn.onclick = () => loadSection(i); btn.id = "nav-" + i;
+    bar.appendChild(btn);
+  });
+}
+
+// ===================== LOAD SECTION =====================
+function loadSection(idx) {
+  currentSection = idx; currentCard = 0; knowCount = 0; dunnoCount = 0;
+  hardOnlyMode = false; masterTestMode = false;
+  document.getElementById("master-test-btn").classList.remove("active");
+  document.getElementById("filter-bar").style.display = "";
+  const s = sections[idx];
+  s.cards.forEach((_, ci) => { delete scores[s.id + "_" + ci]; });
+  deck = s.cards.map((c, i) => ({ ...c, origIdx: i }));
+  document.querySelectorAll(".nav-btn").forEach((b, i) => { b.classList.toggle("active", i === idx); });
+  document.getElementById("section-title").textContent = s.title;
+  document.getElementById("summary").style.display = "none";
+  document.getElementById("card-area").style.display = "flex";
+  fastAnswerCount = 0; cardFlipTime = 0;
+  updateCard(); updateStats(); updateTopBar(); updateFilterButton();
+  if (timerEnabled) startTimer();
+}
+
+// ===================== UPDATE CARD =====================
+function updateCard() {
+  if (deck.length === 0) { showSummary(); return; }
+  if (currentCard >= deck.length) currentCard = deck.length - 1;
+  if (currentCard < 0) currentCard = 0;
+  const c = deck[currentCard];
+  document.getElementById("q-text").innerHTML = c.q;
+  document.getElementById("a-text").innerHTML = c.a;
+  document.getElementById("card-container").classList.remove("flipped");
+  cardFlipTime = 0;
+  document.getElementById("btn-know").disabled = true;
+  document.getElementById("btn-dunno").disabled = true;
+  document.getElementById("card-counter").textContent = (currentCard + 1) + " / " + deck.length;
+  document.getElementById("btn-prev").disabled = currentCard === 0;
+  document.getElementById("btn-next").disabled = currentCard >= deck.length - 1;
+  const total = masterTestMode ? deck.length : sections[currentSection].cards.length;
+  const answered = knowCount + dunnoCount;
+  const pct = total > 0 ? Math.round((answered / total) * 100) : 0;
+  if (masterTestMode && c.sectionTitle) {
+    document.getElementById("progress-text").textContent = "Kaart " + (currentCard + 1) + " van " + deck.length + "  \u00B7  " + pct + "% voltooi  \u00B7  \uD83D\uDCCC " + c.sectionTitle;
+  } else {
+    document.getElementById("progress-text").textContent = "Kaart " + (currentCard + 1) + " van " + deck.length + "  \u00B7  " + pct + "% voltooi";
+  }
+  document.getElementById("progress-fill").style.width = pct + "%";
+  if (timerEnabled) startTimer();
+}
+
+// ===================== FLIP =====================
+function flipCard() {
+  const container = document.getElementById("card-container");
+  container.classList.toggle("flipped");
+  const isFlipped = container.classList.contains("flipped");
+  if (isFlipped && cardFlipTime === 0) cardFlipTime = Date.now();
+  document.getElementById("btn-know").disabled = !isFlipped;
+  document.getElementById("btn-dunno").disabled = !isFlipped;
+}
+
+// ===================== NAVIGATION =====================
+function nextCard() { if (currentCard < deck.length - 1) { currentCard++; updateCard(); } else { showSummary(); } }
+function prevCard() { if (currentCard > 0) { currentCard--; updateCard(); } }
+
+// ===================== MARK CARD =====================
+function markCard(type, evt) {
+  const c = deck[currentCard];
+  const key = (c.sectionId || sections[currentSection].id) + "_" + c.origIdx;
+  const prev = scores[key];
+  if (prev === "know") knowCount--;
+  if (prev === "dunno") dunnoCount--;
+  scores[key] = type;
+  if (type === "know") {
+    knowCount++;
+    if (hardCards[key]) delete hardCards[key];
+    if (masterTestMode && masterHardCards[key]) { delete masterHardCards[key]; saveMasterHard(); updateMasterCount(); }
+    streak++;
+    if (streak > bestStreak) bestStreak = streak;
+    const timeSinceFlip = cardFlipTime > 0 ? (Date.now() - cardFlipTime) / 1000 : 999;
+    if (timeSinceFlip <= 5) { fastAnswerCount++; if (fastAnswerCount >= 10) grantAchievement("blitsvinnig"); }
+    const xpGain = calcXPForCorrect();
+    addXP(xpGain, evt || window.event);
+    soundCorrect();
+    if (streak >= 10) grantAchievement("op_dreef");
+    if (streak >= 20) { grantAchievement("onstuitbaar"); launchConfetti(2000); }
+    if (streak === 5 || streak === 10 || streak === 15 || streak === 20 || streak === 30) { soundStreak(); showToast("\uD83D\uDD25", streak + "-streak!", "Vermenigvuldiger: " + getStreakMultiplier() + "x"); }
+  } else {
+    dunnoCount++; streak = 0; fastAnswerCount = 0; soundWrong();
+    hardCards[key] = true; saveProgress();
+    masterHardCards[key] = true; saveMasterHard(); updateMasterCount();
+  }
+  updateStats(); updateTopBar();
+  if (!masterTestMode) { updateFilterButton(); buildNav(); }
+  stopTimer();
+  if (currentCard < deck.length - 1) { currentCard++; updateCard(); } else { showSummary(); }
+}
+
+// ===================== STATS =====================
+function updateStats() {
+  document.getElementById("know-count").textContent = knowCount;
+  document.getElementById("dunno-count").textContent = dunnoCount;
+}
+
+// ===================== SUMMARY =====================
+function showSummary() {
+  stopTimer();
+  document.getElementById("card-area").style.display = "none";
+  const sumEl = document.getElementById("summary");
+  sumEl.style.display = "block";
+  if (masterTestMode) {
+    const total = knowCount + dunnoCount;
+    const remaining = Object.keys(masterHardCards).length;
+    const pct = total > 0 ? Math.round((knowCount / total) * 100) : 0;
+    let emoji = remaining === 0 ? "\uD83C\uDF1F" : pct >= 80 ? "\uD83C\uDFC6" : pct >= 60 ? "\uD83D\uDC4D" : "\uD83D\uDCAA";
+    if (remaining === 0) launchConfetti(4000);
+    sumEl.innerHTML = '<div class="summary-card"><h2>' + emoji + ' Toets Klaar!</h2><div class="summary-big">' + pct + '%</div><div class="summary-detail">' + knowCount + ' korrek van ' + total + ' kaarte</div>' + (remaining > 0 ? '<div class="summary-detail" style="color:#d05030;font-weight:700">\uD83D\uDCD6 ' + remaining + ' moeilike kaart' + (remaining > 1 ? 'e' : '') + ' bly nog oor</div>' : '<div class="summary-detail" style="color:#2a7a4a;font-weight:700">\u2728 Alle moeilike kaarte bemeester!</div>') + '<div class="summary-btns">' + (remaining > 0 ? '<button class="summary-btn btn-hard-only" onclick="loadMasterTest()">\uD83D\uDCD6 Herdoen moeilikes (' + remaining + ')</button>' : '') + '<button class="summary-btn btn-retry" onclick="exitMasterTest()">\u2190 Terug na afdelings</button></div></div>';
+    masterTestMode = false;
+    document.getElementById("master-test-btn").classList.remove("active");
+    document.getElementById("filter-bar").style.display = "";
+    updateMasterCount(); saveProgress();
+    return;
+  }
+  const total = sections[currentSection].cards.length;
+  const pct = total > 0 ? Math.round((knowCount / total) * 100) : 0;
+  const sectionId = sections[currentSection].id;
+  if (!bestScores[sectionId] || pct > bestScores[sectionId]) bestScores[sectionId] = pct;
+  let animalHTML = "";
+  if (pct >= 70) {
+    discoverAnimal(sectionId);
+    const info = animalMap[sectionId];
+    if (info) animalHTML = '<div class="summary-animal">' + info.emoji + '</div><div class="summary-detail" style="color:#1a5a4a;font-weight:700">' + info.name + ' ontdek!</div>';
+  }
+  const sections80 = sections.filter(s => bestScores[s.id] && bestScores[s.id] >= 80).length;
+  const sections100 = sections.filter(s => bestScores[s.id] && bestScores[s.id] >= 100).length;
+  if (sections80 >= 1) grantAchievement("eerste_afdeling");
+  if (sections80 >= 14) grantAchievement("halfpad");
+  if (sections80 >= TOTAL_SECTIONS) { grantAchievement("meester_wetenskaplike"); launchConfetti(4000); }
+  if (pct === 100) { grantAchievement("perfekte_telling"); launchConfetti(3000); }
+  if (sections100 >= 5) grantAchievement("perfekte_vyf");
+  const totalHardCards = Object.keys(hardCards).length;
+  if (totalHardCards === 0 && sections80 >= 1) grantAchievement("nul_moeilikes");
+  buildNav();
+  let emoji = pct === 100 ? "\uD83C\uDF1F" : pct >= 80 ? "\uD83C\uDFC6" : pct >= 60 ? "\uD83D\uDC4D" : "\uD83D\uDCAA";
+  const hardList = getHardCardsForSection(currentSection);
+  sumEl.innerHTML = '<div class="summary-card"><h2>' + emoji + ' Afdeling Klaar!</h2><div class="summary-big">' + pct + '%</div><div class="summary-detail">' + knowCount + ' korrek van ' + total + ' kaarte</div><div class="summary-detail">Beste telling: ' + (bestScores[sectionId] || pct) + '%</div><div class="summary-detail" style="color:#1a5a4a;font-weight:700">\uD83D\uDCCA Afdelings voltooi: ' + sections80 + ' / ' + TOTAL_SECTIONS + '</div>' + (hardList.length > 0 ? '<div class="summary-detail" style="color:#d05030;font-weight:700">\uD83D\uDCD6 ' + hardList.length + ' moeilike kaart' + (hardList.length > 1 ? 'e' : '') + ' om te hersien</div>' : '<div class="summary-detail" style="color:#2a7a4a;font-weight:700">\u2728 Geen moeilike kaarte oor nie!</div>') + animalHTML + '<div class="summary-btns"><button class="summary-btn btn-retry" onclick="loadSection(' + currentSection + ')">\uD83D\uDD01 Herdoen</button>' + (hardList.length > 0 ? '<button class="summary-btn btn-hard-only" onclick="loadHardOnly()">\uD83D\uDCD6 Net moeilikes (' + hardList.length + ')</button>' : '') + '</div></div>';
+  saveProgress(); updateFilterButton(); updateMasterCount();
+}
+
+// ===================== HARD ONLY =====================
+function getHardCardsForSection(sectionIdx) {
+  const s = sections[sectionIdx]; const hard = [];
+  s.cards.forEach((c, i) => { const key = s.id + "_" + i; if (hardCards[key]) hard.push({ ...c, origIdx: i }); });
+  return hard;
+}
+function toggleHardOnly() {
+  if (hardOnlyMode) { loadSection(currentSection); return; }
+  const hard = getHardCardsForSection(currentSection);
+  if (hard.length === 0) return;
+  hardOnlyMode = true; currentCard = 0; knowCount = 0; dunnoCount = 0; deck = hard;
+  const s = sections[currentSection];
+  hard.forEach(c => { delete scores[s.id + "_" + c.origIdx]; });
+  document.getElementById("summary").style.display = "none";
+  document.getElementById("card-area").style.display = "flex";
+  document.getElementById("section-title").textContent = s.title + " (Net moeilikes)";
+  updateCard(); updateStats(); updateFilterButton();
+  if (timerEnabled) startTimer();
+}
+function loadHardOnly() { toggleHardOnly(); }
+function updateFilterButton() {
+  const hard = getHardCardsForSection(currentSection);
+  const btn = document.getElementById("hard-filter-btn");
+  const badge = document.getElementById("hard-badge-count");
+  badge.textContent = hard.length; btn.disabled = hard.length === 0;
+  btn.classList.toggle("active-filter", hardOnlyMode);
+}
+
+// ===================== MASTER TEST =====================
+function getMasterHardDeck() {
+  const masterDeck = [];
+  sections.forEach((s, si) => { s.cards.forEach((c, ci) => { const key = s.id + "_" + ci; if (masterHardCards[key]) masterDeck.push({ q: c.q, a: c.a, origIdx: ci, sectionIdx: si, sectionId: s.id, sectionTitle: s.nav, masterKey: key }); }); });
+  return masterDeck;
+}
+function loadMasterTest() {
+  const masterDeck = getMasterHardDeck();
+  if (masterDeck.length === 0) { showToast("\u2728", "Geen moeilikes!", "Daar is geen moeilike kaarte om te hersien nie."); return; }
+  masterTestMode = true; hardOnlyMode = false; currentCard = 0; knowCount = 0; dunnoCount = 0; scores = {}; deck = masterDeck;
+  document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById("section-title").innerHTML = "\uD83D\uDCDD Toets Net Moeilikes <span style='font-size:0.7em;font-weight:600;color:#e05050'>(" + masterDeck.length + " kaarte uit alle afdelings)</span>";
+  document.getElementById("summary").style.display = "none";
+  document.getElementById("card-area").style.display = "flex";
+  document.getElementById("filter-bar").style.display = "none";
+  document.getElementById("master-test-btn").classList.add("active");
+  updateCard(); updateStats();
+  if (timerEnabled) startTimer();
+}
+function exitMasterTest() { masterTestMode = false; document.getElementById("master-test-btn").classList.remove("active"); document.getElementById("filter-bar").style.display = ""; loadSection(0); }
+function updateMasterCount() { document.getElementById("master-count").textContent = Object.keys(masterHardCards).length; }
+
+// ===================== KEYBOARD =====================
+function handleKey(e) {
+  const tag = e.target.tagName;
+  if (tag === "INPUT" || tag === "TEXTAREA") return;
+  switch (e.key) {
+    case "ArrowLeft": e.preventDefault(); prevCard(); break;
+    case "ArrowRight": e.preventDefault(); nextCard(); break;
+    case " ": e.preventDefault(); flipCard(); break;
+    case "1": if (!document.getElementById("btn-know").disabled) markCard("know"); break;
+    case "2": if (!document.getElementById("btn-dunno").disabled) markCard("dunno"); break;
+    case "t": case "T": toggleTimer(); break;
+    case "h": case "H": toggleHardOnly(); break;
+  }
+}
+
+// ===================== STICKY NAV =====================
+function updateStickyNav() {
+  const topBar = document.getElementById("top-bar");
+  const navBar = document.getElementById("nav-bar");
+  if (topBar && navBar) navBar.style.top = topBar.offsetHeight + "px";
+}
+
+// ===================== INIT =====================
+function init() {
+  loadProgress();
+  currentLevel = getLevel(totalXP);
+  buildNav(); renderAnimalBar(); renderBadges();
+  updateTopBar(); updateMasterCount(); loadSection(0);
+  document.addEventListener("keydown", handleKey);
+  initAdminReset();
+  updateStickyNav();
+  window.addEventListener("resize", () => { updateStickyNav(); const canvas = document.getElementById("confetti-canvas"); canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+}
+init();
+
+// Deep-link support
+(function(){
+  const h = window.location.hash.slice(1);
+  if (!h) return;
+  const idx = sections.findIndex(s => s.id === h);
+  if (idx >= 0) loadSection(idx);
+})();
+</script>
+</body>
+</html>

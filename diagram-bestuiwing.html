@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="af">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bestuiwing — Interaktiewe Diagram</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #e8f4f0;
+  font-family: 'Nunito', sans-serif;
+  color: #1a2a3a;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* TOP NAV */
+.top-nav {
+  display: flex;
+  gap: 0.3rem;
+  padding: 0.5rem 0.8rem;
+  background: linear-gradient(135deg, #1a3a5a, #1a4a6a);
+  justify-content: center;
+  flex-wrap: wrap;
+  border-bottom: 2px solid #2a7a4a;
+}
+.top-nav a, .top-nav span {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.35rem 0.7rem;
+  border-radius: 16px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.25s;
+}
+.top-nav a {
+  background: rgba(255,255,255,0.1);
+  color: #c0e8d8;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.top-nav a:hover {
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+}
+.top-nav span.nav-active {
+  background: #2a7a4a;
+  color: #fff;
+  border: 1px solid #2a7a4a;
+  box-shadow: 0 2px 8px rgba(42,122,74,0.4);
+}
+
+header {
+  background: linear-gradient(135deg, #1a3a5a, #2a5a7a);
+  color: #e0f5ea;
+  padding: 1rem 1.2rem;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+  border-bottom: 3px solid #2a7a4a;
+}
+header h1 { font-size: 1.3rem; font-weight: 800; }
+header p { font-size: 0.75rem; opacity: 0.7; margin-top: 0.2rem; }
+
+/* MODE TABS */
+.mode-bar {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.6rem 0.8rem;
+  background: #d0eae0;
+  border-bottom: 2px solid #b0d8c8;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.mode-btn {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.5rem 1.2rem;
+  border-radius: 20px;
+  border: 2px solid #5a9a7a;
+  background: #fff;
+  color: #1a3a5a;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.mode-btn:hover { background: #e0f5ea; }
+.mode-btn.active {
+  background: #2a7a4a;
+  color: #fff;
+  border-color: #2a7a4a;
+}
+
+main {
+  max-width: 950px;
+  margin: 0 auto;
+  padding: 1.2rem;
+}
+
+/* STEP INDICATOR */
+.step-row {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-bottom: 0.8rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.step-dot {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: #c0d8c8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #6a8a7a;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 2px solid transparent;
+}
+.step-dot.active {
+  background: #2a7a4a;
+  color: #fff;
+  transform: scale(1.15);
+  border-color: #1a5a3a;
+  box-shadow: 0 2px 8px rgba(42,122,74,0.4);
+}
+.step-dot.done {
+  background: #5ab88a;
+  color: #fff;
+}
+.step-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #4a7a6a;
+  margin: 0 0.4rem;
+}
+
+/* SVG SCENE */
+.scene-wrap {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  overflow: hidden;
+  margin-bottom: 1rem;
+  border: 2px solid #b0d8c8;
+}
+.scene-wrap svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* DESCRIPTION PANEL */
+.desc-panel {
+  background: linear-gradient(135deg, #1a3a5a, #2a5a7a);
+  color: #e0f5ea;
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1rem;
+  min-height: 60px;
+  text-align: center;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+}
+.desc-panel .step-num {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  margin-bottom: 0.3rem;
+}
+.desc-panel .step-text {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.desc-panel .step-detail {
+  font-size: 0.8rem;
+  opacity: 0.85;
+  margin-top: 0.4rem;
+  line-height: 1.4;
+}
+
+/* CONTROLS */
+.controls {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+.ctrl-btn {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.5rem 1.2rem;
+  border-radius: 20px;
+  border: 2px solid #2a7a4a;
+  background: #fff;
+  color: #2a7a4a;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.ctrl-btn:hover { background: #e0f5ea; transform: translateY(-1px); }
+.ctrl-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.ctrl-btn.primary {
+  background: #2a7a4a;
+  color: #fff;
+}
+.ctrl-btn.primary:hover { background: #1a6a3a; }
+
+/* SECTION VISIBILITY */
+.section { display: none; }
+.section.active { display: block; }
+
+/* ===== DIAGRAM MODE ===== */
+.diagram-info {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  margin-top: 1rem;
+  border: 2px solid #b0d8c8;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  min-height: 60px;
+}
+.diagram-info h3 {
+  color: #2a7a4a;
+  font-size: 1rem;
+  margin-bottom: 0.3rem;
+}
+.diagram-info p {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #3a5a4a;
+}
+.diagram-hint {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #6a9a8a;
+  margin-top: 0.5rem;
+  font-weight: 600;
+}
+
+/* ===== QUIZ MODE ===== */
+.quiz-header {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+.quiz-header .q-num {
+  font-size: 0.75rem;
+  color: #6a9a8a;
+  font-weight: 700;
+}
+.quiz-header .q-text {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #1a3a5a;
+  margin-top: 0.3rem;
+}
+.quiz-options {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 500px;
+  margin: 0 auto 1rem;
+}
+.q-opt {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
+  border: 2px solid #b0d8c8;
+  background: #fff;
+  color: #1a3a5a;
+  cursor: pointer;
+  transition: all 0.25s;
+  text-align: left;
+}
+.q-opt:hover { background: #e0f5ea; border-color: #5a9a7a; }
+.q-opt.correct {
+  background: #d0f5d8;
+  border-color: #2a7a4a;
+  color: #1a5a3a;
+}
+.q-opt.wrong {
+  background: #fde8e8;
+  border-color: #d44;
+  color: #a33;
+}
+.q-opt:disabled { cursor: default; }
+
+.quiz-score {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+.quiz-score .big-score {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #2a7a4a;
+}
+.quiz-score .score-msg {
+  font-size: 1rem;
+  color: #4a7a6a;
+  margin-top: 0.5rem;
+}
+.quiz-feedback {
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  min-height: 1.5em;
+}
+.quiz-feedback.ok { color: #2a7a4a; }
+.quiz-feedback.nope { color: #c44; }
+
+/* SVG ANIMATIONS */
+@keyframes flutter {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.7); }
+}
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+@keyframes grow-down {
+  from { stroke-dashoffset: 100; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes fall-petal {
+  0% { transform: translate(0,0) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--fx), 40px) rotate(var(--fr)); opacity: 0; }
+}
+
+/* CLICKABLE PARTS IN DIAGRAM */
+.part-clickable { cursor: pointer; }
+.part-clickable:hover { filter: brightness(1.15); }
+
+/* Responsive */
+@media (max-width: 600px) {
+  header h1 { font-size: 1.1rem; }
+  .desc-panel .step-text { font-size: 0.9rem; }
+  .step-dot { width: 28px; height: 28px; font-size: 0.68rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top-nav">
+  <a href="index.html">&#x1F4CB; Studiegids</a>
+  <a href="flitskaarte.html">&#x1F0CF; Flitskaarte</a>
+  <a href="breinkaart.html">&#x1F9E0; Breinkaart</a>
+  <a href="vergelyk.html">&#x2696;&#xFE0F; Vergelyk</a>
+  <a href="prosesse.html">&#x1F504; Prosesse</a>
+  <a href="habitats.html">&#x1F30D; Habitats</a>
+  <span class="nav-active">&#x1F33B; Bestuiwing</span>
+</nav>
+
+<header>
+  <h1>&#x1F33B; Bestuiwing — Interaktiewe Diagram</h1>
+  <p>Hoe word blomme bestuif? Stap-vir-stap animasie</p>
+</header>
+
+<!-- MODE BAR -->
+<div class="mode-bar">
+  <button class="mode-btn active" onclick="setMode('anim')">&#x1F3AC; Animasie</button>
+  <button class="mode-btn" onclick="setMode('diagram')">&#x1F50D; Diagram</button>
+  <button class="mode-btn" onclick="setMode('quiz')">&#x1F3AF; Toets</button>
+</div>
+
+<main>
+
+<!-- ==================== ANIMATION MODE ==================== -->
+<div id="sec-anim" class="section active">
+
+  <!-- Step dots -->
+  <div class="step-row">
+    <span class="step-label">Stap</span>
+    <div class="step-dot active" onclick="goStep(0)">1</div>
+    <div class="step-dot" onclick="goStep(1)">2</div>
+    <div class="step-dot" onclick="goStep(2)">3</div>
+    <div class="step-dot" onclick="goStep(3)">4</div>
+    <div class="step-dot" onclick="goStep(4)">5</div>
+    <div class="step-dot" onclick="goStep(5)">6</div>
+    <div class="step-dot" onclick="goStep(6)">7</div>
+  </div>
+
+  <!-- SVG Scene -->
+  <div class="scene-wrap">
+    <svg id="anim-svg" viewBox="0 0 800 420" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <!-- Gradient for sky -->
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#b8e4f0"/>
+          <stop offset="100%" stop-color="#d8f0e8"/>
+        </linearGradient>
+        <!-- Pollen particle -->
+        <radialGradient id="pollenG">
+          <stop offset="0%" stop-color="#ffe066"/>
+          <stop offset="100%" stop-color="#e8b800"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Background -->
+      <rect width="800" height="420" fill="url(#sky)"/>
+      <!-- Ground -->
+      <ellipse cx="400" cy="410" rx="420" ry="40" fill="#6ab87a" opacity="0.4"/>
+      <rect x="0" y="400" width="800" height="20" fill="#5aa86a" opacity="0.3"/>
+
+      <!-- ===== FLOWER 1 (left) ===== -->
+      <g id="flower1" transform="translate(180, 200)">
+        <!-- Stem -->
+        <line x1="0" y1="80" x2="0" y2="200" stroke="#3a8a4a" stroke-width="5" stroke-linecap="round"/>
+        <!-- Leaves -->
+        <ellipse cx="-22" cy="160" rx="22" ry="8" fill="#4aa85a" transform="rotate(-30, -22, 160)"/>
+        <ellipse cx="20" cy="140" rx="18" ry="7" fill="#4aa85a" transform="rotate(25, 20, 140)"/>
+        <!-- Kelkblare -->
+        <path d="M-12,75 Q0,90 12,75" fill="#3a8a3a"/>
+        <!-- Petals (kroonblare) -->
+        <ellipse cx="0" cy="-20" rx="16" ry="38" fill="#e060a0" opacity="0.9"/>
+        <ellipse cx="0" cy="-20" rx="16" ry="38" fill="#d050a0" opacity="0.7" transform="rotate(72)"/>
+        <ellipse cx="0" cy="-20" rx="16" ry="38" fill="#e870b0" opacity="0.7" transform="rotate(144)"/>
+        <ellipse cx="0" cy="-20" rx="16" ry="38" fill="#d050a0" opacity="0.7" transform="rotate(216)"/>
+        <ellipse cx="0" cy="-20" rx="16" ry="38" fill="#e060a0" opacity="0.8" transform="rotate(288)"/>
+        <!-- Center -->
+        <circle cx="0" cy="0" r="14" fill="#f0d060"/>
+        <!-- Meeldrade (stamens) -->
+        <line x1="-10" y1="-5" x2="-22" y2="-18" stroke="#8a7a20" stroke-width="1.5"/>
+        <circle cx="-22" cy="-18" r="4" fill="#e8c800" id="f1-anther1"/>
+        <line x1="10" y1="-5" x2="22" y2="-18" stroke="#8a7a20" stroke-width="1.5"/>
+        <circle cx="22" cy="-18" r="4" fill="#e8c800" id="f1-anther2"/>
+        <line x1="0" y1="-8" x2="0" y2="-26" stroke="#8a7a20" stroke-width="1.5"/>
+        <circle cx="0" cy="-26" r="4" fill="#e8c800" id="f1-anther3"/>
+        <!-- Stamper (pistil) visible in center -->
+        <ellipse cx="0" cy="0" r="5" fill="#90c840" id="f1-stigma"/>
+        <!-- Nektar label area (hidden initially) -->
+        <g id="nektar-label" opacity="0">
+          <line x1="0" y1="30" x2="40" y2="55" stroke="#f0a030" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <rect x="30" y="48" width="68" height="22" rx="6" fill="#f0a030"/>
+          <text x="64" y="63" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">Nektar</text>
+          <circle cx="0" cy="30" r="3" fill="#f0a030" opacity="0.6"/>
+        </g>
+      </g>
+
+      <!-- ===== FLOWER 2 (right) ===== -->
+      <g id="flower2" transform="translate(600, 210)">
+        <line x1="0" y1="80" x2="0" y2="190" stroke="#3a8a4a" stroke-width="5" stroke-linecap="round"/>
+        <ellipse cx="22" cy="150" rx="20" ry="7" fill="#4aa85a" transform="rotate(30, 22, 150)"/>
+        <ellipse cx="-18" cy="135" rx="16" ry="6" fill="#4aa85a" transform="rotate(-20, -18, 135)"/>
+        <!-- Kelkblare -->
+        <path d="M-12,75 Q0,90 12,75" fill="#3a8a3a"/>
+        <!-- Petals -->
+        <ellipse cx="0" cy="-20" rx="16" ry="36" fill="#8060d0" opacity="0.85"/>
+        <ellipse cx="0" cy="-20" rx="16" ry="36" fill="#7050c0" opacity="0.7" transform="rotate(72)"/>
+        <ellipse cx="0" cy="-20" rx="16" ry="36" fill="#9070d8" opacity="0.7" transform="rotate(144)"/>
+        <ellipse cx="0" cy="-20" rx="16" ry="36" fill="#7050c0" opacity="0.7" transform="rotate(216)"/>
+        <ellipse cx="0" cy="-20" rx="16" ry="36" fill="#8060d0" opacity="0.8" transform="rotate(288)"/>
+        <!-- Center -->
+        <circle cx="0" cy="0" r="14" fill="#f0d060"/>
+        <!-- Meeldrade -->
+        <line x1="-10" y1="-5" x2="-20" y2="-16" stroke="#8a7a20" stroke-width="1.5"/>
+        <circle cx="-20" cy="-16" r="3.5" fill="#e8c800"/>
+        <line x1="10" y1="-5" x2="20" y2="-16" stroke="#8a7a20" stroke-width="1.5"/>
+        <circle cx="20" cy="-16" r="3.5" fill="#e8c800"/>
+        <!-- Stamper -->
+        <ellipse cx="0" cy="0" r="5" fill="#90c840" id="f2-stigma"/>
+        <!-- Stempel label (hidden) -->
+        <g id="stempel-label" opacity="0">
+          <line x1="0" y1="0" x2="-50" y2="-40" stroke="#2a7a4a" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <rect x="-118" y="-52" width="72" height="22" rx="6" fill="#2a7a4a"/>
+          <text x="-82" y="-37" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">Stempel</text>
+        </g>
+        <!-- Pollen on stigma (hidden) -->
+        <g id="pollen-on-stigma" opacity="0">
+          <circle cx="-3" cy="-2" r="2.5" fill="#ffe040"/>
+          <circle cx="3" cy="1" r="2.5" fill="#ffe040"/>
+          <circle cx="0" cy="-4" r="2" fill="#ffd000"/>
+        </g>
+      </g>
+
+      <!-- ===== BUTTERFLY ===== -->
+      <g id="butterfly" transform="translate(700, 120)">
+        <!-- Body -->
+        <ellipse cx="0" cy="0" rx="3" ry="14" fill="#2a2a2a"/>
+        <!-- Head -->
+        <circle cx="0" cy="-16" r="4" fill="#3a3a3a"/>
+        <!-- Antennae -->
+        <path d="M-2,-19 Q-8,-30 -12,-32" stroke="#3a3a3a" stroke-width="1" fill="none"/>
+        <circle cx="-12" cy="-32" r="1.5" fill="#e88030"/>
+        <path d="M2,-19 Q8,-30 12,-32" stroke="#3a3a3a" stroke-width="1" fill="none"/>
+        <circle cx="12" cy="-32" r="1.5" fill="#e88030"/>
+        <!-- Left wings -->
+        <ellipse cx="-20" cy="-6" rx="20" ry="14" fill="#e87030" opacity="0.9" class="wing-l">
+          <animate attributeName="ry" values="14;9;14" dur="0.3s" repeatCount="indefinite"/>
+        </ellipse>
+        <ellipse cx="-15" cy="10" rx="14" ry="10" fill="#d06020" opacity="0.85" class="wing-l2">
+          <animate attributeName="ry" values="10;6;10" dur="0.3s" repeatCount="indefinite"/>
+        </ellipse>
+        <!-- Right wings -->
+        <ellipse cx="20" cy="-6" rx="20" ry="14" fill="#e87030" opacity="0.9" class="wing-r">
+          <animate attributeName="ry" values="14;9;14" dur="0.3s" repeatCount="indefinite"/>
+        </ellipse>
+        <ellipse cx="15" cy="10" rx="14" ry="10" fill="#d06020" opacity="0.85" class="wing-r2">
+          <animate attributeName="ry" values="10;6;10" dur="0.3s" repeatCount="indefinite"/>
+        </ellipse>
+        <!-- Wing patterns -->
+        <circle cx="-22" cy="-6" r="5" fill="#fff" opacity="0.3"/>
+        <circle cx="22" cy="-6" r="5" fill="#fff" opacity="0.3"/>
+        <circle cx="-16" cy="8" r="3" fill="#fff" opacity="0.25"/>
+        <circle cx="16" cy="8" r="3" fill="#fff" opacity="0.25"/>
+        <!-- Proboscis (hidden initially) -->
+        <path id="proboscis" d="M0,0 Q-3,10 -6,22" stroke="#2a2a2a" stroke-width="1" fill="none" opacity="0"/>
+        <!-- Pollen on body (hidden initially) -->
+        <g id="pollen-on-butterfly" opacity="0">
+          <circle cx="-4" cy="4" r="2.5" fill="#ffe040"/>
+          <circle cx="4" cy="6" r="2.5" fill="#ffe040"/>
+          <circle cx="-2" cy="10" r="2" fill="#ffd000"/>
+          <circle cx="3" cy="-2" r="2" fill="#ffe040"/>
+          <circle cx="-5" cy="8" r="1.8" fill="#ffd000"/>
+        </g>
+      </g>
+
+      <!-- Dotted path for step 4 (hidden) -->
+      <path id="flight-path" d="M220,185 C300,100 450,90 570,190" stroke="#e87030" stroke-width="2" stroke-dasharray="6,4" fill="none" opacity="0"/>
+
+      <!-- Arrow for step 1 -->
+      <g id="approach-arrow" opacity="0">
+        <path d="M650,140 C550,110 350,130 230,175" stroke="#e87030" stroke-width="2" stroke-dasharray="6,4" fill="none"/>
+        <polygon points="230,175 240,168 238,178" fill="#e87030"/>
+      </g>
+
+      <!-- ===== CROSS SECTION (Step 6) ===== -->
+      <g id="cross-section" opacity="0" transform="translate(400, 210)">
+        <!-- Background for cross-section -->
+        <rect x="-160" y="-180" width="320" height="360" rx="16" fill="#f8fff8" stroke="#b0d8c0" stroke-width="2"/>
+        <text x="0" y="-155" text-anchor="middle" fill="#1a3a5a" font-size="13" font-weight="800">Deursnit van Blom 2</text>
+
+        <!-- Outer flower shape -->
+        <!-- Petals (outline) -->
+        <ellipse cx="-60" cy="-100" rx="30" ry="50" fill="#c090e0" opacity="0.4" transform="rotate(-20, -60, -100)"/>
+        <ellipse cx="60" cy="-100" rx="30" ry="50" fill="#c090e0" opacity="0.4" transform="rotate(20, 60, -100)"/>
+        <ellipse cx="0" cy="-120" rx="25" ry="45" fill="#c090e0" opacity="0.35"/>
+
+        <!-- Stempel at top -->
+        <ellipse cx="0" cy="-75" rx="12" ry="6" fill="#90c840" stroke="#5a8a30" stroke-width="1.5"/>
+        <!-- Pollen on stempel -->
+        <circle cx="-4" cy="-77" r="3" fill="#ffe040"/>
+        <circle cx="4" cy="-76" r="2.5" fill="#ffd000"/>
+        <circle cx="0" cy="-79" r="2" fill="#ffe040"/>
+        <!-- Stempel label -->
+        <line x1="15" y1="-75" x2="90" y2="-85" stroke="#5a8a30" stroke-width="1"/>
+        <text x="95" y="-80" fill="#5a8a30" font-size="11" font-weight="700">Stempel</text>
+        <text x="95" y="-68" fill="#8aaa6a" font-size="9">(met stuifmeel)</text>
+
+        <!-- Styl -->
+        <rect x="-4" y="-70" width="8" height="70" rx="3" fill="#a0d860" opacity="0.8"/>
+        <!-- Styl label -->
+        <line x1="8" y1="-35" x2="90" y2="-30" stroke="#7aaa40" stroke-width="1"/>
+        <text x="95" y="-26" fill="#7aaa40" font-size="11" font-weight="700">Styl</text>
+
+        <!-- Pollen tube growing -->
+        <line id="pollen-tube" x1="0" y1="-70" x2="0" y2="0" stroke="#e8b800" stroke-width="2.5" stroke-dasharray="100" stroke-dashoffset="100" stroke-linecap="round"/>
+        <!-- Pollen tube label -->
+        <line x1="-8" y1="-45" x2="-80" y2="-50" stroke="#c8a000" stroke-width="1"/>
+        <text x="-85" y="-53" fill="#c8a000" font-size="10" font-weight="700" text-anchor="end">Stuifmeelbuis</text>
+
+        <!-- Vrugbeginsel -->
+        <ellipse cx="0" cy="25" rx="35" ry="28" fill="#f0e8a0" stroke="#c8a840" stroke-width="2"/>
+        <!-- Saadknoppies inside -->
+        <circle cx="-12" cy="20" r="5" fill="#a0d060" stroke="#7aa040" stroke-width="1"/>
+        <circle cx="12" cy="20" r="5" fill="#a0d060" stroke="#7aa040" stroke-width="1"/>
+        <circle cx="0" cy="32" r="5" fill="#a0d060" stroke="#7aa040" stroke-width="1"/>
+        <circle cx="-8" cy="35" r="4" fill="#a0d060" stroke="#7aa040" stroke-width="1"/>
+        <circle cx="10" cy="34" r="4" fill="#a0d060" stroke="#7aa040" stroke-width="1"/>
+        <!-- Vrugbeginsel label -->
+        <line x1="-38" y1="25" x2="-85" y2="30" stroke="#c8a840" stroke-width="1"/>
+        <text x="-88" y="26" fill="#c8a840" font-size="11" font-weight="700" text-anchor="end">Vrugbeginsel</text>
+
+        <!-- Saadknoppies label -->
+        <line x1="38" y1="30" x2="85" y2="40" stroke="#7aa040" stroke-width="1"/>
+        <text x="88" y="37" fill="#7aa040" font-size="11" font-weight="700">Saadknoppies</text>
+
+        <!-- Kelkblare at base -->
+        <path d="M-40,50 Q0,65 40,50" fill="#3a8a3a" opacity="0.5"/>
+
+        <!-- Helmdraad + Helmknoppie on sides -->
+        <line x1="-50" y1="-60" x2="-65" y2="-90" stroke="#8a7a20" stroke-width="1.5"/>
+        <circle cx="-65" cy="-90" r="5" fill="#e8c800"/>
+        <line x1="50" y1="-60" x2="65" y2="-90" stroke="#8a7a20" stroke-width="1.5"/>
+        <circle cx="65" cy="-90" r="5" fill="#e8c800"/>
+        <!-- Helmknoppie label -->
+        <text x="70" y="-95" fill="#b8a020" font-size="9" font-weight="600">Helmknoppie</text>
+        <!-- Helmdraad label -->
+        <text x="-100" y="-80" fill="#8a7a20" font-size="9" font-weight="600" text-anchor="end">Helmdraad</text>
+      </g>
+
+      <!-- ===== FRUIT (Step 7) ===== -->
+      <g id="fruit-scene" opacity="0" transform="translate(400, 230)">
+        <rect x="-160" y="-200" width="320" height="380" rx="16" fill="#f8fff8" stroke="#b0d8c0" stroke-width="2"/>
+        <text x="0" y="-175" text-anchor="middle" fill="#1a3a5a" font-size="13" font-weight="800">Die vrug en sade ontwikkel</text>
+
+        <!-- Falling petals -->
+        <g id="falling-petals">
+          <ellipse cx="-80" cy="-60" rx="12" ry="30" fill="#c090e0" opacity="0.4" transform="rotate(-40, -80, -60)"/>
+          <ellipse cx="90" cy="-40" rx="12" ry="28" fill="#c090e0" opacity="0.35" transform="rotate(30, 90, -40)"/>
+          <ellipse cx="-50" cy="60" rx="10" ry="25" fill="#c090e0" opacity="0.25" transform="rotate(-60, -50, 60)"/>
+          <ellipse cx="70" cy="80" rx="11" ry="24" fill="#c090e0" opacity="0.2" transform="rotate(50, 70, 80)"/>
+        </g>
+
+        <!-- Arrow showing transformation -->
+        <text x="0" y="-130" text-anchor="middle" fill="#8a6a9a" font-size="10" font-weight="600">Kroonblare val af...</text>
+
+        <!-- Swollen vrugbeginsel = fruit -->
+        <ellipse cx="0" cy="10" rx="55" ry="50" fill="#e8a040" stroke="#c88030" stroke-width="2.5"/>
+        <!-- Texture -->
+        <ellipse cx="0" cy="10" rx="48" ry="43" fill="none" stroke="#d89838" stroke-width="1" opacity="0.5"/>
+        <!-- Seeds inside -->
+        <g>
+          <ellipse cx="-15" cy="0" rx="7" ry="10" fill="#6a4a20" transform="rotate(-15, -15, 0)"/>
+          <ellipse cx="15" cy="5" rx="7" ry="10" fill="#6a4a20" transform="rotate(15, 15, 5)"/>
+          <ellipse cx="0" cy="20" rx="6" ry="9" fill="#6a4a20" transform="rotate(5, 0, 20)"/>
+          <ellipse cx="-10" cy="25" rx="5" ry="8" fill="#6a4a20" transform="rotate(-10, -10, 25)"/>
+          <ellipse cx="12" cy="22" rx="5.5" ry="8" fill="#6a4a20" transform="rotate(10, 12, 22)"/>
+        </g>
+
+        <!-- Remaining stem -->
+        <line x1="0" y1="60" x2="0" y2="130" stroke="#3a8a4a" stroke-width="5" stroke-linecap="round"/>
+        <path d="M-18,58 Q0,70 18,58" fill="#3a8a3a"/>
+
+        <!-- Labels -->
+        <line x1="58" y1="10" x2="110" y2="-10" stroke="#c88030" stroke-width="1.2"/>
+        <rect x="100" y="-24" width="50" height="20" rx="5" fill="#c88030"/>
+        <text x="125" y="-10" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">VRUG</text>
+
+        <line x1="20" y1="20" x2="100" y2="40" stroke="#6a4a20" stroke-width="1.2"/>
+        <rect x="90" y="30" width="52" height="20" rx="5" fill="#6a4a20"/>
+        <text x="116" y="44" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">SADE</text>
+
+        <!-- Explanatory text -->
+        <text x="0" y="155" text-anchor="middle" fill="#2a7a4a" font-size="10" font-weight="700">Vrugbeginsel &#x2192; VRUG</text>
+        <text x="0" y="170" text-anchor="middle" fill="#6a4a20" font-size="10" font-weight="700">Saadknoppies &#x2192; SADE</text>
+      </g>
+
+      <!-- Step title overlay (faded) -->
+      <g id="scene-title" opacity="0">
+        <rect x="10" y="8" width="200" height="26" rx="8" fill="#1a3a5a" opacity="0.7"/>
+        <text id="scene-title-text" x="20" y="26" fill="#fff" font-size="11" font-weight="700">Stap 1</text>
+      </g>
+
+      <!-- Stuifmeel label (step 3) -->
+      <g id="stuifmeel-label" opacity="0">
+        <line x1="200" y1="210" x2="260" y2="240" stroke="#c8a000" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <rect x="248" y="232" width="82" height="22" rx="6" fill="#c8a000"/>
+        <text x="289" y="247" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">Stuifmeel</text>
+      </g>
+
+      <!-- Helmknop highlight (step 3) -->
+      <g id="helmknop-highlight" opacity="0">
+        <circle cx="158" cy="182" r="8" fill="none" stroke="#e8c800" stroke-width="2" stroke-dasharray="3,2">
+          <animate attributeName="r" values="8;12;8" dur="1.5s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="1;0.4;1" dur="1.5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="202" cy="182" r="8" fill="none" stroke="#e8c800" stroke-width="2" stroke-dasharray="3,2">
+          <animate attributeName="r" values="8;12;8" dur="1.5s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="1;0.4;1" dur="1.5s" repeatCount="indefinite"/>
+        </circle>
+        <line x1="202" y1="178" x2="260" y2="168" stroke="#b8a020" stroke-width="1"/>
+        <text x="265" y="172" fill="#b8a020" font-size="10" font-weight="700">Helmknoppe</text>
+      </g>
+
+      <!-- "Stuifmeel land op stempel" label (step 5) -->
+      <g id="transfer-label" opacity="0">
+        <rect x="450" y="140" width="180" height="24" rx="8" fill="#2a7a4a" opacity="0.9"/>
+        <text x="540" y="157" text-anchor="middle" fill="#fff" font-size="10.5" font-weight="700">Stuifmeel land op stempel</text>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Description panel -->
+  <div class="desc-panel" id="desc-panel">
+    <div class="step-num" id="desc-step-num">Stap 1 van 7</div>
+    <div class="step-text" id="desc-step-text">Die vlinder word deur die blom se kleure en geur gelok</div>
+    <div class="step-detail" id="desc-step-detail">Blomme se helder kroonblare en soet geur trek insekte en vlinders nader.</div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="ctrl-btn" id="btn-prev" onclick="prevStep()" disabled>&#x25C0; Vorige</button>
+    <button class="ctrl-btn primary" id="btn-next" onclick="nextStep()">Volgende &#x25B6;</button>
+    <button class="ctrl-btn" id="btn-play" onclick="playAll()">&#x25B6;&#x25B6; Speel Alles</button>
+    <button class="ctrl-btn" id="btn-reset" onclick="resetAnim()">&#x1F501; Begin Oor</button>
+  </div>
+</div>
+
+<!-- ==================== DIAGRAM MODE ==================== -->
+<div id="sec-diagram" class="section">
+  <div class="scene-wrap">
+    <svg id="diag-svg" viewBox="0 0 700 500" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bgGrad" cx="50%" cy="30%">
+          <stop offset="0%" stop-color="#f0faf5"/>
+          <stop offset="100%" stop-color="#e0f0e8"/>
+        </radialGradient>
+      </defs>
+      <rect width="700" height="500" fill="url(#bgGrad)"/>
+      <text x="350" y="30" text-anchor="middle" fill="#1a3a5a" font-size="16" font-weight="800">Dele van 'n Blom</text>
+      <text x="350" y="48" text-anchor="middle" fill="#6a9a8a" font-size="11">(Klik op 'n deel vir meer inligting)</text>
+
+      <!-- Stem -->
+      <line x1="350" y1="320" x2="350" y2="460" stroke="#3a8a4a" stroke-width="7" stroke-linecap="round" class="part-clickable" onclick="showPart('stam')"/>
+      <!-- Leaves -->
+      <ellipse cx="310" cy="410" rx="35" ry="12" fill="#4aa85a" transform="rotate(-25, 310, 410)" class="part-clickable" onclick="showPart('blare')"/>
+      <ellipse cx="395" cy="380" rx="30" ry="10" fill="#4aa85a" transform="rotate(20, 395, 380)" class="part-clickable" onclick="showPart('blare')"/>
+
+      <!-- Kelkblare -->
+      <path d="M305,315 Q350,345 395,315" fill="#3a8a3a" class="part-clickable" onclick="showPart('kelk')"/>
+      <path d="M310,320 Q340,340 350,318" fill="#2a7a3a" opacity="0.6" class="part-clickable" onclick="showPart('kelk')"/>
+
+      <!-- Kroonblare (petals) -->
+      <g class="part-clickable" onclick="showPart('kroon')">
+        <ellipse cx="350" cy="210" rx="28" ry="70" fill="#e060a0" opacity="0.85"/>
+        <ellipse cx="350" cy="210" rx="28" ry="70" fill="#d050a0" opacity="0.65" transform="rotate(60, 350, 270)"/>
+        <ellipse cx="350" cy="210" rx="28" ry="70" fill="#e870b0" opacity="0.65" transform="rotate(120, 350, 270)"/>
+        <ellipse cx="350" cy="210" rx="28" ry="70" fill="#d050a0" opacity="0.65" transform="rotate(180, 350, 270)"/>
+        <ellipse cx="350" cy="210" rx="28" ry="70" fill="#e060a0" opacity="0.7" transform="rotate(240, 350, 270)"/>
+        <ellipse cx="350" cy="210" rx="28" ry="70" fill="#e870b0" opacity="0.65" transform="rotate(300, 350, 270)"/>
+      </g>
+
+      <!-- Flower center / receptacle -->
+      <circle cx="350" cy="270" r="22" fill="#f0d860" class="part-clickable" onclick="showPart('kroon')"/>
+
+      <!-- Meeldrade (stamens) — filament + anther -->
+      <g class="part-clickable" onclick="showPart('meeldraad')">
+        <!-- Helmdraad 1 -->
+        <line x1="330" y1="260" x2="295" y2="220" stroke="#8a7a20" stroke-width="2.5"/>
+        <circle cx="295" cy="220" r="7" fill="#e8c800" stroke="#c8a800" stroke-width="1"/>
+        <!-- Helmdraad 2 -->
+        <line x1="370" y1="260" x2="405" y2="220" stroke="#8a7a20" stroke-width="2.5"/>
+        <circle cx="405" cy="220" r="7" fill="#e8c800" stroke="#c8a800" stroke-width="1"/>
+        <!-- Helmdraad 3 -->
+        <line x1="350" y1="252" x2="350" y2="210" stroke="#8a7a20" stroke-width="2.5"/>
+        <circle cx="350" cy="210" r="7" fill="#e8c800" stroke="#c8a800" stroke-width="1"/>
+        <!-- Small pollen dots -->
+        <circle cx="292" cy="215" r="2" fill="#ffe040" opacity="0.8"/>
+        <circle cx="300" cy="223" r="1.8" fill="#ffe040" opacity="0.7"/>
+        <circle cx="408" cy="217" r="2" fill="#ffe040" opacity="0.8"/>
+        <circle cx="402" cy="225" r="1.8" fill="#ffe040" opacity="0.7"/>
+      </g>
+
+      <!-- Stamper (pistil) in center -->
+      <g class="part-clickable" onclick="showPart('stamper')">
+        <!-- Stempel (stigma) -->
+        <ellipse cx="350" cy="248" rx="10" ry="5" fill="#90c840" stroke="#5a8a30" stroke-width="1.5"/>
+        <!-- Styl -->
+        <rect x="346" y="252" width="8" height="38" rx="3" fill="#a0d860"/>
+        <!-- Vrugbeginsel -->
+        <ellipse cx="350" cy="300" rx="22" ry="18" fill="#c8e890" stroke="#8ab840" stroke-width="1.5"/>
+        <!-- Saadknoppies -->
+        <circle cx="342" cy="296" r="4" fill="#f0e8a0" stroke="#c8a840" stroke-width="1"/>
+        <circle cx="358" cy="296" r="4" fill="#f0e8a0" stroke="#c8a840" stroke-width="1"/>
+        <circle cx="350" cy="306" r="3.5" fill="#f0e8a0" stroke="#c8a840" stroke-width="1"/>
+      </g>
+
+      <!-- LABELS with lines -->
+      <!-- Kroonblare -->
+      <line x1="310" y1="200" x2="150" y2="150" stroke="#d050a0" stroke-width="1.2" opacity="0.7"/>
+      <rect x="50" y="138" width="105" height="24" rx="8" fill="#d050a0" class="part-clickable" onclick="showPart('kroon')"/>
+      <text x="103" y="155" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" class="part-clickable" onclick="showPart('kroon')">Kroonblare</text>
+
+      <!-- Helmknoppie -->
+      <line x1="410" y1="218" x2="530" y2="175" stroke="#c8a800" stroke-width="1.2" opacity="0.7"/>
+      <rect x="525" y="162" width="115" height="24" rx="8" fill="#c8a800" class="part-clickable" onclick="showPart('meeldraad')"/>
+      <text x="582" y="179" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" class="part-clickable" onclick="showPart('meeldraad')">Helmknoppie</text>
+
+      <!-- Helmdraad -->
+      <line x1="390" y1="240" x2="530" y2="210" stroke="#8a7a20" stroke-width="1.2" opacity="0.7"/>
+      <rect x="525" y="198" width="100" height="22" rx="8" fill="#8a7a20" class="part-clickable" onclick="showPart('meeldraad')"/>
+      <text x="575" y="213" text-anchor="middle" fill="#fff" font-size="11" font-weight="700" class="part-clickable" onclick="showPart('meeldraad')">Helmdraad</text>
+
+      <!-- Stempel -->
+      <line x1="340" y1="247" x2="160" y2="240" stroke="#5a8a30" stroke-width="1.2" opacity="0.7"/>
+      <rect x="80" y="228" width="85" height="24" rx="8" fill="#5a8a30" class="part-clickable" onclick="showPart('stamper')"/>
+      <text x="123" y="245" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" class="part-clickable" onclick="showPart('stamper')">Stempel</text>
+
+      <!-- Styl -->
+      <line x1="354" y1="270" x2="175" y2="285" stroke="#7aaa40" stroke-width="1.2" opacity="0.7"/>
+      <rect x="120" y="274" width="60" height="22" rx="8" fill="#7aaa40" class="part-clickable" onclick="showPart('stamper')"/>
+      <text x="150" y="290" text-anchor="middle" fill="#fff" font-size="11" font-weight="700" class="part-clickable" onclick="showPart('stamper')">Styl</text>
+
+      <!-- Vrugbeginsel -->
+      <line x1="372" y1="300" x2="530" y2="300" stroke="#8ab840" stroke-width="1.2" opacity="0.7"/>
+      <rect x="525" y="288" width="120" height="24" rx="8" fill="#8ab840" class="part-clickable" onclick="showPart('stamper')"/>
+      <text x="585" y="305" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" class="part-clickable" onclick="showPart('stamper')">Vrugbeginsel</text>
+
+      <!-- Saadknoppies -->
+      <line x1="360" y1="308" x2="530" y2="340" stroke="#c8a840" stroke-width="1.2" opacity="0.7"/>
+      <rect x="525" y="328" width="115" height="22" rx="8" fill="#c8a840" class="part-clickable" onclick="showPart('stamper')"/>
+      <text x="582" y="343" text-anchor="middle" fill="#fff" font-size="11" font-weight="700" class="part-clickable" onclick="showPart('stamper')">Saadknoppies</text>
+
+      <!-- Kelkblare -->
+      <line x1="320" y1="330" x2="160" y2="360" stroke="#2a7a3a" stroke-width="1.2" opacity="0.7"/>
+      <rect x="80" y="348" width="90" height="24" rx="8" fill="#2a7a3a" class="part-clickable" onclick="showPart('kelk')"/>
+      <text x="125" y="365" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" class="part-clickable" onclick="showPart('kelk')">Kelkblare</text>
+
+      <!-- Stuifmeel label -->
+      <line x1="298" y1="218" x2="155" y2="195" stroke="#ffe040" stroke-width="1.2" opacity="0.7"/>
+      <rect x="70" y="183" width="90" height="22" rx="8" fill="#e8b800" class="part-clickable" onclick="showPart('stuifmeel')"/>
+      <text x="115" y="198" text-anchor="middle" fill="#fff" font-size="11" font-weight="700" class="part-clickable" onclick="showPart('stuifmeel')">Stuifmeel</text>
+    </svg>
+  </div>
+  <div class="diagram-info" id="diagram-info">
+    <h3 id="diag-title">Klik op 'n deel van die blom</h3>
+    <p id="diag-desc">Klik op enige etiket of deel om meer te leer oor daardie struktuur en sy rol in bestuiwing.</p>
+  </div>
+  <div class="diagram-hint">Tik op enige deel of etiket vir 'n beskrywing</div>
+</div>
+
+<!-- ==================== QUIZ MODE ==================== -->
+<div id="sec-quiz" class="section">
+  <div id="quiz-area">
+    <div class="quiz-header">
+      <div class="q-num" id="q-num">Vraag 1 van 7</div>
+      <div class="q-text" id="q-text"></div>
+    </div>
+    <div class="quiz-feedback" id="quiz-fb"></div>
+    <div class="quiz-options" id="q-opts"></div>
+    <div class="controls">
+      <button class="ctrl-btn primary" id="q-next" onclick="nextQ()" style="display:none">Volgende Vraag &#x25B6;</button>
+    </div>
+  </div>
+  <div class="quiz-score" id="quiz-score" style="display:none">
+    <div class="big-score" id="final-score"></div>
+    <div class="score-msg" id="score-msg"></div>
+    <br>
+    <button class="ctrl-btn primary" onclick="startQuiz()">&#x1F501; Probeer Weer</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+/* ===================== MODE SWITCHING ===================== */
+function setMode(m) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + m).classList.add('active');
+  const labels = {anim: 0, diagram: 1, quiz: 2};
+  document.querySelectorAll('.mode-btn')[labels[m]].classList.add('active');
+  if (m === 'quiz') startQuiz();
+}
+
+/* ===================== ANIMATION MODE ===================== */
+const steps = [
+  {
+    title: "Die vlinder word gelok",
+    text: "Die vlinder word deur die blom se kleure en geur gelok",
+    detail: "Blomme se helder kroonblare en soet geur trek insekte en vlinders nader. Die vlinder sien Blom 1 se pienk kleure en vlieg nader."
+  },
+  {
+    title: "Die vlinder drink nektar",
+    text: "Die vlinder drink nektar uit die blom",
+    detail: "Die vlinder land op Blom 1 en steek sy slurp (proboscis) in die blom om die soet nektar te drink. Nektar is die blom se beloning vir besoekers."
+  },
+  {
+    title: "Stuifmeel kleef aan",
+    text: "Stuifmeel kleef aan die vlinder se lyf",
+    detail: "Terwyl die vlinder nektar drink, raak geel stuifmeelkorrels van die helmknoppe aan sy lyf vas. Die vlinder weet nie eens daarvan nie!"
+  },
+  {
+    title: "Vlinder vlieg verder",
+    text: "Die vlinder vlieg na 'n ander blom",
+    detail: "Die vlinder lig op met stuifmeel op sy lyf en vlieg na Blom 2 om meer nektar te soek. Die stuifmeel reis saam."
+  },
+  {
+    title: "Stuifmeel op stempel",
+    text: "Stuifmeel word op die stempel van die nuwe blom afgesit",
+    detail: "Wanneer die vlinder op Blom 2 land, val party stuifmeelkorrels op die taaierige stempel af. Dit is bestuiwing!"
+  },
+  {
+    title: "Bevrugting",
+    text: "Die stuifmeelkorrel groei deur die styl na die vrugbeginsel",
+    detail: "Die stuifmeel maak 'n dun stuifmeelbuis wat deur die styl groei tot by die vrugbeginsel. Daar smelt dit saam met die saadknoppies — dit is bevrugting."
+  },
+  {
+    title: "Vrug en sade",
+    text: "Die vrug en sade ontwikkel",
+    detail: "Na bevrugting val die kroonblare af. Die vrugbeginsel groei en word 'n vrug. Die saadknoppies binne-in word sade. Die siklus kan weer begin!"
+  }
+];
+
+let curStep = 0;
+let playing = false;
+let playTimer = null;
+
+const butterfly = document.getElementById('butterfly');
+const proboscis = document.getElementById('proboscis');
+const pollenOnButterfly = document.getElementById('pollen-on-butterfly');
+const nektarLabel = document.getElementById('nektar-label');
+const flightPath = document.getElementById('flight-path');
+const approachArrow = document.getElementById('approach-arrow');
+const stuifmeelLabel = document.getElementById('stuifmeel-label');
+const helmknopHighlight = document.getElementById('helmknop-highlight');
+const stempelLabel = document.getElementById('stempel-label');
+const pollenOnStigma = document.getElementById('pollen-on-stigma');
+const transferLabel = document.getElementById('transfer-label');
+const crossSection = document.getElementById('cross-section');
+const pollenTube = document.getElementById('pollen-tube');
+const fruitScene = document.getElementById('fruit-scene');
+const flower1 = document.getElementById('flower1');
+const flower2 = document.getElementById('flower2');
+const sceneTitle = document.getElementById('scene-title');
+const sceneTitleText = document.getElementById('scene-title-text');
+
+function setButterfly(x, y, show) {
+  butterfly.setAttribute('transform', `translate(${x}, ${y})`);
+  butterfly.style.transition = 'transform 0.8s ease-in-out';
+  butterfly.style.opacity = show ? 1 : 0;
+}
+
+function resetAllElements() {
+  // Reset positions & visibility
+  butterfly.setAttribute('transform', 'translate(700, 120)');
+  butterfly.style.opacity = 1;
+  proboscis.setAttribute('opacity', 0);
+  pollenOnButterfly.setAttribute('opacity', 0);
+  nektarLabel.setAttribute('opacity', 0);
+  flightPath.setAttribute('opacity', 0);
+  approachArrow.setAttribute('opacity', 0);
+  stuifmeelLabel.setAttribute('opacity', 0);
+  helmknopHighlight.setAttribute('opacity', 0);
+  stempelLabel.setAttribute('opacity', 0);
+  pollenOnStigma.setAttribute('opacity', 0);
+  transferLabel.setAttribute('opacity', 0);
+  crossSection.setAttribute('opacity', 0);
+  fruitScene.setAttribute('opacity', 0);
+  flower1.style.opacity = 1;
+  flower2.style.opacity = 1;
+  sceneTitle.setAttribute('opacity', 0);
+
+  // Reset pollen tube
+  pollenTube.style.transition = 'none';
+  pollenTube.setAttribute('stroke-dashoffset', '100');
+}
+
+function applyStep(step) {
+  resetAllElements();
+  sceneTitle.setAttribute('opacity', '1');
+  sceneTitleText.textContent = `Stap ${step + 1}: ${steps[step].title}`;
+
+  switch(step) {
+    case 0: // Butterfly approaches
+      butterfly.setAttribute('transform', 'translate(380, 140)');
+      approachArrow.setAttribute('opacity', '0.7');
+      break;
+
+    case 1: // Drinking nectar
+      butterfly.setAttribute('transform', 'translate(195, 175)');
+      proboscis.setAttribute('opacity', '1');
+      nektarLabel.setAttribute('opacity', '1');
+      break;
+
+    case 2: // Pollen sticks
+      butterfly.setAttribute('transform', 'translate(195, 175)');
+      proboscis.setAttribute('opacity', '1');
+      pollenOnButterfly.setAttribute('opacity', '1');
+      stuifmeelLabel.setAttribute('opacity', '1');
+      helmknopHighlight.setAttribute('opacity', '1');
+      break;
+
+    case 3: // Fly to flower 2
+      butterfly.setAttribute('transform', 'translate(420, 110)');
+      pollenOnButterfly.setAttribute('opacity', '1');
+      flightPath.setAttribute('opacity', '0.6');
+      break;
+
+    case 4: // Land on flower 2, pollen transfers
+      butterfly.setAttribute('transform', 'translate(615, 185)');
+      pollenOnButterfly.setAttribute('opacity', '0.3');
+      stempelLabel.setAttribute('opacity', '1');
+      pollenOnStigma.setAttribute('opacity', '1');
+      transferLabel.setAttribute('opacity', '1');
+      break;
+
+    case 5: // Cross section / fertilization
+      butterfly.style.opacity = 0;
+      flower1.style.opacity = 0.15;
+      flower2.style.opacity = 0.15;
+      crossSection.setAttribute('opacity', '1');
+      // Animate pollen tube
+      setTimeout(() => {
+        pollenTube.style.transition = 'stroke-dashoffset 2s ease-in-out';
+        pollenTube.setAttribute('stroke-dashoffset', '0');
+      }, 400);
+      break;
+
+    case 6: // Fruit
+      butterfly.style.opacity = 0;
+      flower1.style.opacity = 0.15;
+      flower2.style.opacity = 0.15;
+      fruitScene.setAttribute('opacity', '1');
+      break;
+  }
+
+  // Update description
+  document.getElementById('desc-step-num').textContent = `Stap ${step + 1} van 7`;
+  document.getElementById('desc-step-text').textContent = steps[step].text;
+  document.getElementById('desc-step-detail').textContent = steps[step].detail;
+
+  // Update dots
+  document.querySelectorAll('.step-dot').forEach((d, i) => {
+    d.classList.remove('active', 'done');
+    if (i === step) d.classList.add('active');
+    else if (i < step) d.classList.add('done');
+  });
+
+  // Update buttons
+  document.getElementById('btn-prev').disabled = step === 0;
+  document.getElementById('btn-next').disabled = step === 6;
+}
+
+function goStep(s) {
+  curStep = s;
+  applyStep(curStep);
+}
+
+function nextStep() {
+  if (curStep < 6) { curStep++; applyStep(curStep); }
+}
+
+function prevStep() {
+  if (curStep > 0) { curStep--; applyStep(curStep); }
+}
+
+function playAll() {
+  if (playing) { stopPlay(); return; }
+  playing = true;
+  document.getElementById('btn-play').textContent = '⏸ Stop';
+  curStep = 0;
+  applyStep(0);
+  let s = 1;
+  playTimer = setInterval(() => {
+    if (s > 6) { stopPlay(); return; }
+    curStep = s;
+    applyStep(s);
+    s++;
+  }, 3500);
+}
+
+function stopPlay() {
+  playing = false;
+  clearInterval(playTimer);
+  document.getElementById('btn-play').textContent = '▶▶ Speel Alles';
+}
+
+function resetAnim() {
+  stopPlay();
+  curStep = 0;
+  applyStep(0);
+}
+
+// Initialize
+applyStep(0);
+
+/* ===================== DIAGRAM MODE ===================== */
+const partInfo = {
+  kroon: {
+    title: "Kroonblare (Petals)",
+    desc: "Die helder, kleurvolle blare van die blom. Hulle trek voels en insekte na die blom toe aan met hulle kleure en geur. Sonder kroonblare sou baie minder bestuiwers die blom besoek."
+  },
+  meeldraad: {
+    title: "Meeldraad: Helmdraad + Helmknoppie",
+    desc: "Die meeldraad is die MANLIKE deel van die blom. Die helmdraad is die dun steeltjie wat die helmknoppie (anther) ondersteun. Die helmknoppie maak stuifmeel — dit is die geel poeier wat insekte na ander blomme dra."
+  },
+  stamper: {
+    title: "Stamper: Stempel, Styl & Vrugbeginsel",
+    desc: "Die stamper is die VROULIKE deel van die blom. Die stempel (bo) is taaierig en vang stuifmeel op. Die styl (middel) lei na die vrugbeginsel (onder). Die vrugbeginsel bevat saadknoppies wat, na bevrugting, sade word. Die vrugbeginsel self word die vrug."
+  },
+  kelk: {
+    title: "Kelkblare (Sepals)",
+    desc: "Die groen blaartjies aan die onderkant van die blom. Hulle beskerm die blom terwyl dit nog 'n knop is en voor dit oopgaan."
+  },
+  stuifmeel: {
+    title: "Stuifmeel (Pollen)",
+    desc: "Die geel poeier wat deur die helmknoppie gemaak word. Dit bevat die manlike selletjies wat nodig is vir bevrugting. Insekte, voels en wind help om stuifmeel van blom tot blom te dra."
+  },
+  stam: {
+    title: "Stingel (Stem)",
+    desc: "Die stingel hou die blom regop en vervoer water en voedingstowwe van die wortels af na die blom toe."
+  },
+  blare: {
+    title: "Blare (Leaves)",
+    desc: "Die blare maak kos vir die plant deur fotosintese — hulle gebruik sonlig, water en koolstofdioksied om suiker te maak."
+  }
+};
+
+function showPart(key) {
+  const info = partInfo[key];
+  if (!info) return;
+  document.getElementById('diag-title').textContent = info.title;
+  document.getElementById('diag-desc').textContent = info.desc;
+  // Highlight effect
+  const box = document.getElementById('diagram-info');
+  box.style.borderColor = '#2a7a4a';
+  box.style.boxShadow = '0 0 12px rgba(42,122,74,0.3)';
+  setTimeout(() => {
+    box.style.borderColor = '#b0d8c8';
+    box.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+  }, 800);
+}
+
+/* ===================== QUIZ MODE ===================== */
+const questions = [
+  {
+    q: "Wat lok die vlinder na die blom toe?",
+    opts: ["Die blom se wortels", "Die blom se helder kleure en geur", "Die blom se blare", "Die wind"],
+    ans: 1
+  },
+  {
+    q: "Wat drink die vlinder uit die blom?",
+    opts: ["Water", "Stuifmeel", "Nektar", "Heuning"],
+    ans: 2
+  },
+  {
+    q: "Waar word stuifmeel gemaak?",
+    opts: ["In die stempel", "In die vrugbeginsel", "In die helmknoppie", "In die kelkblare"],
+    ans: 2
+  },
+  {
+    q: "Wat gebeur wanneer die vlinder na 'n ander blom vlieg?",
+    opts: ["Die stuifmeel val op die grond", "Die stuifmeel word op die nuwe blom se stempel afgesit", "Die vlinder verloor al die stuifmeel", "Niks gebeur nie"],
+    ans: 1
+  },
+  {
+    q: "Waar land die stuifmeel op die nuwe blom?",
+    opts: ["Op die kroonblare", "Op die kelkblare", "Op die stempel", "Op die helmdraad"],
+    ans: 2
+  },
+  {
+    q: "Wat groei van die stempel af deur die styl na die vrugbeginsel?",
+    opts: ["'n Wortel", "'n Stuifmeelbuis", "'n Nuwe blom", "'n Blaar"],
+    ans: 1
+  },
+  {
+    q: "Wat word die vrugbeginsel na bevrugting?",
+    opts: ["'n Nuwe blom", "'n Blaar", "'n Vrug met sade", "'n Stingel"],
+    ans: 2
+  }
+];
+
+let qIdx = 0;
+let score = 0;
+let answered = false;
+
+function startQuiz() {
+  qIdx = 0;
+  score = 0;
+  answered = false;
+  document.getElementById('quiz-area').style.display = 'block';
+  document.getElementById('quiz-score').style.display = 'none';
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = questions[qIdx];
+  document.getElementById('q-num').textContent = `Vraag ${qIdx + 1} van ${questions.length}`;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('quiz-fb').textContent = '';
+  document.getElementById('quiz-fb').className = 'quiz-feedback';
+  document.getElementById('q-next').style.display = 'none';
+  answered = false;
+
+  const optsDiv = document.getElementById('q-opts');
+  optsDiv.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'q-opt';
+    btn.textContent = o;
+    btn.onclick = () => pickAnswer(i);
+    optsDiv.appendChild(btn);
+  });
+}
+
+function pickAnswer(i) {
+  if (answered) return;
+  answered = true;
+  const q = questions[qIdx];
+  const btns = document.querySelectorAll('.q-opt');
+  btns.forEach((b, idx) => {
+    b.disabled = true;
+    if (idx === q.ans) b.classList.add('correct');
+    if (idx === i && i !== q.ans) b.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('quiz-fb');
+  if (i === q.ans) {
+    score++;
+    fb.textContent = 'Korrek! Uitstekend!';
+    fb.className = 'quiz-feedback ok';
+  } else {
+    fb.textContent = 'Nie heeltemal nie — kyk na die groen antwoord.';
+    fb.className = 'quiz-feedback nope';
+  }
+
+  if (qIdx < questions.length - 1) {
+    document.getElementById('q-next').style.display = 'inline-block';
+  } else {
+    setTimeout(showScore, 1200);
+  }
+}
+
+function nextQ() {
+  qIdx++;
+  showQuestion();
+}
+
+function showScore() {
+  document.getElementById('quiz-area').style.display = 'none';
+  document.getElementById('quiz-score').style.display = 'block';
+  document.getElementById('final-score').textContent = `${score} / ${questions.length}`;
+  const pct = Math.round(score / questions.length * 100);
+  let msg = '';
+  if (pct === 100) msg = 'Perfek! Jy verstaan bestuiwing uitstekend!';
+  else if (pct >= 70) msg = 'Goed gedoen! Jy ken die meeste stappe.';
+  else if (pct >= 40) msg = 'Nie sleg nie — kyk weer na die animasie en probeer weer.';
+  else msg = 'Kyk eers weer na die animasie en probeer dan weer.';
+  document.getElementById('score-msg').textContent = msg;
+}
+
+// Init quiz on first load (lazy)
+</script>
+</body>
+</html>

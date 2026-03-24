@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="af">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spiere, Senings en Gewrigte — Interaktiewe Diagram</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #e8f4f0;
+  font-family: 'Nunito', sans-serif;
+  color: #1a2a3a;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* TOP NAV */
+.top-nav {
+  display: flex;
+  gap: 0.3rem;
+  padding: 0.5rem 0.8rem;
+  background: linear-gradient(135deg, #1a3a5a, #1a4a6a);
+  justify-content: center;
+  flex-wrap: wrap;
+  border-bottom: 2px solid #2a7a4a;
+}
+.top-nav a, .top-nav span {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.35rem 0.7rem;
+  border-radius: 16px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.25s;
+}
+.top-nav a {
+  background: rgba(255,255,255,0.1);
+  color: #c0e8d8;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.top-nav a:hover {
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+}
+.top-nav span.nav-active {
+  background: #2a7a4a;
+  color: #fff;
+  border: 1px solid #2a7a4a;
+}
+
+/* HEADER */
+.page-header {
+  text-align: center;
+  padding: 1.2rem 1rem 0.6rem;
+  background: linear-gradient(135deg, #1a3a5a 0%, #1a4a6a 100%);
+  color: white;
+}
+.page-header h1 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 0.2rem;
+}
+.page-header p {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+/* MODE TABS */
+.mode-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1rem;
+  background: #fff;
+  border-bottom: 2px solid #d0e8e0;
+  flex-wrap: wrap;
+}
+.mode-tab {
+  padding: 0.5rem 1.2rem;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: 2px solid #1a3a5a;
+  background: white;
+  color: #1a3a5a;
+  transition: all 0.3s;
+}
+.mode-tab:hover { background: #e0f0ea; }
+.mode-tab.active {
+  background: #1a3a5a;
+  color: white;
+}
+
+/* MAIN CONTENT */
+.content-area {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* DIAGRAM CONTAINER */
+.diagrams-wrapper {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+.diagram-panel {
+  background: white;
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+  border: 2px solid #d0e8e0;
+  flex: 1;
+  min-width: 280px;
+  max-width: 480px;
+  text-align: center;
+}
+.diagram-panel h3 {
+  color: #1a3a5a;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+.diagram-panel .subtitle {
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+.diagram-panel svg {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+}
+
+/* INFO BOX */
+.info-box {
+  background: linear-gradient(135deg, #eaf6f0, #dceef8);
+  border-radius: 14px;
+  padding: 1rem 1.2rem;
+  margin: 1rem 0;
+  border-left: 4px solid #2a7a4a;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  min-height: 60px;
+  transition: all 0.3s;
+}
+.info-box strong { color: #1a3a5a; }
+.info-box .highlight { color: #c0392b; font-weight: 700; }
+
+/* PROGRESS DOTS */
+.progress-bar {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: center;
+  margin: 0.8rem 0;
+  flex-wrap: wrap;
+}
+.progress-dot {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: #ccc;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+.progress-dot.found { background: #2a7a4a; }
+.progress-dot.active { background: #e67e22; transform: scale(1.3); }
+
+/* KEY BOX */
+.key-box {
+  background: white;
+  border-radius: 14px;
+  padding: 1rem;
+  margin: 1rem 0;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  border: 2px solid #d0e8e0;
+}
+.key-box h4 { color: #1a3a5a; margin-bottom: 0.5rem; font-size: 0.95rem; }
+.key-items {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.key-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.key-swatch {
+  width: 20px; height: 14px;
+  border-radius: 4px;
+  border: 1px solid rgba(0,0,0,0.15);
+}
+
+/* LEER MODE */
+.leer-container { text-align: center; }
+.leer-step-box {
+  background: white;
+  border-radius: 16px;
+  padding: 1.2rem 1.5rem;
+  margin: 1rem 0;
+  box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+  border: 2px solid #2a7a4a;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+.leer-step-box .step-num {
+  display: inline-block;
+  background: #1a3a5a;
+  color: white;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  line-height: 30px;
+  font-weight: 800;
+  margin-right: 0.5rem;
+}
+.mnemonic-box {
+  background: linear-gradient(135deg, #fef9e7, #fdebd0);
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  margin: 0.8rem 0;
+  border-left: 4px solid #e67e22;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.nav-btns {
+  display: flex;
+  gap: 0.8rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+.nav-btn {
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: 2px solid #1a3a5a;
+  background: #1a3a5a;
+  color: white;
+  transition: all 0.3s;
+}
+.nav-btn:hover { background: #2a5a7a; }
+.nav-btn:disabled { opacity: 0.4; cursor: default; }
+
+/* TOETS MODE */
+.quiz-container { max-width: 600px; margin: 0 auto; }
+.quiz-question-box {
+  background: white;
+  border-radius: 16px;
+  padding: 1.2rem;
+  margin: 1rem 0;
+  box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+  border: 2px solid #d0e8e0;
+}
+.quiz-question-box h4 {
+  color: #1a3a5a;
+  margin-bottom: 0.8rem;
+  font-size: 1rem;
+}
+.quiz-option {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  margin: 0.4rem 0;
+  border-radius: 10px;
+  border: 2px solid #d0e8e0;
+  background: #f8fcfa;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+}
+.quiz-option:hover { border-color: #2a7a4a; background: #eaf6f0; }
+.quiz-option.correct {
+  background: #d5f5e3;
+  border-color: #27ae60;
+  color: #1a6a3a;
+}
+.quiz-option.wrong {
+  background: #fadbd8;
+  border-color: #e74c3c;
+  color: #922b21;
+}
+.quiz-option:disabled { cursor: default; }
+.score-bar {
+  text-align: center;
+  font-weight: 700;
+  color: #1a3a5a;
+  font-size: 1rem;
+  margin: 0.5rem 0;
+}
+.score-final {
+  text-align: center;
+  padding: 2rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+}
+.score-final .big-score {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #2a7a4a;
+}
+.score-final .msg { font-size: 1.1rem; margin-top: 0.5rem; }
+
+/* SVG CLICKABLE PARTS */
+.clickable-part { cursor: pointer; transition: opacity 0.2s; }
+.clickable-part:hover { opacity: 0.8; }
+.glow { filter: drop-shadow(0 0 8px rgba(42,122,74,0.6)); }
+
+/* HIDDEN */
+.hidden { display: none !important; }
+
+@media (max-width: 650px) {
+  .diagrams-wrapper { flex-direction: column; align-items: center; }
+  .diagram-panel { max-width: 100%; }
+  .page-header h1 { font-size: 1.3rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top-nav">
+  <a href="index.html">&#x1F4CB; Studiegids</a>
+  <a href="flitskaarte.html">&#x1F0CF; Flitskaarte</a>
+  <a href="breinkaart.html">&#x1F9E0; Breinkaart</a>
+  <a href="vergelyk.html">&#x2696;&#xFE0F; Vergelyk</a>
+  <a href="prosesse.html">&#x1F504; Prosesse</a>
+  <a href="habitats.html">&#x1F30D; Habitats</a>
+  <span class="nav-active">&#x1F4AA; Spiere</span>
+</nav>
+
+<!-- HEADER -->
+<header class="page-header">
+  <h1>&#x1F4AA; Spiere, Senings en Gewrigte</h1>
+  <p>Hoe spiere in pare werk om jou liggaam te beweeg</p>
+</header>
+
+<!-- MODE TABS -->
+<div class="mode-tabs">
+  <button class="mode-tab active" onclick="setMode('ontdek')">&#x1F50D; Ontdek</button>
+  <button class="mode-tab" onclick="setMode('leer')">&#x1F4A1; Leer</button>
+  <button class="mode-tab" onclick="setMode('toets')">&#x1F3AF; Toets</button>
+</div>
+
+<div class="content-area">
+
+<!-- ==== ONTDEK MODE ==== -->
+<div id="mode-ontdek">
+  <!-- Key / Legend -->
+  <div class="key-box">
+    <h4>Sleutel:</h4>
+    <div class="key-items">
+      <div class="key-item"><div class="key-swatch" style="background:#c0392b;"></div> Saamgetrokke spier</div>
+      <div class="key-item"><div class="key-swatch" style="background:#e8a0a0;"></div> Ontspanne spier</div>
+      <div class="key-item"><div class="key-swatch" style="background:#f5e6c8;"></div> Been (bot)</div>
+      <div class="key-item"><div class="key-swatch" style="background:#e0ddd5;"></div> Sening</div>
+      <div class="key-item"><div class="key-swatch" style="background:#6cb4ee;"></div> Gewrig</div>
+    </div>
+  </div>
+
+  <!-- DIAGRAMS -->
+  <div class="diagrams-wrapper">
+    <!-- LEFT: ARM BUIG -->
+    <div class="diagram-panel">
+      <h3>Arm Buig</h3>
+      <div class="subtitle">Biseps trek saam / Triseps ontspan</div>
+      <svg viewBox="0 0 340 360" xmlns="http://www.w3.org/2000/svg" id="svg-buig">
+        <!-- Shoulder joint -->
+        <circle cx="80" cy="70" r="22" fill="#f0d0b0" stroke="#c9a882" stroke-width="1.5" opacity="0.5"/>
+        <!-- Upper arm bone -->
+        <path d="M80,70 L175,175" stroke="#f5e6c8" stroke-width="16" stroke-linecap="round" class="clickable-part" data-part="been"/>
+        <path d="M80,70 L175,175" stroke="#e8d8b8" stroke-width="10" stroke-linecap="round"/>
+        <!-- Forearm bones (bent up) -->
+        <path d="M175,175 L255,85" stroke="#f5e6c8" stroke-width="13" stroke-linecap="round" class="clickable-part" data-part="been"/>
+        <path d="M175,175 L255,85" stroke="#e8d8b8" stroke-width="8" stroke-linecap="round"/>
+        <!-- Second forearm bone -->
+        <path d="M175,175 L250,92" stroke="#f5e6c8" stroke-width="9" stroke-linecap="round"/>
+
+        <!-- Elbow joint -->
+        <circle cx="175" cy="175" r="14" fill="#6cb4ee" stroke="#3a8ad0" stroke-width="2" class="clickable-part" data-part="gewrig" opacity="0.7"/>
+
+        <!-- Tendon: bicep to forearm -->
+        <path d="M195,120 Q190,140 182,165" stroke="#e0ddd5" stroke-width="5" fill="none" stroke-linecap="round" class="clickable-part" data-part="sening"/>
+        <!-- Tendon: bicep to shoulder -->
+        <path d="M100,85 Q95,80 88,75" stroke="#e0ddd5" stroke-width="5" fill="none" stroke-linecap="round" class="clickable-part" data-part="sening"/>
+        <!-- Tendon: tricep to forearm -->
+        <path d="M155,175 Q160,178 165,178" stroke="#e0ddd5" stroke-width="4" fill="none" stroke-linecap="round" class="clickable-part" data-part="sening"/>
+        <!-- Tendon: tricep to shoulder -->
+        <path d="M85,90 Q82,85 80,78" stroke="#e0ddd5" stroke-width="4" fill="none" stroke-linecap="round" class="clickable-part" data-part="sening"/>
+
+        <!-- BISEPS — contracted (short and fat, on top of upper arm) -->
+        <path d="M100,85 Q130,70 150,90 Q170,108 195,120 Q175,140 155,128 Q130,115 110,105 Z"
+              fill="#c0392b" stroke="#a02020" stroke-width="1.5" opacity="0.85"
+              class="clickable-part" data-part="biseps"/>
+        <!-- Muscle fiber lines -->
+        <path d="M115,93 Q140,85 170,108" stroke="#d05050" stroke-width="0.8" fill="none" opacity="0.5"/>
+        <path d="M110,100 Q135,90 165,115" stroke="#d05050" stroke-width="0.8" fill="none" opacity="0.5"/>
+
+        <!-- TRISEPS — relaxed (long and thin, under upper arm) -->
+        <path d="M85,90 Q110,160 135,170 Q150,175 155,175
+                 Q148,168 130,162 Q105,150 90,100 Z"
+              fill="#e8a0a0" stroke="#c08080" stroke-width="1" opacity="0.75"
+              class="clickable-part" data-part="triseps"/>
+
+        <!-- Skin outline (semi-transparent) -->
+        <path d="M65,55 Q60,60 70,75 Q75,95 85,120 Q100,155 130,175
+                 Q155,188 175,190 Q195,170 220,130 Q240,100 265,78
+                 Q270,72 260,68 Q245,72 230,85 Q210,105 195,125
+                 Q180,145 175,165 Q170,145 160,130 Q140,100 120,85
+                 Q100,70 85,62 Z"
+              fill="rgba(240,208,176,0.2)" stroke="rgba(180,150,120,0.4)" stroke-width="1.5" fill-rule="evenodd" pointer-events="none"/>
+
+        <!-- Hand -->
+        <ellipse cx="262" cy="78" rx="14" ry="10" fill="#f0d0b0" stroke="#c9a882" stroke-width="1" opacity="0.6" transform="rotate(-40,262,78)"/>
+
+        <!-- LABELS -->
+        <text x="145" y="82" font-size="11" font-weight="800" fill="#8b1a1a" font-family="Nunito">BISEPS</text>
+        <text x="130" y="65" font-size="8" fill="#8b1a1a" font-family="Nunito" font-weight="600">(trek saam)</text>
+        <text x="78" y="155" font-size="10" font-weight="700" fill="#806060" font-family="Nunito">TRISEPS</text>
+        <text x="78" y="166" font-size="8" fill="#806060" font-family="Nunito" font-weight="600">(ontspan)</text>
+
+        <!-- Sening labels -->
+        <line x1="200" y1="135" x2="220" y2="148" stroke="#888" stroke-width="0.8"/>
+        <text x="222" y="153" font-size="8" fill="#666" font-family="Nunito" font-weight="700">Sening</text>
+
+        <!-- Gewrig label -->
+        <line x1="175" y1="190" x2="175" y2="210" stroke="#3a8ad0" stroke-width="0.8"/>
+        <text x="155" y="222" font-size="9" fill="#3a8ad0" font-family="Nunito" font-weight="700">Gewrig</text>
+        <text x="152" y="233" font-size="7" fill="#3a8ad0" font-family="Nunito">(elmboog)</text>
+
+        <!-- Been label -->
+        <line x1="130" y1="130" x2="118" y2="140" stroke="#a89060" stroke-width="0.8"/>
+        <text x="90" y="200" font-size="8" fill="#a08040" font-family="Nunito" font-weight="700">Boarmbeen</text>
+
+        <!-- Direction arrow -->
+        <path d="M250,100 Q270,115 260,135" stroke="#c0392b" stroke-width="2" fill="none" marker-end="url(#arrow-red)"/>
+        <text x="255" y="150" font-size="8" fill="#c0392b" font-family="Nunito" font-weight="700">Arm buig</text>
+
+        <defs>
+          <marker id="arrow-red" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0,0 8,3 0,6" fill="#c0392b"/>
+          </marker>
+        </defs>
+      </svg>
+      <div style="font-size:0.78rem; color:#666; margin-top:0.3rem;">
+        <strong style="color:#c0392b;">Biseps trek saam</strong> en trek aan die been &rarr; arm buig
+      </div>
+    </div>
+
+    <!-- RIGHT: ARM STREK -->
+    <div class="diagram-panel">
+      <h3>Arm Strek</h3>
+      <div class="subtitle">Triseps trek saam / Biseps ontspan</div>
+      <svg viewBox="0 0 340 360" xmlns="http://www.w3.org/2000/svg" id="svg-strek">
+        <!-- Shoulder joint -->
+        <circle cx="60" cy="100" r="22" fill="#f0d0b0" stroke="#c9a882" stroke-width="1.5" opacity="0.5"/>
+        <!-- Upper arm bone -->
+        <path d="M60,100 L170,140" stroke="#f5e6c8" stroke-width="16" stroke-linecap="round" class="clickable-part" data-part="been"/>
+        <path d="M60,100 L170,140" stroke="#e8d8b8" stroke-width="10" stroke-linecap="round"/>
+        <!-- Forearm bones (straight) -->
+        <path d="M170,140 L300,165" stroke="#f5e6c8" stroke-width="13" stroke-linecap="round" class="clickable-part" data-part="been"/>
+        <path d="M170,140 L300,165" stroke="#e8d8b8" stroke-width="8" stroke-linecap="round"/>
+        <!-- Second forearm bone -->
+        <path d="M170,140 L298,170" stroke="#f5e6c8" stroke-width="9" stroke-linecap="round"/>
+
+        <!-- Elbow joint -->
+        <circle cx="170" cy="140" r="14" fill="#6cb4ee" stroke="#3a8ad0" stroke-width="2" class="clickable-part" data-part="gewrig" opacity="0.7"/>
+
+        <!-- Tendon: bicep to forearm -->
+        <path d="M155,122 Q162,128 168,132" stroke="#e0ddd5" stroke-width="4" fill="none" stroke-linecap="round" class="clickable-part" data-part="sening"/>
+        <!-- Tendon: bicep to shoulder -->
+        <path d="M75,95 Q70,96 65,98" stroke="#e0ddd5" stroke-width="4" fill="none" stroke-linecap="round" class="clickable-part" data-part="sening"/>
+        <!-- Tendon: tricep to elbow -->
+        <path d="M155,155 Q160,150 165,147" stroke="#e0ddd5" stroke-width="5" fill="none" stroke-linecap="round" class="clickable-part" data-part="sening"/>
+        <!-- Tendon: tricep to shoulder -->
+        <path d="M72,118 Q68,112 64,106" stroke="#e0ddd5" stroke-width="5" fill="none" stroke-linecap="round" class="clickable-part" data-part="sening"/>
+
+        <!-- BISEPS — relaxed (long and thin, on top) -->
+        <path d="M75,95 Q100,88 120,95 Q140,102 155,122
+                 Q145,128 130,118 Q110,108 90,103 Z"
+              fill="#e8a0a0" stroke="#c08080" stroke-width="1" opacity="0.75"
+              class="clickable-part" data-part="biseps"/>
+
+        <!-- TRISEPS — contracted (short and fat, underneath) -->
+        <path d="M72,118 Q90,155 110,162 Q130,167 145,160 Q155,155 155,155
+                 Q148,148 135,152 Q115,156 100,148 Q82,138 78,125 Z"
+              fill="#c0392b" stroke="#a02020" stroke-width="1.5" opacity="0.85"
+              class="clickable-part" data-part="triseps"/>
+        <!-- Muscle fiber lines -->
+        <path d="M82,125 Q105,148 140,155" stroke="#d05050" stroke-width="0.8" fill="none" opacity="0.5"/>
+        <path d="M78,130 Q100,152 135,158" stroke="#d05050" stroke-width="0.8" fill="none" opacity="0.5"/>
+
+        <!-- Skin outline (semi-transparent) -->
+        <path d="M48,85 Q45,95 50,108 Q58,130 75,148 Q100,168 135,170
+                 Q160,168 175,155 Q190,150 230,158 Q270,165 305,170
+                 Q315,168 310,160 Q295,155 260,152 Q220,148 185,140
+                 Q170,135 165,128 Q155,115 140,105 Q120,92 95,88
+                 Q72,86 55,88 Z"
+              fill="rgba(240,208,176,0.2)" stroke="rgba(180,150,120,0.4)" stroke-width="1.5" pointer-events="none"/>
+
+        <!-- Hand -->
+        <ellipse cx="310" cy="168" rx="14" ry="9" fill="#f0d0b0" stroke="#c9a882" stroke-width="1" opacity="0.6"/>
+
+        <!-- LABELS -->
+        <text x="88" y="90" font-size="10" font-weight="700" fill="#806060" font-family="Nunito">BISEPS</text>
+        <text x="88" y="82" font-size="8" fill="#806060" font-family="Nunito" font-weight="600">(ontspan)</text>
+        <text x="90" y="180" font-size="11" font-weight="800" fill="#8b1a1a" font-family="Nunito">TRISEPS</text>
+        <text x="88" y="192" font-size="8" fill="#8b1a1a" font-family="Nunito" font-weight="600">(trek saam)</text>
+
+        <!-- Sening label -->
+        <line x1="155" y1="158" x2="175" y2="178" stroke="#888" stroke-width="0.8"/>
+        <text x="177" y="183" font-size="8" fill="#666" font-family="Nunito" font-weight="700">Sening</text>
+
+        <!-- Gewrig label -->
+        <line x1="170" y1="155" x2="170" y2="210" stroke="#3a8ad0" stroke-width="0.8"/>
+        <text x="150" y="222" font-size="9" fill="#3a8ad0" font-family="Nunito" font-weight="700">Gewrig</text>
+        <text x="147" y="233" font-size="7" fill="#3a8ad0" font-family="Nunito">(elmboog)</text>
+
+        <!-- Been label -->
+        <text x="220" y="145" font-size="8" fill="#a08040" font-family="Nunito" font-weight="700">Voorarmbeen</text>
+
+        <!-- Direction arrow -->
+        <path d="M280,130 Q270,115 260,120" stroke="#c0392b" stroke-width="2" fill="none" marker-end="url(#arrow-red2)"/>
+        <text x="250" y="110" font-size="8" fill="#c0392b" font-family="Nunito" font-weight="700">Arm strek</text>
+
+        <defs>
+          <marker id="arrow-red2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0,0 8,3 0,6" fill="#c0392b"/>
+          </marker>
+        </defs>
+      </svg>
+      <div style="font-size:0.78rem; color:#666; margin-top:0.3rem;">
+        <strong style="color:#c0392b;">Triseps trek saam</strong> en trek aan die been &rarr; arm strek
+      </div>
+    </div>
+  </div>
+
+  <!-- INFO BOX for clicked parts -->
+  <div class="info-box" id="info-ontdek">
+    <strong>Klik op enige deel</strong> van die diagramme hierbo om meer te leer oor spiere, senings, bene en gewrigte.
+  </div>
+
+  <!-- Progress -->
+  <div style="text-align:center; font-size:0.8rem; color:#666; margin-top:0.5rem;">Dele ontdek:</div>
+  <div class="progress-bar" id="progress-ontdek"></div>
+</div>
+
+<!-- ==== LEER MODE ==== -->
+<div id="mode-leer" class="hidden">
+  <div class="leer-container">
+    <div class="diagrams-wrapper" id="leer-diagrams">
+      <!-- Same diagrams but smaller, used for highlighting -->
+      <div class="diagram-panel" id="leer-panel-buig">
+        <h3>Arm Buig</h3>
+        <svg viewBox="0 0 340 360" xmlns="http://www.w3.org/2000/svg" id="svg-leer-buig">
+          <!-- Shoulder -->
+          <circle cx="80" cy="70" r="22" fill="#f0d0b0" stroke="#c9a882" stroke-width="1.5" opacity="0.5"/>
+          <!-- Upper arm bone -->
+          <path d="M80,70 L175,175" stroke="#f5e6c8" stroke-width="16" stroke-linecap="round" id="lb-been1"/>
+          <path d="M80,70 L175,175" stroke="#e8d8b8" stroke-width="10" stroke-linecap="round"/>
+          <!-- Forearm -->
+          <path d="M175,175 L255,85" stroke="#f5e6c8" stroke-width="13" stroke-linecap="round" id="lb-been2"/>
+          <path d="M175,175 L255,85" stroke="#e8d8b8" stroke-width="8" stroke-linecap="round"/>
+          <path d="M175,175 L250,92" stroke="#f5e6c8" stroke-width="9" stroke-linecap="round"/>
+          <!-- Elbow -->
+          <circle cx="175" cy="175" r="14" fill="#6cb4ee" stroke="#3a8ad0" stroke-width="2" opacity="0.7" id="lb-gewrig"/>
+          <!-- Tendons -->
+          <path d="M195,120 Q190,140 182,165" stroke="#e0ddd5" stroke-width="5" fill="none" stroke-linecap="round" id="lb-sening1"/>
+          <path d="M100,85 Q95,80 88,75" stroke="#e0ddd5" stroke-width="5" fill="none" stroke-linecap="round" id="lb-sening2"/>
+          <!-- Biseps contracted -->
+          <path d="M100,85 Q130,70 150,90 Q170,108 195,120 Q175,140 155,128 Q130,115 110,105 Z"
+                fill="#c0392b" stroke="#a02020" stroke-width="1.5" opacity="0.85" id="lb-biseps"/>
+          <!-- Triseps relaxed -->
+          <path d="M85,90 Q110,160 135,170 Q150,175 155,175 Q148,168 130,162 Q105,150 90,100 Z"
+                fill="#e8a0a0" stroke="#c08080" stroke-width="1" opacity="0.75" id="lb-triseps"/>
+          <!-- Skin -->
+          <path d="M65,55 Q60,60 70,75 Q75,95 85,120 Q100,155 130,175 Q155,188 175,190 Q195,170 220,130 Q240,100 265,78 Q270,72 260,68 Q245,72 230,85 Q210,105 195,125 Q180,145 175,165 Q170,145 160,130 Q140,100 120,85 Q100,70 85,62 Z" fill="rgba(240,208,176,0.2)" stroke="rgba(180,150,120,0.4)" stroke-width="1.5" pointer-events="none"/>
+          <ellipse cx="262" cy="78" rx="14" ry="10" fill="#f0d0b0" stroke="#c9a882" stroke-width="1" opacity="0.6" transform="rotate(-40,262,78)"/>
+          <!-- Labels -->
+          <text x="135" y="82" font-size="11" font-weight="800" fill="#8b1a1a" font-family="Nunito">BISEPS</text>
+          <text x="78" y="155" font-size="10" font-weight="700" fill="#806060" font-family="Nunito">TRISEPS</text>
+        </svg>
+      </div>
+      <div class="diagram-panel" id="leer-panel-strek">
+        <h3>Arm Strek</h3>
+        <svg viewBox="0 0 340 360" xmlns="http://www.w3.org/2000/svg" id="svg-leer-strek">
+          <circle cx="60" cy="100" r="22" fill="#f0d0b0" stroke="#c9a882" stroke-width="1.5" opacity="0.5"/>
+          <path d="M60,100 L170,140" stroke="#f5e6c8" stroke-width="16" stroke-linecap="round" id="ls-been1"/>
+          <path d="M60,100 L170,140" stroke="#e8d8b8" stroke-width="10" stroke-linecap="round"/>
+          <path d="M170,140 L300,165" stroke="#f5e6c8" stroke-width="13" stroke-linecap="round" id="ls-been2"/>
+          <path d="M170,140 L300,165" stroke="#e8d8b8" stroke-width="8" stroke-linecap="round"/>
+          <path d="M170,140 L298,170" stroke="#f5e6c8" stroke-width="9" stroke-linecap="round"/>
+          <circle cx="170" cy="140" r="14" fill="#6cb4ee" stroke="#3a8ad0" stroke-width="2" opacity="0.7" id="ls-gewrig"/>
+          <path d="M155,122 Q162,128 168,132" stroke="#e0ddd5" stroke-width="4" fill="none" stroke-linecap="round" id="ls-sening1"/>
+          <path d="M72,118 Q68,112 64,106" stroke="#e0ddd5" stroke-width="5" fill="none" stroke-linecap="round" id="ls-sening2"/>
+          <!-- Biseps relaxed -->
+          <path d="M75,95 Q100,88 120,95 Q140,102 155,122 Q145,128 130,118 Q110,108 90,103 Z"
+                fill="#e8a0a0" stroke="#c08080" stroke-width="1" opacity="0.75" id="ls-biseps"/>
+          <!-- Triseps contracted -->
+          <path d="M72,118 Q90,155 110,162 Q130,167 145,160 Q155,155 155,155 Q148,148 135,152 Q115,156 100,148 Q82,138 78,125 Z"
+                fill="#c0392b" stroke="#a02020" stroke-width="1.5" opacity="0.85" id="ls-triseps"/>
+          <path d="M48,85 Q45,95 50,108 Q58,130 75,148 Q100,168 135,170 Q160,168 175,155 Q190,150 230,158 Q270,165 305,170 Q315,168 310,160 Q295,155 260,152 Q220,148 185,140 Q170,135 165,128 Q155,115 140,105 Q120,92 95,88 Q72,86 55,88 Z" fill="rgba(240,208,176,0.2)" stroke="rgba(180,150,120,0.4)" stroke-width="1.5" pointer-events="none"/>
+          <ellipse cx="310" cy="168" rx="14" ry="9" fill="#f0d0b0" stroke="#c9a882" stroke-width="1" opacity="0.6"/>
+          <text x="88" y="90" font-size="10" font-weight="700" fill="#806060" font-family="Nunito">BISEPS</text>
+          <text x="90" y="180" font-size="11" font-weight="800" fill="#8b1a1a" font-family="Nunito">TRISEPS</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Step content -->
+    <div class="leer-step-box" id="leer-step-box"></div>
+
+    <!-- Mnemonic (shown on certain steps) -->
+    <div class="mnemonic-box hidden" id="mnemonic-box"></div>
+
+    <!-- Step progress -->
+    <div class="progress-bar" id="progress-leer"></div>
+
+    <!-- Nav buttons -->
+    <div class="nav-btns">
+      <button class="nav-btn" id="btn-prev" onclick="leerPrev()">&larr; Vorige</button>
+      <button class="nav-btn" id="btn-next" onclick="leerNext()">Volgende &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==== TOETS MODE ==== -->
+<div id="mode-toets" class="hidden">
+  <div class="quiz-container">
+    <div class="score-bar" id="score-bar">Vraag 1 van 8 &nbsp;|&nbsp; Telling: 0/0</div>
+    <div id="quiz-area"></div>
+  </div>
+</div>
+
+</div><!-- /content-area -->
+
+<script>
+// ==================== MODE SWITCHING ====================
+let currentMode = 'ontdek';
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-tab').forEach((t,i) => {
+    t.classList.toggle('active', ['ontdek','leer','toets'][i] === mode);
+  });
+  document.getElementById('mode-ontdek').classList.toggle('hidden', mode !== 'ontdek');
+  document.getElementById('mode-leer').classList.toggle('hidden', mode !== 'leer');
+  document.getElementById('mode-toets').classList.toggle('hidden', mode !== 'toets');
+  if (mode === 'leer') initLeer();
+  if (mode === 'toets') initToets();
+}
+
+// ==================== ONTDEK MODE ====================
+const partDescriptions = {
+  biseps: {
+    title: 'Biseps',
+    text: 'Die <strong>biseps</strong> is die spier <strong>bo-op die boarm</strong>. Wanneer die biseps <span class="highlight">saamtrek</span> (korter en dikker word), trek dit aan die voorarmbeen en die arm <strong>buig</strong>. Die biseps is d.m.v. senings aan bene geheg.'
+  },
+  triseps: {
+    title: 'Triseps',
+    text: 'Die <strong>triseps</strong> is die spier <strong>onder die boarm</strong>. Wanneer die triseps <span class="highlight">saamtrek</span>, trek dit die arm <strong>reguit</strong> (strek). Die triseps en biseps werk as \'n <strong>spierpaar</strong> — wanneer een saamtrek, ontspan die ander.'
+  },
+  sening: {
+    title: 'Sening',
+    text: '<strong>Senings</strong> is taai koorde wat <strong>spiere aan bene</strong> vasheg. Sonder senings sou spiere nie aan bene kon trek nie. Hulle is baie sterk en dra die krag van die spier oor na die been.'
+  },
+  gewrig: {
+    title: 'Gewrig',
+    text: 'n <strong>Gewrig</strong> is die plek waar <strong>twee of meer bene bymekaarkom</strong>. Gewrigte maak ons skelette buigsaam — sonder gewrigte sou ons nie kon beweeg nie! Die elmboog is \'n voorbeeld van \'n gewrig.'
+  },
+  been: {
+    title: 'Been (Bot)',
+    text: '<strong>Bene</strong> vorm die harde raam van jou skelet. Spiere is d.m.v. senings aan bene geheg. Wanneer \'n spier saamtrek, trek dit aan die been en laat dit beweeg. Die boarm het een been (humerus) en die voorarm het twee bene.'
+  }
+};
+
+const discoveredParts = new Set();
+const allParts = ['biseps','triseps','sening','gewrig','been'];
+
+function initOntdekProgress() {
+  const bar = document.getElementById('progress-ontdek');
+  bar.innerHTML = '';
+  allParts.forEach(p => {
+    const dot = document.createElement('div');
+    dot.className = 'progress-dot' + (discoveredParts.has(p) ? ' found' : '');
+    dot.title = partDescriptions[p].title;
+    dot.onclick = () => showPartInfo(p);
+    bar.appendChild(dot);
+  });
+}
+
+function showPartInfo(part) {
+  const desc = partDescriptions[part];
+  if (!desc) return;
+  discoveredParts.add(part);
+  const box = document.getElementById('info-ontdek');
+  box.innerHTML = '<strong>' + desc.title + ':</strong> ' + desc.text;
+  initOntdekProgress();
+
+  // Highlight on SVGs
+  document.querySelectorAll('.glow').forEach(el => el.classList.remove('glow'));
+  document.querySelectorAll('[data-part="' + part + '"]').forEach(el => el.classList.add('glow'));
+  setTimeout(() => document.querySelectorAll('.glow').forEach(el => el.classList.remove('glow')), 2000);
+}
+
+// Attach click handlers to SVG parts in ontdek mode
+document.querySelectorAll('#mode-ontdek .clickable-part').forEach(el => {
+  el.addEventListener('click', () => showPartInfo(el.dataset.part));
+});
+
+initOntdekProgress();
+
+// ==================== LEER MODE ====================
+const leerSteps = [
+  {
+    num: 1,
+    text: 'Spiere werk altyd in <strong>PARE</strong> (pairs). Wanneer een spier saamtrek (korter en dikker word), <strong>ontspan</strong> die ander spier (word langer en dunner).',
+    highlight: ['lb-biseps','lb-triseps','ls-biseps','ls-triseps'],
+    mnemonic: null
+  },
+  {
+    num: 2,
+    text: 'Die <strong>BISEPS</strong> en <strong>TRISEPS</strong> is \'n voorbeeld van \'n spierpaar. Die biseps is bo-op die boarm en die triseps is onder die boarm.',
+    highlight: ['lb-biseps','lb-triseps','ls-biseps','ls-triseps'],
+    mnemonic: null
+  },
+  {
+    num: 3,
+    text: 'Wanneer die <strong>biseps saamtrek</strong>, buig die arm. Kyk hoe die biseps kort en dik is in die "Arm Buig" diagram!',
+    highlight: ['lb-biseps'],
+    mnemonic: 'Biseps BUIG (B-B) — albei begin met B!'
+  },
+  {
+    num: 4,
+    text: 'Wanneer die <strong>triseps saamtrek</strong>, strek die arm reguit. Kyk hoe die triseps kort en dik is in die "Arm Strek" diagram!',
+    highlight: ['ls-triseps'],
+    mnemonic: 'Triseps Trek / STREK (T-T-S) — T vir Triseps, T vir Trek, S vir Strek!'
+  },
+  {
+    num: 5,
+    text: '<strong>SENINGS</strong> is taai koorde wat spiere aan bene vasheg. Sonder senings kan spiere nie aan bene trek nie.',
+    highlight: ['lb-sening1','lb-sening2','ls-sening1','ls-sening2'],
+    mnemonic: null
+  },
+  {
+    num: 6,
+    text: '<strong>GEWRIGTE</strong> is waar twee bene ontmoet en beweging moontlik maak. Die elmboog is \'n gewrig — dit laat jou arm buig en strek.',
+    highlight: ['lb-gewrig','ls-gewrig'],
+    mnemonic: null
+  },
+  {
+    num: 7,
+    text: 'Spiere kan net <strong>TREK</strong> (pull), nie <strong>STOOT</strong> (push) nie! Daarom werk hulle altyd in pare — een trek om te buig, die ander trek om te strek.',
+    highlight: ['lb-biseps','lb-triseps','ls-biseps','ls-triseps'],
+    mnemonic: 'Spiere TREK, nooit STOOT — daarom werk hulle in PARE!'
+  }
+];
+
+let leerIdx = 0;
+
+function initLeer() {
+  leerIdx = 0;
+  renderLeerStep();
+}
+
+function renderLeerStep() {
+  const step = leerSteps[leerIdx];
+  const box = document.getElementById('leer-step-box');
+  box.innerHTML = '<span class="step-num">' + step.num + '</span> ' + step.text;
+
+  // Mnemonic
+  const mBox = document.getElementById('mnemonic-box');
+  if (step.mnemonic) {
+    mBox.classList.remove('hidden');
+    mBox.innerHTML = '&#x1F4A1; Onthou: <strong>' + step.mnemonic + '</strong>';
+  } else {
+    mBox.classList.add('hidden');
+  }
+
+  // Highlight
+  document.querySelectorAll('#mode-leer svg *').forEach(el => {
+    el.style.filter = '';
+    el.style.opacity = '';
+  });
+  step.highlight.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.filter = 'drop-shadow(0 0 6px rgba(230,126,34,0.8))';
+    }
+  });
+
+  // Progress dots
+  const bar = document.getElementById('progress-leer');
+  bar.innerHTML = '';
+  leerSteps.forEach((s,i) => {
+    const dot = document.createElement('div');
+    dot.className = 'progress-dot' + (i < leerIdx ? ' found' : '') + (i === leerIdx ? ' active' : '');
+    dot.onclick = () => { leerIdx = i; renderLeerStep(); };
+    bar.appendChild(dot);
+  });
+
+  // Buttons
+  document.getElementById('btn-prev').disabled = leerIdx === 0;
+  document.getElementById('btn-next').disabled = leerIdx === leerSteps.length - 1;
+}
+
+function leerNext() { if (leerIdx < leerSteps.length - 1) { leerIdx++; renderLeerStep(); } }
+function leerPrev() { if (leerIdx > 0) { leerIdx--; renderLeerStep(); } }
+
+// ==================== TOETS MODE ====================
+const quizQuestions = [
+  {
+    q: 'Wat gebeur as die biseps saamtrek?',
+    opts: ['Die arm strek', 'Die arm buig', 'Die been breek', 'Niks gebeur nie'],
+    answer: 1
+  },
+  {
+    q: 'Wat gebeur as die triseps saamtrek?',
+    opts: ['Die arm buig', 'Die voet beweeg', 'Die arm strek', 'Die spier ontplof'],
+    answer: 2
+  },
+  {
+    q: 'Wat verbind spiere aan bene?',
+    opts: ['Ligamente', 'Kraakbeen', 'Senings', 'Bande'],
+    answer: 2
+  },
+  {
+    q: 'Hoekom werk spiere in pare?',
+    opts: ['Want spiere kan stoot en trek', 'Want spiere kan net trek, nie stoot nie', 'Want een spier is genoeg', 'Want spiere is swak'],
+    answer: 1
+  },
+  {
+    q: 'Waar ontmoet twee bene?',
+    opts: ['By \'n sening', 'By \'n spier', 'By \'n gewrig', 'By die vel'],
+    answer: 2
+  },
+  {
+    q: 'Watter spier is bo-op die boarm?',
+    opts: ['Triseps', 'Biseps', 'Kwadriseps', 'Hamstring'],
+    answer: 1
+  },
+  {
+    q: 'Watter spier is onder die boarm?',
+    opts: ['Biseps', 'Hamstring', 'Triseps', 'Deltoid'],
+    answer: 2
+  },
+  {
+    q: 'Kan spiere stoot?',
+    opts: ['Ja, hulle kan stoot en trek', 'Nee, hulle kan net trek', 'Ja, maar net soms', 'Nee, hulle kan net stoot'],
+    answer: 1
+  }
+];
+
+let quizIdx = 0;
+let quizScore = 0;
+let quizAnswered = 0;
+
+function initToets() {
+  quizIdx = 0;
+  quizScore = 0;
+  quizAnswered = 0;
+  renderQuiz();
+}
+
+function renderQuiz() {
+  const area = document.getElementById('quiz-area');
+  const scoreBar = document.getElementById('score-bar');
+
+  if (quizIdx >= quizQuestions.length) {
+    // Final score
+    const pct = Math.round((quizScore / quizQuestions.length) * 100);
+    let msg = '';
+    if (pct === 100) msg = 'Perfek! Jy ken spiere, senings en gewrigte uitstekend!';
+    else if (pct >= 75) msg = 'Baie goed! Jy verstaan die meeste konsepte.';
+    else if (pct >= 50) msg = 'Goed probeer! Hersien die "Leer" modus vir meer oefening.';
+    else msg = 'Bly probeer! Gaan terug na "Leer" modus en probeer weer.';
+    area.innerHTML = '<div class="score-final"><div class="big-score">' + quizScore + '/' + quizQuestions.length + '</div><div class="msg">' + msg + '</div><br><button class="nav-btn" onclick="initToets()">Probeer weer</button></div>';
+    scoreBar.textContent = 'Finale telling: ' + quizScore + '/' + quizQuestions.length + ' (' + pct + '%)';
+    return;
+  }
+
+  const question = quizQuestions[quizIdx];
+  scoreBar.textContent = 'Vraag ' + (quizIdx + 1) + ' van ' + quizQuestions.length + '  |  Telling: ' + quizScore + '/' + quizAnswered;
+
+  let html = '<div class="quiz-question-box"><h4>' + (quizIdx + 1) + '. ' + question.q + '</h4>';
+  question.opts.forEach((opt, i) => {
+    html += '<button class="quiz-option" data-idx="' + i + '" onclick="checkAnswer(' + i + ',' + question.answer + ')">' + opt + '</button>';
+  });
+  html += '</div>';
+  area.innerHTML = html;
+}
+
+function checkAnswer(chosen, correct) {
+  const btns = document.querySelectorAll('#quiz-area .quiz-option');
+  btns.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === correct) btn.classList.add('correct');
+    if (i === chosen && chosen !== correct) btn.classList.add('wrong');
+  });
+  quizAnswered++;
+  if (chosen === correct) quizScore++;
+
+  document.getElementById('score-bar').textContent = 'Vraag ' + (quizIdx + 1) + ' van ' + quizQuestions.length + '  |  Telling: ' + quizScore + '/' + quizAnswered;
+
+  setTimeout(() => { quizIdx++; renderQuiz(); }, 1200);
+}
+</script>
+</body>
+</html>

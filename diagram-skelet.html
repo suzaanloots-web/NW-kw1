@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="af">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menslike Skelet — Interaktiewe Diagram</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #e8f4f0;
+  font-family: 'Nunito', sans-serif;
+  color: #1a2a3a;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* TOP NAV */
+.top-nav {
+  display: flex;
+  gap: 0.3rem;
+  padding: 0.5rem 0.8rem;
+  background: linear-gradient(135deg, #1a3a5a, #1a4a6a);
+  justify-content: center;
+  flex-wrap: wrap;
+  border-bottom: 2px solid #2a7a4a;
+}
+.top-nav a, .top-nav span {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.35rem 0.7rem;
+  border-radius: 16px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.25s;
+}
+.top-nav a {
+  background: rgba(255,255,255,0.1);
+  color: #c0e8d8;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.top-nav a:hover {
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+}
+.top-nav span.nav-active {
+  background: #2a7a4a;
+  color: #fff;
+  border: 1px solid #2a7a4a;
+  box-shadow: 0 2px 8px rgba(42,122,74,0.4);
+}
+
+header {
+  background: linear-gradient(135deg, #1a3a5a, #2a5a7a);
+  color: #e0f5ea;
+  padding: 1rem 1.2rem;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+  border-bottom: 3px solid #2a7a4a;
+}
+header h1 { font-size: 1.3rem; font-weight: 800; }
+header p { font-size: 0.75rem; opacity: 0.7; margin-top: 0.2rem; }
+
+/* MODE TABS */
+.mode-bar {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.6rem 0.8rem;
+  background: #d0eae0;
+  border-bottom: 2px solid #b0d8c8;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.mode-btn {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.5rem 1.2rem;
+  border-radius: 20px;
+  border: 2px solid #5a9a7a;
+  background: #fff;
+  color: #1a3a5a;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.mode-btn:hover { background: #e0f5ea; }
+.mode-btn.active {
+  background: #2a7a4a;
+  color: #fff;
+  border-color: #2a7a4a;
+}
+
+main {
+  max-width: 1050px;
+  margin: 0 auto;
+  padding: 1.2rem;
+}
+
+/* PROGRESS ROW */
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.prog-dot {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: #c0d8c8;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 700;
+  transition: all 0.3s;
+  cursor: pointer;
+  filter: grayscale(100%) opacity(0.5);
+  color: #555;
+}
+.prog-dot.found {
+  background: #2a7a4a;
+  color: #fff;
+  filter: none;
+  box-shadow: 0 2px 6px rgba(42,122,74,0.4);
+}
+.prog-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #4a7a6a;
+}
+
+/* LAYOUT */
+.diagram-area {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.svg-wrap {
+  flex: 0 0 auto;
+  background: #fff;
+  border-radius: 18px;
+  padding: 0.8rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  border: 2px solid #b0d8c8;
+}
+.info-panel {
+  flex: 1 1 280px;
+  max-width: 380px;
+  min-width: 260px;
+}
+.info-card {
+  background: linear-gradient(145deg,#ffffff,#e8f5f0);
+  border-radius: 16px;
+  padding: 1.2rem;
+  border: 2px solid #b0d8c8;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+  margin-bottom: 0.8rem;
+}
+.info-card h3 {
+  font-size: 1.1rem;
+  color: #1a3a5a;
+  margin-bottom: 0.3rem;
+}
+.info-card .eng-name {
+  font-size: 0.78rem;
+  color: #5a9a7a;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.info-card p {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #3a5a4a;
+}
+.info-card .fun-fact {
+  margin-top: 0.6rem;
+  padding: 0.5rem 0.7rem;
+  background: #f0f8f4;
+  border-radius: 10px;
+  border-left: 3px solid #2a7a4a;
+  font-size: 0.78rem;
+  color: #2a6a4a;
+}
+
+/* FUNCTIONS BOX */
+.func-box {
+  background: linear-gradient(135deg,#1a3a5a,#2a5a7a);
+  border-radius: 16px;
+  padding: 1rem;
+  color: #e0f5ea;
+  margin-bottom: 0.8rem;
+}
+.func-box h4 { font-size: 0.9rem; margin-bottom: 0.5rem; }
+.func-box .func-item {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-size: 0.8rem; margin-bottom: 0.3rem;
+}
+.func-box .func-icon {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; flex-shrink: 0;
+}
+
+/* SVG STYLES */
+.bone-group { cursor: pointer; transition: all 0.3s; }
+.bone-group:hover .bone-shape { filter: drop-shadow(0 0 8px rgba(42,122,74,0.6)); }
+.bone-group.active .bone-shape { filter: drop-shadow(0 0 12px rgba(42,122,74,0.8)); }
+.bone-shape { transition: all 0.3s; }
+.label-text {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  fill: #1a3a5a;
+  pointer-events: none;
+}
+.label-bg {
+  fill: rgba(255,255,255,0.9);
+  rx: 4; ry: 4;
+  pointer-events: none;
+}
+.leader-line {
+  stroke: #7a9a8a;
+  stroke-width: 1;
+  stroke-dasharray: 3,2;
+  fill: none;
+  pointer-events: none;
+}
+
+/* LEARN MODE */
+.learn-section { display: none; }
+.learn-nav {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.learn-nav button {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  border: 2px solid #5a9a7a;
+  background: #fff;
+  color: #1a3a5a;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.learn-nav button:hover { background: #e0f5ea; }
+.learn-nav button:disabled { opacity: 0.4; cursor: default; }
+.learn-step-label {
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #5a8a6a;
+  margin-bottom: 0.5rem;
+}
+.learn-detail {
+  background: linear-gradient(145deg,#fff,#e8f5f0);
+  border-radius: 16px;
+  padding: 1.2rem;
+  border: 2px solid #b0d8c8;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+  margin-bottom: 0.8rem;
+}
+.learn-detail h3 { font-size: 1.15rem; color: #1a3a5a; }
+.learn-detail .eng { font-size: 0.8rem; color: #5a9a7a; font-weight: 600; }
+.learn-detail p { font-size: 0.88rem; line-height: 1.55; color: #3a5a4a; margin-top: 0.5rem; }
+.mnemonic-box {
+  background: linear-gradient(135deg,#2a7a4a,#3a9a5a);
+  border-radius: 14px;
+  padding: 1rem;
+  color: #fff;
+  margin-top: 0.8rem;
+}
+.mnemonic-box h4 { font-size: 0.85rem; margin-bottom: 0.4rem; }
+.mnemonic-box p { font-size: 0.82rem; line-height: 1.5; opacity: 0.95; }
+
+/* QUIZ MODE */
+.quiz-section { display: none; }
+.quiz-prompt {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #1a3a5a;
+  margin-bottom: 0.4rem;
+}
+.quiz-sub {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #5a8a6a;
+  margin-bottom: 0.8rem;
+}
+.quiz-score-bar {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.quiz-score-bar .correct { color: #2a7a4a; }
+.quiz-score-bar .wrong { color: #c0392b; }
+.quiz-feedback {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 700;
+  min-height: 2rem;
+  margin-bottom: 0.5rem;
+  transition: all 0.3s;
+}
+.quiz-feedback.right { color: #2a7a4a; }
+.quiz-feedback.wrong { color: #c0392b; }
+.quiz-result {
+  text-align: center;
+  padding: 2rem;
+  background: linear-gradient(145deg,#fff,#e8f5f0);
+  border-radius: 16px;
+  border: 2px solid #b0d8c8;
+  display: none;
+}
+.quiz-result h2 { color: #1a3a5a; font-size: 1.4rem; }
+.quiz-result .score-big { font-size: 2.5rem; font-weight: 800; color: #2a7a4a; }
+.quiz-result button {
+  margin-top: 1rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem; font-weight: 700;
+  padding: 0.6rem 2rem;
+  border-radius: 20px;
+  border: 2px solid #2a7a4a;
+  background: #2a7a4a; color: #fff;
+  cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+  .diagram-area { flex-direction: column; align-items: center; }
+  .info-panel { max-width: 100%; }
+  .svg-wrap { width: 100%; overflow-x: auto; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="top-nav">
+  <a href="index.html">📋 Studiegids</a>
+  <a href="flitskaarte.html">🃏 Flitskaarte</a>
+  <a href="breinkaart.html">🧠 Breinkaart</a>
+  <a href="vergelyk.html">⚖️ Vergelyk</a>
+  <a href="prosesse.html">🔄 Prosesse</a>
+  <a href="habitats.html">🌍 Habitats</a>
+  <span class="nav-active">💀 Skelet</span>
+</nav>
+
+<header>
+  <h1>💀 Menslike Skelet — Interaktiewe Diagram</h1>
+  <p>Klik op die dele om te leer — 206 bene in die volwasse menslike liggaam</p>
+</header>
+
+<!-- MODE TABS -->
+<div class="mode-bar">
+  <button class="mode-btn active" onclick="setMode('explore')">🔍 Ontdek</button>
+  <button class="mode-btn" onclick="setMode('learn')">💡 Leer</button>
+  <button class="mode-btn" onclick="setMode('quiz')">🎯 Toets</button>
+</div>
+
+<main>
+  <!-- ============= EXPLORE ============= -->
+  <section id="explore-section" class="explore-section">
+    <div class="progress-row" id="explore-progress"></div>
+    <div class="diagram-area">
+      <div class="svg-wrap" id="svg-container"></div>
+      <div class="info-panel" id="explore-info">
+        <div class="func-box">
+          <h4>🦴 Funksies van die Skelet</h4>
+          <div class="func-item"><span class="func-icon">🏗️</span> <b>Ondersteuning</b> — Hou die liggaam regop</div>
+          <div class="func-item"><span class="func-icon">🛡️</span> <b>Beskerming</b> — Beskerm organe</div>
+          <div class="func-item"><span class="func-icon">🏃</span> <b>Beweging</b> — Werk saam met spiere</div>
+          <div class="func-item"><span class="func-icon">🔢</span> <b>206 bene</b> in die volwasse liggaam</div>
+        </div>
+        <div class="info-card" id="explore-detail">
+          <h3>Klik op 'n deel van die skelet</h3>
+          <p>Kies enige been of area om meer inligting te sien.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= LEARN ============= -->
+  <section id="learn-section" class="learn-section">
+    <div class="learn-nav">
+      <button id="learn-prev" onclick="learnStep(-1)">◀ Vorige</button>
+      <button id="learn-next" onclick="learnStep(1)">Volgende ▶</button>
+    </div>
+    <div class="learn-step-label" id="learn-step-label"></div>
+    <div class="diagram-area">
+      <div class="svg-wrap" id="svg-container-learn"></div>
+      <div class="info-panel">
+        <div class="learn-detail" id="learn-detail"></div>
+        <div class="mnemonic-box" id="mnemonic-box">
+          <h4>🧠 Onthou-wenke</h4>
+          <p><b>Skedel</b> beskerm <b>Brein</b><br>
+          <b>Ribbekas</b> beskerm <b>Hart & Longe</b><br>
+          <b>Ruggraat</b> beskerm <b>Rugmurg</b></p>
+          <p style="margin-top:0.5rem;"><b>206 bene:</b> 27 per hand, 26 per voet, bobeen is die langste been</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= QUIZ ============= -->
+  <section id="quiz-section" class="quiz-section">
+    <div class="quiz-prompt" id="quiz-prompt">Klik "Begin" om die toets te begin!</div>
+    <div class="quiz-sub" id="quiz-sub">12 vrae — klik op die regte deel van die skelet</div>
+    <div class="quiz-score-bar">
+      <span class="correct">✅ Reg: <span id="quiz-correct">0</span></span>
+      <span class="wrong">❌ Fout: <span id="quiz-wrong">0</span></span>
+      <span>📊 Vraag: <span id="quiz-qnum">0</span>/12</span>
+    </div>
+    <div class="quiz-feedback" id="quiz-feedback"></div>
+    <div class="diagram-area">
+      <div class="svg-wrap" id="svg-container-quiz"></div>
+    </div>
+    <div style="text-align:center;margin-top:0.8rem;">
+      <button class="mode-btn" id="quiz-start-btn" onclick="startQuiz()">▶ Begin Toets</button>
+    </div>
+    <div class="quiz-result" id="quiz-result">
+      <h2>Toets Klaar!</h2>
+      <div class="score-big" id="quiz-final-score"></div>
+      <p id="quiz-final-msg"></p>
+      <button onclick="startQuiz()">🔄 Probeer Weer</button>
+    </div>
+  </section>
+</main>
+
+<script>
+// ===== DATA =====
+const parts = [
+  {
+    id: 'skedel', name: 'Skedel', eng: 'Skull', group: 'protect',
+    desc: 'Beskerm die brein en die sagter dele van die gesig (oe).',
+    fact: 'Die skedel is een van die sterkste bene in die liggaam — dit is ontwerp om skade te absorbeer.',
+    color: '#89c4e8', hoverColor: '#5ab0e0'
+  },
+  {
+    id: 'ribbekas', name: 'Ribbekas', eng: 'Rib cage', group: 'protect',
+    desc: 'Beskerm die hart en longe. Bestaan uit 12 pare ribbebene wat \'n hok rondom die hooforgane vorm.',
+    fact: 'Die ribbekas is \'n raamstruktuur — baie sterk maar tog \'n bietjie buigsaam sodat jy kan asemhaal.',
+    color: '#e8b87a', hoverColor: '#d9a05a'
+  },
+  {
+    id: 'ruggraat', name: 'Ruggraat / Werwelkolom', eng: 'Spine', group: 'protect',
+    desc: '33 werwels beskerm die rugmurg en hou die liggaam regop. Die rugmurg stuur seine vanaf die brein na alle dele van die liggaam.',
+    fact: 'Gewrigte tussen werwels laat beperkte beweging toe — dit hou die ruggraat sterk maar tog buigsaam.',
+    color: '#6abe8a', hoverColor: '#4aae6a'
+  },
+  {
+    id: 'skouerblad', name: 'Skouerblad / Skouergordel', eng: 'Shoulder girdle', group: 'girdle',
+    desc: 'Verbind die arms aan die romp. Sluit die skouerblad (bladbeen) en sleutelbeen (klavikel) in.',
+    fact: 'Die skouergewrig kan vrylik beweeg — beweging is hier belangriker as krag.',
+    color: '#a8c8e8', hoverColor: '#80b0d8'
+  },
+  {
+    id: 'heupgordel', name: 'Heupgordel / Bekken', eng: 'Hip girdle / Pelvis', group: 'girdle',
+    desc: 'Verbind die bene aan die romp. Dit is \'n sterk struktuur wat die gewig van die bolyf dra.',
+    fact: 'Die heupgordel ondersteun die agterste ledemate en help met balans.',
+    color: '#c8a8d8', hoverColor: '#b080c8'
+  },
+  {
+    id: 'boarm', name: 'Boarm', eng: 'Humerus / Upper arm', group: 'limb',
+    desc: 'Die boarmbeen (humerus) verbind die skouer met die elmboog. Dit is \'n sterk been wat aan kragtige spiere geheg is.',
+    fact: 'Spiere is d.m.v. senings aan die boarmbeen geheg — dit laat jou arm buig en strek.',
+    color: '#d0d8e0', hoverColor: '#b0c0d0'
+  },
+  {
+    id: 'onderarm', name: 'Onderarm', eng: 'Radius + Ulna / Forearm', group: 'limb',
+    desc: '2 bene: die radius en ulna. Hulle laat jou hand draai en buig.',
+    fact: 'Die twee bene kan oor mekaar draai — dis hoekom jy jou hand kan draai!',
+    color: '#d0d8e0', hoverColor: '#b0c0d0'
+  },
+  {
+    id: 'bobeen', name: 'Bobeen', eng: 'Femur / Thigh', group: 'limb',
+    desc: 'Die langste been in die liggaam! Die femur is ook die sterkste been en dra die meeste gewig.',
+    fact: 'Die bobeen is so sterk dat dit tot 30 keer jou liggaamsgewig kan dra.',
+    color: '#d8d0c8', hoverColor: '#c0b8a8'
+  },
+  {
+    id: 'onderbeen', name: 'Onderbeen', eng: 'Tibia + Fibula / Lower leg', group: 'limb',
+    desc: '2 bene: die tibia (skeen-been) en fibula. Dit verbind die knie met die enkel.',
+    fact: 'Die tibia is die groter, sterker been wat die meeste gewig dra.',
+    color: '#d8d0c8', hoverColor: '#c0b8a8'
+  },
+  {
+    id: 'hande', name: 'Hande', eng: 'Hands', group: 'limb',
+    desc: '27 bene per hand! Dit sluit die polsbene, handpalmbene en vingerbene in.',
+    fact: '27 bene per hand = 54 bene in albei hande saam. Dis meer as \'n kwart van al jou bene!',
+    color: '#e0d8d0', hoverColor: '#c8c0b0'
+  },
+  {
+    id: 'voete', name: 'Voete', eng: 'Feet', group: 'limb',
+    desc: '26 bene per voet. Dit sluit die enkelbene, voetbene en toonbene in.',
+    fact: '26 bene per voet = 52 bene in albei voete saam. Hulle ondersteun jou hele liggaamsgewig!',
+    color: '#e0d8d0', hoverColor: '#c8c0b0'
+  },
+  {
+    id: 'knieskyfie', name: 'Knieskyfie', eng: 'Kneecap / Patella', group: 'limb',
+    desc: '\'n Klein, plat been wat die kniegewrig beskerm. Dit sit voor die knie.',
+    fact: 'Die knieskyfie is die grootste sesamiese been in die liggaam — dit is ingebed in \'n sening.',
+    color: '#f0e0b0', hoverColor: '#e0d090'
+  }
+];
+
+// ===== SVG SKELETON DRAWING =====
+function buildSkeletonSVG(containerId, showLabels, mode) {
+  const W = 420, H = 620;
+  let svg = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg" style="display:block;">`;
+  svg += `<defs>
+    <filter id="glow-${containerId}"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>`;
+
+  const cx = 210;
+
+  // Helper: bone group wrapper
+  function boneGroup(part, shapes, labelX, labelY, anchorX, anchorY) {
+    let g = `<g class="bone-group" data-id="${part.id}" id="${containerId}-${part.id}">`;
+    g += shapes;
+    if (showLabels) {
+      // Leader line
+      g += `<line class="leader-line" x1="${anchorX}" y1="${anchorY}" x2="${labelX}" y2="${labelY}"/>`;
+      // Label background
+      const textLen = part.name.length * 6.5 + 12;
+      g += `<rect class="label-bg" x="${labelX - 4}" y="${labelY - 12}" width="${textLen}" height="18" />`;
+      g += `<text class="label-text" x="${labelX}" y="${labelY}">${part.name}</text>`;
+    }
+    g += `</g>`;
+    return g;
+  }
+
+  // === SKULL ===
+  svg += boneGroup(parts[0],
+    `<ellipse class="bone-shape" cx="${cx}" cy="62" rx="38" ry="46" fill="${parts[0].color}" stroke="#5a8ab0" stroke-width="1.5"/>
+     <ellipse cx="${cx}" cy="78" rx="22" ry="16" fill="#cde4f2" stroke="#5a8ab0" stroke-width="1"/>
+     <circle cx="${cx-9}" cy="68" r="5" fill="#fff" stroke="#5a8ab0" stroke-width="1"/>
+     <circle cx="${cx+9}" cy="68" r="5" fill="#fff" stroke="#5a8ab0" stroke-width="1"/>
+     <circle cx="${cx-9}" cy="68" r="2" fill="#1a3a5a"/>
+     <circle cx="${cx+9}" cy="68" r="2" fill="#1a3a5a"/>
+     <path d="M${cx-5} 82 Q${cx} 88 ${cx+5} 82" fill="none" stroke="#5a8ab0" stroke-width="1.2"/>
+     <line x1="${cx-4}" y1="85" x2="${cx+4}" y2="85" stroke="#5a8ab0" stroke-width="0.8"/>`,
+    25, 50, cx-38, 55
+  );
+
+  // Neck (connecting, not clickable)
+  svg += `<rect x="${cx-6}" y="106" width="12" height="18" rx="3" fill="#b8d8b0" stroke="#6a9a7a" stroke-width="1" opacity="0.7"/>`;
+
+  // === SPINE / RUGGRAAT ===
+  let spineShapes = '';
+  for (let i = 0; i < 18; i++) {
+    const y = 124 + i * 15;
+    const w = i < 5 ? 10 : (i < 12 ? 11 : 9);
+    spineShapes += `<rect class="bone-shape" x="${cx - w/2}" y="${y}" width="${w}" height="12" rx="3" fill="${parts[2].color}" stroke="#4a8a6a" stroke-width="0.8"/>`;
+  }
+  svg += boneGroup(parts[2], spineShapes, 16, 260, cx-6, 250);
+
+  // === RIB CAGE ===
+  let ribShapes = '';
+  for (let i = 0; i < 12; i++) {
+    const y = 140 + i * 12;
+    const spread = 24 + Math.sin((i/11) * Math.PI) * 36;
+    const curveY = y + 6;
+    // Left rib
+    ribShapes += `<path class="bone-shape" d="M${cx-5} ${y} Q${cx - spread - 10} ${curveY} ${cx - spread} ${y+10}" fill="none" stroke="${parts[1].color}" stroke-width="3" stroke-linecap="round"/>`;
+    // Right rib
+    ribShapes += `<path class="bone-shape" d="M${cx+5} ${y} Q${cx + spread + 10} ${curveY} ${cx + spread} ${y+10}" fill="none" stroke="${parts[1].color}" stroke-width="3" stroke-linecap="round"/>`;
+  }
+  // Sternum
+  ribShapes += `<rect class="bone-shape" x="${cx-4}" y="135" width="8" height="90" rx="3" fill="${parts[1].color}" stroke="#c0884a" stroke-width="1"/>`;
+  svg += boneGroup(parts[1], ribShapes, 310, 170, cx+55, 180);
+
+  // === SHOULDER GIRDLE ===
+  let shoulderShapes = '';
+  // Clavicles (sleutelbene)
+  shoulderShapes += `<path class="bone-shape" d="M${cx-8} 128 Q${cx-40} 120 ${cx-72} 132" fill="none" stroke="${parts[3].color}" stroke-width="4" stroke-linecap="round"/>`;
+  shoulderShapes += `<path class="bone-shape" d="M${cx+8} 128 Q${cx+40} 120 ${cx+72} 132" fill="none" stroke="${parts[3].color}" stroke-width="4" stroke-linecap="round"/>`;
+  // Scapulae shapes (simplified)
+  shoulderShapes += `<ellipse class="bone-shape" cx="${cx-65}" cy="155" rx="18" ry="28" fill="${parts[3].color}" stroke="#6a9ab0" stroke-width="1.2" opacity="0.6"/>`;
+  shoulderShapes += `<ellipse class="bone-shape" cx="${cx+65}" cy="155" rx="18" ry="28" fill="${parts[3].color}" stroke="#6a9ab0" stroke-width="1.2" opacity="0.6"/>`;
+  svg += boneGroup(parts[3], shoulderShapes, 300, 128, cx+72, 132);
+
+  // === HIP GIRDLE / PELVIS ===
+  let pelvisShapes = '';
+  pelvisShapes += `<path class="bone-shape" d="M${cx-8} 380 Q${cx-55} 360 ${cx-50} 410 Q${cx-40} 430 ${cx-12} 420" fill="${parts[4].color}" stroke="#9070a0" stroke-width="1.5"/>`;
+  pelvisShapes += `<path class="bone-shape" d="M${cx+8} 380 Q${cx+55} 360 ${cx+50} 410 Q${cx+40} 430 ${cx+12} 420" fill="${parts[4].color}" stroke="#9070a0" stroke-width="1.5"/>`;
+  // Pubic arch
+  pelvisShapes += `<path class="bone-shape" d="M${cx-12} 420 Q${cx} 435 ${cx+12} 420" fill="none" stroke="${parts[4].color}" stroke-width="3"/>`;
+  svg += boneGroup(parts[4], pelvisShapes, 310, 400, cx+50, 400);
+
+  // === UPPER ARMS ===
+  let upperArmShapes = '';
+  // Left
+  upperArmShapes += `<rect class="bone-shape" x="${cx-80}" y="165" width="12" height="100" rx="5" fill="${parts[5].color}" stroke="#9aaaba" stroke-width="1.2" transform="rotate(5,${cx-74},215)"/>`;
+  // Right
+  upperArmShapes += `<rect class="bone-shape" x="${cx+68}" y="165" width="12" height="100" rx="5" fill="${parts[5].color}" stroke="#9aaaba" stroke-width="1.2" transform="rotate(-5,${cx+74},215)"/>`;
+  svg += boneGroup(parts[5], upperArmShapes, 20, 200, cx-80, 200);
+
+  // === FOREARMS ===
+  let forearmShapes = '';
+  // Left pair
+  forearmShapes += `<rect class="bone-shape" x="${cx-86}" y="270" width="7" height="95" rx="3" fill="${parts[6].color}" stroke="#9aaaba" stroke-width="1" transform="rotate(3,${cx-83},310)"/>`;
+  forearmShapes += `<rect class="bone-shape" x="${cx-76}" y="270" width="7" height="95" rx="3" fill="${parts[6].color}" stroke="#9aaaba" stroke-width="1" transform="rotate(3,${cx-73},310)"/>`;
+  // Right pair
+  forearmShapes += `<rect class="bone-shape" x="${cx+69}" y="270" width="7" height="95" rx="3" fill="${parts[6].color}" stroke="#9aaaba" stroke-width="1" transform="rotate(-3,${cx+73},310)"/>`;
+  forearmShapes += `<rect class="bone-shape" x="${cx+79}" y="270" width="7" height="95" rx="3" fill="${parts[6].color}" stroke="#9aaaba" stroke-width="1" transform="rotate(-3,${cx+83},310)"/>`;
+  svg += boneGroup(parts[6], forearmShapes, 16, 320, cx-86, 310);
+
+  // === HANDS ===
+  let handShapes = '';
+  // Left hand
+  for (let f = 0; f < 5; f++) {
+    const fx = cx - 94 + f * 7;
+    const fy = 368;
+    handShapes += `<rect class="bone-shape" x="${fx}" y="${fy}" width="4" height="${18 + (f===2?5:0)}" rx="2" fill="${parts[9].color}" stroke="#b0a898" stroke-width="0.8" transform="rotate(${-8+f*4},${fx+2},${fy+10})"/>`;
+  }
+  handShapes += `<ellipse class="bone-shape" cx="${cx-80}" cy="365" rx="16" ry="10" fill="${parts[9].color}" stroke="#b0a898" stroke-width="1"/>`;
+  // Right hand
+  for (let f = 0; f < 5; f++) {
+    const fx = cx + 66 + f * 7;
+    const fy = 368;
+    handShapes += `<rect class="bone-shape" x="${fx}" y="${fy}" width="4" height="${18 + (f===2?5:0)}" rx="2" fill="${parts[9].color}" stroke="#b0a898" stroke-width="0.8" transform="rotate(${-8+f*4},${fx+2},${fy+10})"/>`;
+  }
+  handShapes += `<ellipse class="bone-shape" cx="${cx+80}" cy="365" rx="16" ry="10" fill="${parts[9].color}" stroke="#b0a898" stroke-width="1"/>`;
+  svg += boneGroup(parts[9], handShapes, 10, 385, cx-94, 375);
+
+  // === THIGH / FEMUR ===
+  let thighShapes = '';
+  thighShapes += `<rect class="bone-shape" x="${cx-38}" y="432" width="14" height="120" rx="6" fill="${parts[7].color}" stroke="#a8a090" stroke-width="1.2" transform="rotate(3,${cx-31},492)"/>`;
+  thighShapes += `<rect class="bone-shape" x="${cx+24}" y="432" width="14" height="120" rx="6" fill="${parts[7].color}" stroke="#a8a090" stroke-width="1.2" transform="rotate(-3,${cx+31},492)"/>`;
+  svg += boneGroup(parts[7], thighShapes, 310, 480, cx+38, 480);
+
+  // === KNEECAP ===
+  let kneecapShapes = '';
+  kneecapShapes += `<ellipse class="bone-shape" cx="${cx-32}" cy="552" rx="9" ry="10" fill="${parts[11].color}" stroke="#c0b870" stroke-width="1.2"/>`;
+  kneecapShapes += `<ellipse class="bone-shape" cx="${cx+32}" cy="552" rx="9" ry="10" fill="${parts[11].color}" stroke="#c0b870" stroke-width="1.2"/>`;
+  svg += boneGroup(parts[11], kneecapShapes, 310, 555, cx+41, 552);
+
+  // === LOWER LEG ===
+  let lowerLegShapes = '';
+  // Left
+  lowerLegShapes += `<rect class="bone-shape" x="${cx-40}" y="564" width="8" height="80" rx="3" fill="${parts[8].color}" stroke="#a8a090" stroke-width="1" transform="rotate(1,${cx-36},604)"/>`;
+  lowerLegShapes += `<rect class="bone-shape" x="${cx-30}" y="564" width="6" height="80" rx="3" fill="${parts[8].color}" stroke="#a8a090" stroke-width="1" transform="rotate(1,${cx-27},604)"/>`;
+  // Right
+  lowerLegShapes += `<rect class="bone-shape" x="${cx+26}" y="564" width="6" height="80" rx="3" fill="${parts[8].color}" stroke="#a8a090" stroke-width="1" transform="rotate(-1,${cx+29},604)"/>`;
+  lowerLegShapes += `<rect class="bone-shape" x="${cx+34}" y="564" width="8" height="80" rx="3" fill="${parts[8].color}" stroke="#a8a090" stroke-width="1" transform="rotate(-1,${cx+38},604)"/>`;
+  svg += boneGroup(parts[8], lowerLegShapes, 16, 600, cx-40, 600);
+
+  // === FEET ===
+  let feetShapes = '';
+  // Left foot
+  feetShapes += `<path class="bone-shape" d="M${cx-44} 644 L${cx-50} 608 L${cx-24} 608 L${cx-18} 644 Q${cx-31} 652 ${cx-44} 644Z" fill="${parts[10].color}" stroke="#b0a898" stroke-width="1.2"/>`;
+  for (let t = 0; t < 5; t++) {
+    feetShapes += `<ellipse class="bone-shape" cx="${cx-46+t*7}" cy="${649}" rx="3" ry="4" fill="${parts[10].color}" stroke="#b0a898" stroke-width="0.8"/>`;
+  }
+  // Right foot
+  feetShapes += `<path class="bone-shape" d="M${cx+18} 644 L${cx+24} 608 L${cx+50} 608 L${cx+44} 644 Q${cx+31} 652 ${cx+18} 644Z" fill="${parts[10].color}" stroke="#b0a898" stroke-width="1.2"/>`;
+  for (let t = 0; t < 5; t++) {
+    feetShapes += `<ellipse class="bone-shape" cx="${cx+20+t*7}" cy="${649}" rx="3" ry="4" fill="${parts[10].color}" stroke="#b0a898" stroke-width="0.8"/>`;
+  }
+  svg += boneGroup(parts[10], feetShapes, 310, 640, cx+44, 644);
+
+  svg += `</svg>`;
+  document.getElementById(containerId).innerHTML = svg;
+}
+
+// ===== MODE SWITCHING =====
+let currentMode = 'explore';
+const explored = new Set();
+
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach((b,i) => {
+    b.classList.toggle('active', ['explore','learn','quiz'][i] === mode);
+  });
+  document.getElementById('explore-section').style.display = mode === 'explore' ? 'block' : 'none';
+  document.getElementById('learn-section').style.display = mode === 'learn' ? 'block' : 'none';
+  document.getElementById('quiz-section').style.display = mode === 'quiz' ? 'block' : 'none';
+
+  if (mode === 'explore') {
+    buildSkeletonSVG('svg-container', true, 'explore');
+    attachExplorHandlers();
+    updateExploreProgress();
+  } else if (mode === 'learn') {
+    buildSkeletonSVG('svg-container-learn', true, 'learn');
+    learnIdx = 0;
+    showLearnStep();
+  } else if (mode === 'quiz') {
+    buildSkeletonSVG('svg-container-quiz', false, 'quiz');
+    document.getElementById('quiz-result').style.display = 'none';
+    document.getElementById('quiz-start-btn').style.display = '';
+    document.getElementById('quiz-prompt').textContent = 'Klik "Begin" om die toets te begin!';
+    document.getElementById('quiz-feedback').textContent = '';
+  }
+}
+
+// ===== EXPLORE MODE =====
+function attachExplorHandlers() {
+  document.querySelectorAll('#svg-container .bone-group').forEach(g => {
+    g.addEventListener('click', () => {
+      const id = g.dataset.id;
+      const part = parts.find(p => p.id === id);
+      if (!part) return;
+      explored.add(id);
+      updateExploreProgress();
+      // Highlight
+      document.querySelectorAll('#svg-container .bone-group').forEach(gg => gg.classList.remove('active'));
+      g.classList.add('active');
+      // Show info
+      const detail = document.getElementById('explore-detail');
+      detail.innerHTML = `
+        <h3>${part.name}</h3>
+        <div class="eng-name">${part.eng}</div>
+        <p>${part.desc}</p>
+        <div class="fun-fact">💡 ${part.fact}</div>
+      `;
+    });
+  });
+}
+
+function updateExploreProgress() {
+  const row = document.getElementById('explore-progress');
+  let html = `<span class="prog-label">Ontdek: ${explored.size}/12</span>`;
+  parts.forEach((p, i) => {
+    const found = explored.has(p.id);
+    html += `<span class="prog-dot ${found ? 'found' : ''}" title="${p.name}">${found ? '✓' : (i+1)}</span>`;
+  });
+  row.innerHTML = html;
+}
+
+// ===== LEARN MODE =====
+let learnIdx = 0;
+
+function showLearnStep() {
+  const part = parts[learnIdx];
+  document.getElementById('learn-step-label').textContent = `Stap ${learnIdx+1} van ${parts.length}`;
+  document.getElementById('learn-prev').disabled = learnIdx === 0;
+  document.getElementById('learn-next').disabled = learnIdx === parts.length - 1;
+
+  // Highlight on SVG
+  document.querySelectorAll('#svg-container-learn .bone-group').forEach(g => {
+    g.classList.toggle('active', g.dataset.id === part.id);
+    if (g.dataset.id === part.id) {
+      g.querySelectorAll('.bone-shape').forEach(s => s.style.fill = part.hoverColor);
+    } else {
+      const p2 = parts.find(pp => pp.id === g.dataset.id);
+      if (p2) g.querySelectorAll('.bone-shape').forEach(s => {
+        if (s.tagName === 'path' && !s.getAttribute('fill')) return;
+        if (s.getAttribute('fill') && s.getAttribute('fill') !== 'none') s.style.fill = '';
+      });
+    }
+  });
+
+  const groupLabel = {protect:'🛡️ Beskermende Struktuur', girdle:'🔗 Gordel', limb:'🦴 Ledemaat'}[part.group];
+  document.getElementById('learn-detail').innerHTML = `
+    <div style="font-size:0.72rem;font-weight:700;color:#5a9a7a;margin-bottom:0.3rem;">${groupLabel}</div>
+    <h3>${part.name}</h3>
+    <div class="eng" style="margin-bottom:0.4rem;">${part.eng}</div>
+    <p>${part.desc}</p>
+    <p style="margin-top:0.6rem;padding:0.5rem 0.7rem;background:#f0f8f4;border-radius:10px;border-left:3px solid #2a7a4a;font-size:0.82rem;color:#2a6a4a;">💡 ${part.fact}</p>
+  `;
+}
+
+function learnStep(dir) {
+  learnIdx = Math.max(0, Math.min(parts.length - 1, learnIdx + dir));
+  showLearnStep();
+}
+
+// ===== QUIZ MODE =====
+let quizOrder = [];
+let quizIdx = 0;
+let quizCorrect = 0;
+let quizWrong = 0;
+let quizActive = false;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  quizOrder = shuffle(parts);
+  quizIdx = 0;
+  quizCorrect = 0;
+  quizWrong = 0;
+  quizActive = true;
+  document.getElementById('quiz-result').style.display = 'none';
+  document.getElementById('quiz-start-btn').style.display = 'none';
+  buildSkeletonSVG('svg-container-quiz', false, 'quiz');
+  attachQuizHandlers();
+  updateQuizUI();
+  showQuizQuestion();
+}
+
+function attachQuizHandlers() {
+  document.querySelectorAll('#svg-container-quiz .bone-group').forEach(g => {
+    g.addEventListener('click', () => {
+      if (!quizActive) return;
+      const id = g.dataset.id;
+      const target = quizOrder[quizIdx];
+      const fb = document.getElementById('quiz-feedback');
+      if (id === target.id) {
+        quizCorrect++;
+        fb.className = 'quiz-feedback right';
+        fb.textContent = `✅ Korrek! Dit is die ${target.name}.`;
+        // Flash green
+        g.querySelectorAll('.bone-shape').forEach(s => {
+          if (s.getAttribute('fill') && s.getAttribute('fill') !== 'none') s.style.fill = '#4aee8a';
+        });
+      } else {
+        quizWrong++;
+        const wrong = parts.find(p => p.id === id);
+        fb.className = 'quiz-feedback wrong';
+        fb.textContent = `❌ Nee, dit is die ${wrong ? wrong.name : '?'}. Die regte antwoord is gemerk.`;
+        // Flash red on wrong
+        g.querySelectorAll('.bone-shape').forEach(s => {
+          if (s.getAttribute('fill') && s.getAttribute('fill') !== 'none') s.style.fill = '#ee6a5a';
+        });
+        // Flash green on correct
+        const correctG = document.querySelector(`#svg-container-quiz [data-id="${target.id}"]`);
+        if (correctG) correctG.querySelectorAll('.bone-shape').forEach(s => {
+          if (s.getAttribute('fill') && s.getAttribute('fill') !== 'none') s.style.fill = '#4aee8a';
+        });
+      }
+      updateQuizUI();
+
+      setTimeout(() => {
+        quizIdx++;
+        if (quizIdx >= 12) {
+          endQuiz();
+        } else {
+          // Reset colors
+          buildSkeletonSVG('svg-container-quiz', false, 'quiz');
+          attachQuizHandlers();
+          showQuizQuestion();
+        }
+      }, 1500);
+      quizActive = false;
+      setTimeout(() => { quizActive = true; }, 1500);
+    });
+  });
+}
+
+function showQuizQuestion() {
+  const part = quizOrder[quizIdx];
+  document.getElementById('quiz-prompt').textContent = `Wys die "${part.name}" op die skelet`;
+  document.getElementById('quiz-sub').textContent = `${part.eng} — Klik op die regte deel`;
+  document.getElementById('quiz-feedback').textContent = '';
+}
+
+function updateQuizUI() {
+  document.getElementById('quiz-correct').textContent = quizCorrect;
+  document.getElementById('quiz-wrong').textContent = quizWrong;
+  document.getElementById('quiz-qnum').textContent = quizIdx + 1;
+}
+
+function endQuiz() {
+  quizActive = false;
+  const pct = Math.round((quizCorrect / 12) * 100);
+  document.getElementById('quiz-result').style.display = 'block';
+  document.getElementById('quiz-final-score').textContent = `${quizCorrect}/12 (${pct}%)`;
+  const msgs = [
+    [90, '🌟 Uitstekend! Jy ken die skelet baie goed!'],
+    [70, '👏 Goed gedoen! Oefen nog \'n bietjie.'],
+    [50, '📚 Nie sleg nie! Gaan terug na "Leer" modus om te hersien.'],
+    [0, '💪 Hou aan oefen! Probeer eers die "Leer" modus.']
+  ];
+  const msg = msgs.find(m => pct >= m[0])[1];
+  document.getElementById('quiz-final-msg').textContent = msg;
+  document.getElementById('quiz-prompt').textContent = 'Toets klaar!';
+  document.getElementById('quiz-sub').textContent = '';
+}
+
+// ===== INIT =====
+setMode('explore');
+</script>
+</body>
+</html>

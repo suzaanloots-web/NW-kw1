@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="af">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Breinkaart — Natuurwetenskap Kwartaal 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #e8f4f0;
+    font-family: 'Nunito', sans-serif;
+    color: #1a3a2a;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  header {
+    background: linear-gradient(135deg, #1a3a5a, #2a5a3a);
+    color: #e0f0e8;
+    padding: 1rem 1.2rem;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+    border-bottom: 3px solid #2a7a4a;
+  }
+  header h1 { font-size: 1.4rem; font-weight: 800; }
+  header p { font-size: 0.75rem; opacity: 0.7; margin-top: 0.2rem; }
+
+  /* NAV BAR */
+  .nav-bar {
+    display: flex;
+    gap: 0.4rem;
+    padding: 0.55rem 0.8rem;
+    background: #d8ece4;
+    border-bottom: 2px solid #b0d8c0;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .nav-link {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.45rem 0.9rem;
+    border-radius: 20px;
+    border: 2px solid #6a9a7a;
+    background: #fff;
+    color: #1a3a5a;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .nav-link:hover { background: #e0f5ea; }
+  .nav-link.active {
+    background: #2a7a4a;
+    color: #fff;
+    border-color: #2a7a4a;
+    box-shadow: 0 2px 8px rgba(42,122,74,0.3);
+    pointer-events: none;
+  }
+
+  /* TABS */
+  .tab-bar {
+    display: flex;
+    gap: 0.4rem;
+    padding: 0.6rem 0.8rem;
+    background: #d0e8dc;
+    border-bottom: 2px solid #b0d8c0;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: 2px solid #6a9a7a;
+    background: #fff;
+    color: #1a3a5a;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .tab-btn:hover { background: #e0f5ea; }
+  .tab-btn.active {
+    background: #2a7a4a;
+    color: #fff;
+    border-color: #2a7a4a;
+    box-shadow: 0 2px 8px rgba(42,122,74,0.3);
+  }
+
+  main {
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 2rem;
+  }
+
+  /* CENTRAL BUBBLE */
+  .centre-bubble {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    margin: 0 auto 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #fff;
+    font-weight: 800;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.2);
+    animation: bubblePulse 3s ease-in-out infinite;
+    opacity: 0;
+    transform: scale(0);
+    transition: opacity 0.5s, transform 0.5s;
+    position: relative;
+    z-index: 2;
+  }
+  .centre-bubble.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .centre-bubble .bubble-emoji { font-size: 2rem; margin-bottom: 0.2rem; }
+  .centre-bubble .bubble-title { font-size: 0.85rem; line-height: 1.2; padding: 0 0.5rem; }
+  .centre-bubble .bubble-sub { font-size: 0.6rem; opacity: 0.8; margin-top: 0.15rem; }
+
+  @keyframes bubblePulse {
+    0%, 100% { box-shadow: 0 6px 25px rgba(0,0,0,0.2); }
+    50% { box-shadow: 0 6px 35px rgba(42,122,74,0.35); }
+  }
+
+  /* Theme colours */
+  .theme-habitats .centre-bubble { background: linear-gradient(135deg, #1a3a5a, #2a5a8a); }
+  .theme-interafhanklikheid .centre-bubble { background: linear-gradient(135deg, #2a7a4a, #3a9a5a); }
+  .theme-skelette .centre-bubble { background: linear-gradient(135deg, #4a3a6a, #6a5a8a); }
+  .theme-voedselkettings .centre-bubble { background: linear-gradient(135deg, #8a4a2a, #aa6a3a); }
+  .theme-lewensiklusse .centre-bubble { background: linear-gradient(135deg, #2a6a6a, #3a8a8a); }
+
+  /* CONNECTOR LINE */
+  .connector {
+    width: 3px;
+    height: 30px;
+    margin: 0 auto;
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.4s 0.3s;
+  }
+  .connector.show { opacity: 1; }
+  .theme-habitats .connector { background: #1a3a5a; }
+  .theme-interafhanklikheid .connector { background: #2a7a4a; }
+  .theme-skelette .connector { background: #4a3a6a; }
+  .theme-voedselkettings .connector { background: #8a4a2a; }
+  .theme-lewensiklusse .connector { background: #2a6a6a; }
+
+  /* BRANCH GRID */
+  .branch-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.7rem;
+    margin-top: 0.8rem;
+  }
+
+  .branch-card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    border-left: 4px solid #b0d0c0;
+    overflow: hidden;
+    cursor: pointer;
+    transition: box-shadow 0.2s, transform 0.15s;
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  .branch-card.show {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.2s;
+  }
+  .branch-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+  .branch-card.expanded { transform: translateY(0) !important; }
+
+  .branch-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.8rem 1rem;
+    user-select: none;
+  }
+  .branch-emoji { font-size: 1.5rem; flex-shrink: 0; }
+  .branch-title { font-size: 0.85rem; font-weight: 700; flex: 1; }
+  .branch-arrow {
+    font-size: 0.7rem;
+    color: #8aaa9a;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+  .branch-card.expanded .branch-arrow { transform: rotate(180deg); }
+
+  .branch-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    padding: 0 1rem;
+  }
+  .branch-card.expanded .branch-body {
+    max-height: 900px;
+    padding: 0 1rem 0.8rem;
+  }
+
+  .branch-body hr {
+    border: none;
+    border-top: 1px dashed rgba(0,0,0,0.1);
+    margin-bottom: 0.6rem;
+  }
+
+  .leaf-list {
+    list-style: none;
+    padding: 0;
+  }
+  .leaf-list li {
+    padding: 0.25rem 0 0.25rem 1.2rem;
+    position: relative;
+    font-size: 0.8rem;
+    line-height: 1.45;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  .branch-card.expanded .leaf-list li {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .leaf-list li::before {
+    content: '\25B8';
+    position: absolute;
+    left: 0;
+    font-size: 0.75rem;
+    font-weight: 800;
+  }
+
+  /* SUB-BRANCH STYLING */
+  .sub-branch {
+    margin: 0.4rem 0 0.2rem 0;
+    border-left: 3px solid rgba(0,0,0,0.08);
+    padding-left: 0.6rem;
+    border-radius: 0 8px 8px 0;
+    background: rgba(0,0,0,0.015);
+  }
+  .sub-branch-title {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #1a3a5a;
+    padding: 0.2rem 0;
+  }
+  .sub-branch .leaf-list li {
+    font-size: 0.75rem;
+    padding: 0.15rem 0 0.15rem 1.1rem;
+  }
+
+  /* STAGGERED LEAF ANIMATION */
+  .branch-card.expanded .leaf-list li:nth-child(1) { transition-delay: 0.05s; }
+  .branch-card.expanded .leaf-list li:nth-child(2) { transition-delay: 0.1s; }
+  .branch-card.expanded .leaf-list li:nth-child(3) { transition-delay: 0.15s; }
+  .branch-card.expanded .leaf-list li:nth-child(4) { transition-delay: 0.2s; }
+  .branch-card.expanded .leaf-list li:nth-child(5) { transition-delay: 0.25s; }
+  .branch-card.expanded .leaf-list li:nth-child(6) { transition-delay: 0.3s; }
+  .branch-card.expanded .leaf-list li:nth-child(7) { transition-delay: 0.35s; }
+  .branch-card.expanded .leaf-list li:nth-child(8) { transition-delay: 0.4s; }
+  .branch-card.expanded .leaf-list li:nth-child(9) { transition-delay: 0.45s; }
+  .branch-card.expanded .leaf-list li:nth-child(10) { transition-delay: 0.5s; }
+  .branch-card.expanded .leaf-list li:nth-child(11) { transition-delay: 0.55s; }
+  .branch-card.expanded .leaf-list li:nth-child(12) { transition-delay: 0.6s; }
+
+  /* HINT */
+  .hint-text {
+    text-align: center;
+    font-size: 0.75rem;
+    color: #7a9a8a;
+    margin-top: 1rem;
+    font-weight: 600;
+  }
+
+  /* HABITATS BRANCH COLORS */
+  .theme-habitats .branch-card:nth-child(1) { border-left-color: #1a3a5a; }
+  .theme-habitats .branch-card:nth-child(2) { border-left-color: #2a5a8a; }
+  .theme-habitats .branch-card:nth-child(3) { border-left-color: #3a7aaa; }
+  .theme-habitats .branch-card:nth-child(4) { border-left-color: #4a8aba; }
+  .theme-habitats .leaf-list li::before { color: #1a3a5a; }
+  .theme-habitats .sub-branch-title { color: #1a3a5a; }
+
+  /* INTERAFHANKLIKHEID BRANCH COLORS */
+  .theme-interafhanklikheid .branch-card:nth-child(1) { border-left-color: #2a7a4a; }
+  .theme-interafhanklikheid .branch-card:nth-child(2) { border-left-color: #3a8a5a; }
+  .theme-interafhanklikheid .branch-card:nth-child(3) { border-left-color: #4a9a6a; }
+  .theme-interafhanklikheid .branch-card:nth-child(4) { border-left-color: #3a7a5a; }
+  .theme-interafhanklikheid .branch-card:nth-child(5) { border-left-color: #2a6a3a; }
+  .theme-interafhanklikheid .leaf-list li::before { color: #2a7a4a; }
+  .theme-interafhanklikheid .sub-branch-title { color: #2a7a4a; }
+
+  /* SKELETTE BRANCH COLORS */
+  .theme-skelette .branch-card:nth-child(1) { border-left-color: #4a3a6a; }
+  .theme-skelette .branch-card:nth-child(2) { border-left-color: #5a4a7a; }
+  .theme-skelette .branch-card:nth-child(3) { border-left-color: #6a5a8a; }
+  .theme-skelette .branch-card:nth-child(4) { border-left-color: #7a6a9a; }
+  .theme-skelette .branch-card:nth-child(5) { border-left-color: #5a3a7a; }
+  .theme-skelette .leaf-list li::before { color: #4a3a6a; }
+  .theme-skelette .sub-branch-title { color: #4a3a6a; }
+
+  /* VOEDSELKETTINGS BRANCH COLORS */
+  .theme-voedselkettings .branch-card:nth-child(1) { border-left-color: #8a4a2a; }
+  .theme-voedselkettings .branch-card:nth-child(2) { border-left-color: #9a5a3a; }
+  .theme-voedselkettings .branch-card:nth-child(3) { border-left-color: #aa6a4a; }
+  .theme-voedselkettings .branch-card:nth-child(4) { border-left-color: #ba7a5a; }
+  .theme-voedselkettings .leaf-list li::before { color: #8a4a2a; }
+  .theme-voedselkettings .sub-branch-title { color: #8a4a2a; }
+
+  /* LEWENSIKLUSSE BRANCH COLORS */
+  .theme-lewensiklusse .branch-card:nth-child(1) { border-left-color: #2a6a6a; }
+  .theme-lewensiklusse .branch-card:nth-child(2) { border-left-color: #3a7a7a; }
+  .theme-lewensiklusse .branch-card:nth-child(3) { border-left-color: #4a8a8a; }
+  .theme-lewensiklusse .branch-card:nth-child(4) { border-left-color: #3a8a7a; }
+  .theme-lewensiklusse .branch-card:nth-child(5) { border-left-color: #2a7a6a; }
+  .theme-lewensiklusse .leaf-list li::before { color: #2a6a6a; }
+  .theme-lewensiklusse .sub-branch-title { color: #2a6a6a; }
+
+  @media (max-width: 600px) {
+    header h1 { font-size: 1.1rem; }
+    .nav-bar { gap: 0.25rem; }
+    .nav-link { font-size: 0.65rem; padding: 0.35rem 0.6rem; }
+    .tab-bar { gap: 0.3rem; }
+    .tab-btn { font-size: 0.7rem; padding: 0.4rem 0.8rem; }
+    main { padding: 1rem 0.6rem; }
+    .centre-bubble { width: 140px; height: 140px; }
+    .centre-bubble .bubble-emoji { font-size: 1.6rem; }
+    .centre-bubble .bubble-title { font-size: 0.75rem; }
+    .branch-grid { grid-template-columns: 1fr; gap: 0.5rem; }
+    .branch-header { padding: 0.7rem 0.8rem; }
+    .branch-emoji { font-size: 1.3rem; }
+    .branch-title { font-size: 0.8rem; }
+    .leaf-list li { font-size: 0.78rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>&#x1F9E0; Breinkaart &mdash; Natuurwetenskap</h1>
+  <p>Graad 5 &middot; Kwartaal 1 &middot; Tik op &rsquo;n tak om dit oop te maak</p>
+</header>
+
+<nav class="nav-bar">
+  <a class="nav-link" href="index.html">&#x1F4CB; Studiegids</a>
+  <a class="nav-link" href="flitskaarte.html">&#x1F0CF; Flitskaarte</a>
+  <a class="nav-link active" href="breinkaart.html">&#x1F9E0; Breinkaart</a>
+  <a class="nav-link" href="vergelyk.html">&#x2696;&#xFE0F; Vergelyk</a>
+  <a class="nav-link" href="prosesse.html">&#x1F504; Prosesse</a>
+  <a class="nav-link" href="habitats.html">&#x1F30D; Habitats</a>
+</nav>
+
+<div class="tab-bar" id="tab-bar"></div>
+
+<main id="main-area">
+  <div class="centre-bubble" id="centre-bubble">
+    <div class="bubble-emoji" id="bubble-emoji"></div>
+    <div class="bubble-title" id="bubble-title"></div>
+    <div class="bubble-sub" id="bubble-sub"></div>
+  </div>
+  <div class="connector" id="connector"></div>
+  <div class="branch-grid" id="branch-grid"></div>
+  <div class="hint-text" id="hint-text">&#x1F446; Tik op 'n tak om die feite te sien</div>
+  <div style="text-align:center;margin:1rem 0;">
+    <button id="wysAllesBtn" onclick="wysAlles()" style="background:linear-gradient(135deg,#2a7a4a,#3a9a5a);color:white;border:none;padding:0.7rem 1.5rem;border-radius:12px;font-family:'Nunito',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,0.2);">📖 Wys Alles</button>
+  </div>
+</main>
+
+<script>
+const eenhede = [
+  {
+    id: "habitats",
+    tab: "\uD83C\uDF3F Habitats",
+    theme: "theme-habitats",
+    centre: { emoji: "\uD83C\uDF0D", title: "Habitats & Biodiversiteit", sub: "Onderwerp 1 \u2013 Eenheid 1" },
+    branches: [
+      {
+        emoji: "\uD83C\uDF3F", title: "Wat is Habitats?",
+        facts: [
+          "Habitat = die natuurlike woonplek van \u2019n plant of dier",
+          "Plante en diere besit spesiale eienskappe om in \u2019n spesifieke habitat te oorleef",
+          "Die habitat bepaal die eienskappe van die organisme",
+          "Habitats voorsien kos, water, lug en skuiling"
+        ]
+      },
+      {
+        emoji: "\uD83C\uDF31", title: "Plante-aanpassings",
+        html: true,
+        content:
+          '<div class="sub-branch"><div class="sub-branch-title">\uD83C\uDF3A Waterlelie</div><ul class="leaf-list"><li>Lewe in water</li><li>Groot, plat blare wat dryf op die water</li></ul></div>' +
+          '<div class="sub-branch"><div class="sub-branch-title">\uD83C\uDF35 Aalwyn</div><ul class="leaf-list"><li>Leef in dro\u00EB gebiede</li><li>Dik, vleesagtige blare gaar water op</li></ul></div>' +
+          '<div class="sub-branch"><div class="sub-branch-title">\u2615 Rooibos</div><ul class="leaf-list"><li>Groei in dro\u00EB, sanderige grond</li><li>Dun en klein blare \u2013 minder waterverlies</li></ul></div>'
+      },
+      {
+        emoji: "\uD83D\uDC3E", title: "Diere-aanpassings",
+        html: true,
+        content:
+          '<div class="sub-branch"><div class="sub-branch-title">\uD83D\uDC38 Padda</div><ul class="leaf-list"><li>Leef in water</li><li>Vingers en tone is geweb om te swem</li></ul></div>' +
+          '<div class="sub-branch"><div class="sub-branch-title">\uD83D\uDC1F Visse</div><ul class="leaf-list"><li>Het vinne om te help swem</li></ul></div>' +
+          '<div class="sub-branch"><div class="sub-branch-title">\uD83E\uDD93 Sebras</div><ul class="leaf-list"><li>Woon in grasvelde</li><li>Bene om te loop en hardloop</li><li>Wit strepe verblind roofdiere tydelik</li></ul></div>' +
+          '<div class="sub-branch"><div class="sub-branch-title">\uD83E\uDD9C Loeries</div><ul class="leaf-list"><li>Woon in woude</li><li>Vlerke om te vlieg, bene om op takke te spring</li></ul></div>'
+      },
+      {
+        emoji: "\uD83C\uDF0E", title: "Biodiversiteit",
+        facts: [
+          "Biodiversiteit = verskeidenheid van al die plante en diere op aarde",
+          "Plante, diere en hulle habitats = totale biodiversiteit",
+          "Suid-Afrika het \u2019n wye verskeidenheid inheemse plante en diere",
+          "Inheems = organismes wat nog altyd in \u2019n spesifieke gebied voorgekom het",
+          "Inheemse organismes kan in verskillende habitats voorkom"
+        ]
+      }
+    ]
+  },
+  {
+    id: "interafhanklikheid",
+    tab: "\uD83E\uDD1D Interafhanklikheid",
+    theme: "theme-interafhanklikheid",
+    centre: { emoji: "\uD83E\uDD1D", title: "Interafhanklikheid", sub: "Onderwerp 1 \u2013 Eenheid 2" },
+    branches: [
+      {
+        emoji: "\uD83C\uDF3F", title: "Plant \u2194 Plant",
+        facts: [
+          "Interafhanklikheid = twee of meer dinge wat op mekaar staatmaak",
+          "Party plante maak op ander plante staat om te groei",
+          "Gasheerplant = plant wat kos, water en beskerming aan \u2019n ander plant gee",
+          "Vo\u00EBlent groei in bome \u2013 kry voedingstowwe van die gasheerplant",
+          "Orgide\u00EB groei op boomstamme \u2013 lugwortels absorbeer vog uit die lug"
+        ]
+      },
+      {
+        emoji: "\uD83E\uDD8B", title: "Plant \u2194 Dier",
+        facts: [
+          "Vlinders drink nektar vir kos \u2013 bestuif die blom in ruil daarvoor",
+          "Sade met hakies haak aan pelse vas \u2013 word so versprei",
+          "Baie diere eet blare of vrugte vir voedingstowwe en energie",
+          "Houtkapper bou nes in boomstam \u2013 beskerm kleintjies teen roofdiere"
+        ]
+      },
+      {
+        emoji: "\uD83D\uDC26", title: "Dier \u2194 Dier",
+        facts: [
+          "Renostervo\u00EBls eet bosluise van ander diere af",
+          "Die bok kry verligting van bosluise, die vo\u00EBl kry kos",
+          "Sjirurgynvis eet alge en parasiete van seeskilpaaie af",
+          "Macaw-papegaaie versorg mekaar se vere \u2013 hou dit skoon van insekte"
+        ]
+      },
+      {
+        emoji: "\uD83D\uDCA7", title: "Hulpbronne",
+        facts: [
+          "Nie-lewende dinge = hulpbronne (lug, water, grond, sonskyn)",
+          "Plante het water, lug en sonskyn nodig om gesond te bly",
+          "Diere het ook hierdie hulpbronne nodig om te oorleef",
+          "Diere gebruik nie-lewende dinge vir beskerming en voortplanting"
+        ]
+      },
+      {
+        emoji: "\u26A0\uFE0F", title: "Indringerplante",
+        facts: [
+          "Indringerplante gebruik meer water as wat die omgewing kan voorsien",
+          "Hulle groei baie vinnig en neem spasie van inheemse plante in",
+          "Inheemse plante en diere kry nie genoeg hulpbronne nie",
+          "Uitheemse plante moet verwyder word om natuurlike habitats te bewaar"
+        ]
+      }
+    ]
+  },
+  {
+    id: "skelette",
+    tab: "\uD83E\uDDB4 Skelette",
+    theme: "theme-skelette",
+    centre: { emoji: "\uD83E\uDDB4", title: "Skelette & Soorte Diere", sub: "Onderwerpe 1\u20133" },
+    branches: [
+      {
+        emoji: "\uD83D\uDC1A", title: "Eksoskelet vs Endoskelet",
+        html: true,
+        content:
+          '<div class="sub-branch"><div class="sub-branch-title">\uD83D\uDC1A Eksoskelet (BUITE)</div><ul class="leaf-list"><li>Harde plate aanmekaar geheg \u2192 harde dop</li><li>Voordeel: beskerm sagte dele + waterdig</li><li>Nadeel: kan nie groei nie \u2013 dier moet vervel</li><li>Bv: insekte, spinnekoppe, krappe, krewe, skerpioene</li></ul></div>' +
+          '<div class="sub-branch"><div class="sub-branch-title">\uD83E\uDDB4 Endoskelet (BINNE)</div><ul class="leaf-list"><li>Ruggraat van rugwerwels, bedek met spiere</li><li>Voordeel: groei saam met dier, dra meer gewig</li><li>Nadeel: beskerm nie so goed soos eksoskelet</li><li>Bv: soogdiere, vo\u00EBls, visse, reptiele, amfibie\u00EB</li></ul></div>'
+      },
+      {
+        emoji: "\uD83D\uDEE1\uFE0F", title: "Funksies van die Skelet",
+        facts: [
+          "Ondersteun die liggaam en gee dit vorm",
+          "Beskerm sagte organe (brein, hart, longe)",
+          "Ribbekas omhul en beskerm hart en longe",
+          "Skedel beskerm die brein en sagter dele van die gesig",
+          "Ruggraat beskerm die rugmurg wat seine van brein stuur",
+          "Bene is hard \u2013 kalsium en minerale maak hulle sterk",
+          "Bene kan breek, maar dan weer aangroei"
+        ]
+      },
+      {
+        emoji: "\uD83E\uDDB5", title: "Ledemate & Bene",
+        html: true,
+        content:
+          '<ul class="leaf-list"><li>Ledemate = bene, arms of sterte</li><li>Boonste ledemate geheg by die skouergordel</li><li>Onderste ledemate geheg by die heupgordel</li><li>Gordels dien as "skokbrekers" by hardloop/spring</li></ul>' +
+          '<div class="sub-branch"><div class="sub-branch-title">\uD83C\uDFE5 Belangrike Bene</div><ul class="leaf-list"><li>Skedel/kopbeen</li><li>Klavikel/sleutelbeen</li><li>Humerus/boarmbeen</li><li>Werwelkolom/ruggraat</li><li>Bekken/heupbeen</li><li>Femur/dybeen</li><li>Patella/knieskyf</li><li>Tibia/skeenbeen</li></ul></div>'
+      },
+      {
+        emoji: "\uD83C\uDFC3", title: "Beweging",
+        html: true,
+        content:
+          '<ul class="leaf-list"><li>Gewrigte = waar twee of meer bene bymekaarkom</li><li>Spiere trek aan bene om liggaam te beweeg</li><li>Spiere werk in pare (een trek saam, ander ontspan)</li><li>Senings heg spiere aan bene vas</li><li>Ligamente verbind been aan been</li><li>Kraakbeen = buigsame stof by gewrigte</li></ul>' +
+          '<div class="sub-branch"><div class="sub-branch-title">\uD83D\uDC3E Diere-aanpassings vir Beweging</div><ul class="leaf-list"><li>Vo\u00EBls: hol bene (lig) + sterk spiere = vlieg</li><li>Visse: vaartbelynde liggaam + fyn bene = swem</li><li>Jagluiperd: buigsame ruggraat + lang bene = vinnig</li><li>Paddas: lang, sterk agterbene = spring</li></ul></div>'
+      },
+      {
+        emoji: "\uD83C\uDFD7\uFE0F", title: "Raam- & Dopstrukture",
+        html: true,
+        content:
+          '<div class="sub-branch"><div class="sub-branch-title">\uD83C\uDFD7\uFE0F Raamstrukture</div><ul class="leaf-list"><li>Stutte in driehoekvorms geheg = sterk raamwerk</li><li>Bv: br\u00FBe, hyskrane, klimraam</li><li>Gewerwelde skelette = raamstrukture (bene is stutte)</li></ul></div>' +
+          '<div class="sub-branch"><div class="sub-branch-title">\uD83D\uDC1A Dopstrukture</div><ul class="leaf-list"><li>Sterk buitenste laag hou homself regop</li><li>Geen stutte nodig nie</li><li>Bv: igloe, metaalbeker, kartondoos</li><li>Eksoskelette van krappe, slakke, seesterre = dopstrukture</li></ul></div>'
+      }
+    ]
+  },
+  {
+    id: "voedselkettings",
+    tab: "\uD83D\uDD17 Voedselkettings",
+    theme: "theme-voedselkettings",
+    centre: { emoji: "\uD83D\uDD17", title: "Voedselkettings", sub: "Onderwerp 4" },
+    branches: [
+      {
+        emoji: "\u2600\uFE0F", title: "Plante Maak Kos",
+        facts: [
+          "Groen plante maak hulle eie voedsel (vervaardigers)",
+          "Gebruik ligenergie van die son om voedsel te maak",
+          "Blare vang sonlig op + gebruik water en koolstofdioksied",
+          "Plante gee suurstof af wanneer hulle voedsel maak",
+          "Wortels neem water en mineraalsoute uit die grond op",
+          "Grond = anker + bron van voedingstowwe"
+        ]
+      },
+      {
+        emoji: "\uD83E\uDD66", title: "Herbivore, Karnivore & Omnivore",
+        html: true,
+        content:
+          '<div class="sub-branch"><div class="sub-branch-title">\uD83C\uDF3F Herbivore</div><ul class="leaf-list"><li>Eet net plante</li><li>Bv: kameelperde, slakke</li></ul></div>' +
+          '<div class="sub-branch"><div class="sub-branch-title">\uD83E\uDD69 Karnivore</div><ul class="leaf-list"><li>Eet net vleis / ander diere</li><li>Karnivore eet herbivore</li><li>Bv: arende, luiperds</li></ul></div>' +
+          '<div class="sub-branch"><div class="sub-branch-title">\uD83C\uDF7D\uFE0F Omnivore</div><ul class="leaf-list"><li>Eet vleis en plante</li><li>Eet gewoonlik enige kos beskikbaar</li><li>Bv: bobbejane eet plantwortels \u00E9n insekte</li></ul></div>'
+      },
+      {
+        emoji: "\uD83D\uDD17", title: "Hoe Werk \u2019n Voedselketting?",
+        facts: [
+          "Voedselketting = volgorde waarin diere plante/ander diere eet vir energie",
+          "Begin altyd met \u2019n plant (vervaardiger) en minstens een dier",
+          "Pyltjies wys rigting waarin energie oorgedra word",
+          "Volgorde: plant \u2192 herbivoor \u2192 karnivoor",
+          "Daar kan verskeie diere in \u2019n voedselketting wees",
+          "Bv: plant \u2192 wurm \u2192 slang \u2192 arend"
+        ]
+      },
+      {
+        emoji: "\u26A1", title: "Energie-oordrag",
+        facts: [
+          "Lewende organismes het kos nodig vir energie",
+          "Son voorsien plante van energie om kos te maak",
+          "Diere moet plante of ander diere eet om energie te kry",
+          "Energie word oorgedra van een organisme na die volgende",
+          "Diere gebruik energie om te groei, beweeg, voortplant en asemhaal"
+        ]
+      }
+    ]
+  },
+  {
+    id: "lewensiklusse",
+    tab: "\uD83D\uDD04 Lewensiklusse",
+    theme: "theme-lewensiklusse",
+    centre: { emoji: "\uD83D\uDD04", title: "Lewensiklusse", sub: "Onderwerp 5" },
+    branches: [
+      {
+        emoji: "\uD83C\uDF31", title: "Plant Lewensiklus",
+        facts: [
+          "Begin as \u2019n klein saadjie",
+          "Saadjie ontkiem \u2013 swel totdat buitekant oopbreek",
+          "Kiemwortel groei afwaarts \u2013 soek water, hou plant stewig",
+          "Stam groei opwaarts \u2013 soek sonlig, blare vorm",
+          "Volwasse plant bring blomme voort",
+          "Bestuiwing \u2192 bevrugting \u2192 sade word gevorm",
+          "Blomme word vrugte met sade \u2013 sade word versprei",
+          "Die siklus begin weer!"
+        ]
+      },
+      {
+        emoji: "\uD83C\uDF3A", title: "Dele van \u2019n Blom",
+        html: true,
+        content:
+          '<div class="sub-branch"><div class="sub-branch-title">\u2642\uFE0F Manlike Dele</div><ul class="leaf-list"><li>Helmknoppie \u2013 maak stuifmeel</li><li>Helmdraad \u2013 ondersteun die helmknoppie</li></ul></div>' +
+          '<div class="sub-branch"><div class="sub-branch-title">\u2640\uFE0F Vroulike Dele</div><ul class="leaf-list"><li>Stempel \u2013 taaierig, vang stuifmeel op</li><li>Styl \u2013 ondersteun stempel, lei na vrugbeginsel</li><li>Vrugbeginsel \u2013 hou saadknoppies, word later \u2019n vrug</li></ul></div>' +
+          '<div class="sub-branch"><div class="sub-branch-title">\uD83C\uDF38 Ander Dele</div><ul class="leaf-list"><li>Kroonblare \u2013 trek vo\u00EBls en insekte aan</li><li>Kelkblare \u2013 beskerm die blom as dit bot</li></ul></div>'
+      },
+      {
+        emoji: "\uD83D\uDC2E", title: "Dier Lewensiklus",
+        facts: [
+          "Alle lewende dinge het \u2019n lewensiklus (herhalende patroon)",
+          "Soogdiere: baba groei binne ma \u2192 geboorte \u2192 versorging \u2192 volwasse",
+          "Vo\u00EBls en reptiele l\u00EA eiers \u2013 embrio ontwikkel in eier met harde dop",
+          "Voortplanting verseker dat soorte nie uitsterf nie",
+          "Dier kan in enige stadium van lewensiklus doodgaan"
+        ]
+      },
+      {
+        emoji: "\uD83E\uDD5A", title: "Bevrugting",
+        html: true,
+        content:
+          '<ul class="leaf-list"><li>Bevrugting = sperm en eiertjie smelt saam \u2192 nuwe lewe</li></ul>' +
+          '<div class="sub-branch"><div class="sub-branch-title">\uD83D\uDD12 Inwendige Bevrugting</div><ul class="leaf-list"><li>Sperm geplaas binne die vroulike maat se liggaam</li><li>Bv: soogdiere, vo\u00EBls, slange, akkedisse, insekte</li></ul></div>' +
+          '<div class="sub-branch"><div class="sub-branch-title">\uD83C\uDF0A Uitwendige Bevrugting</div><ul class="leaf-list"><li>Eiers bevrug buite die ma se liggaam</li><li>Ma l\u00EA eiers in water, pa versprei sperm oor eiers</li><li>Bv: visse en paddas</li></ul></div>'
+      },
+      {
+        emoji: "\uD83D\uDC23", title: "Versorging van Kleintjies",
+        facts: [
+          "Soogdiere voed kleintjies met melk \u2013 bly naby mammas",
+          "Ouers hou babas warm, voed en beskerm hulle",
+          "Ouers leer kleintjies om te oorleef",
+          "Perde kan feitelik dadelik op hulle voete staan",
+          "Nie alle diere versorg hulle kleintjies nie",
+          "Paddas, insekte, skilpaaie steek eiers weg maar bly nie naby nie"
+        ]
+      }
+    ]
+  }
+];
+
+let currentEenheid = 0;
+
+function buildTabs() {
+  const bar = document.getElementById("tab-bar");
+  eenhede.forEach((e, i) => {
+    const btn = document.createElement("button");
+    btn.className = "tab-btn" + (i === 0 ? " active" : "");
+    btn.textContent = e.tab;
+    btn.onclick = () => {
+      selectEenheid(i);
+      history.replaceState(null, "", "#" + e.id);
+    };
+    bar.appendChild(btn);
+  });
+}
+
+function selectEenheid(idx) {
+  currentEenheid = idx;
+  const e = eenhede[idx];
+
+  // Update tabs
+  document.querySelectorAll(".tab-btn").forEach((b, i) => b.classList.toggle("active", i === idx));
+
+  // Set theme
+  const mainArea = document.getElementById("main-area");
+  mainArea.className = e.theme;
+
+  // Centre bubble
+  const bubble = document.getElementById("centre-bubble");
+  bubble.classList.remove("show");
+  document.getElementById("connector").classList.remove("show");
+
+  setTimeout(() => {
+    document.getElementById("bubble-emoji").textContent = e.centre.emoji;
+    document.getElementById("bubble-title").textContent = e.centre.title;
+    document.getElementById("bubble-sub").textContent = e.centre.sub;
+    bubble.classList.add("show");
+  }, 150);
+
+  setTimeout(() => {
+    document.getElementById("connector").classList.add("show");
+  }, 400);
+
+  // Build branches
+  const grid = document.getElementById("branch-grid");
+  grid.innerHTML = "";
+  e.branches.forEach((b, i) => {
+    const card = document.createElement("div");
+    card.className = "branch-card";
+    card.onclick = () => toggleBranch(card);
+
+    let bodyHTML = "";
+    if (b.html) {
+      bodyHTML = b.content;
+    } else {
+      bodyHTML = '<ul class="leaf-list">';
+      b.facts.forEach(f => { bodyHTML += "<li>" + f + "</li>"; });
+      bodyHTML += "</ul>";
+    }
+
+    card.innerHTML =
+      '<div class="branch-header">' +
+        '<span class="branch-emoji">' + b.emoji + '</span>' +
+        '<span class="branch-title">' + b.title + '</span>' +
+        '<span class="branch-arrow">\u25BC</span>' +
+      '</div>' +
+      '<div class="branch-body"><hr>' + bodyHTML + '</div>';
+
+    grid.appendChild(card);
+
+    // Staggered entrance
+    setTimeout(() => card.classList.add("show"), 500 + i * 100);
+  });
+
+  document.getElementById("hint-text").style.display = "block";
+}
+
+let allExpanded = false;
+function wysAlles() {
+  const cards = document.querySelectorAll(".branch-card");
+  const btn = document.getElementById("wysAllesBtn");
+  if (!allExpanded) {
+    cards.forEach(c => c.classList.add("expanded"));
+    btn.textContent = "📕 Vou Alles In";
+    allExpanded = true;
+  } else {
+    cards.forEach(c => c.classList.remove("expanded"));
+    btn.textContent = "📖 Wys Alles";
+    allExpanded = false;
+  }
+  document.getElementById("hint-text").style.display = allExpanded ? "none" : "block";
+}
+
+function toggleBranch(card) {
+  const wasExpanded = card.classList.contains("expanded");
+  // Collapse all
+  document.querySelectorAll(".branch-card.expanded").forEach(c => c.classList.remove("expanded"));
+  // Expand clicked (if not already open)
+  if (!wasExpanded) {
+    card.classList.add("expanded");
+    setTimeout(() => {
+      card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }, 100);
+  }
+  document.getElementById("hint-text").style.display = "none";
+}
+
+buildTabs();
+
+// Deep-link support: #habitats, #interafhanklikheid, #skelette, #voedselkettings, #lewensiklusse
+(function(){
+  const h = window.location.hash.slice(1);
+  const idx = h ? eenhede.findIndex(e => e.id === h) : -1;
+  selectEenheid(idx >= 0 ? idx : 0);
+})();
+</script>
+</body>
+</html>

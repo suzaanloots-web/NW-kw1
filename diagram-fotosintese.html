@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="af">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fotosintese — Hoe Plante Kos Maak</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #e8f4f0;
+    font-family: 'Nunito', sans-serif;
+    color: #1a2a3a;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* TOP NAV */
+  .top-nav {
+    display: flex;
+    gap: 0.3rem;
+    padding: 0.5rem 0.8rem;
+    background: linear-gradient(135deg, #1a3a5a, #1a4a6a);
+    justify-content: center;
+    flex-wrap: wrap;
+    border-bottom: 2px solid #2a7a4a;
+  }
+  .top-nav a, .top-nav span {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.35rem 0.7rem;
+    border-radius: 16px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.25s;
+  }
+  .top-nav a {
+    background: rgba(255,255,255,0.1);
+    color: #c0e8d8;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .top-nav a:hover {
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+  }
+  .top-nav span.nav-active {
+    background: #2a7a4a;
+    color: #fff;
+    border: 1px solid #2a7a4a;
+  }
+
+  /* HEADER */
+  .page-header {
+    text-align: center;
+    padding: 1.2rem 1rem 0.6rem;
+    background: linear-gradient(180deg, #d0eee4, #e8f4f0);
+  }
+  .page-header h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #1a3a5a;
+    margin-bottom: 0.3rem;
+  }
+  .page-header p {
+    font-size: 0.95rem;
+    color: #2a7a4a;
+    font-weight: 600;
+  }
+
+  /* MODE TABS */
+  .mode-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1rem;
+    flex-wrap: wrap;
+  }
+  .mode-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 0.5rem 1.2rem;
+    border-radius: 20px;
+    border: 2px solid #1a3a5a;
+    background: #fff;
+    color: #1a3a5a;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .mode-btn:hover { background: #d0eee4; }
+  .mode-btn.active {
+    background: #1a3a5a;
+    color: #fff;
+    border-color: #1a3a5a;
+  }
+
+  /* MAIN LAYOUT */
+  .main-area {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 1rem 2rem;
+  }
+
+  /* SVG CONTAINER */
+  .svg-wrap {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+  .svg-wrap svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.6rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    margin-bottom: 1rem;
+    font-weight: 700;
+    color: #1a3a5a;
+    font-size: 0.9rem;
+  }
+  .progress-fill {
+    height: 10px;
+    background: #2a7a4a;
+    border-radius: 5px;
+    transition: width 0.4s;
+  }
+  .progress-track {
+    flex: 1;
+    max-width: 200px;
+    height: 10px;
+    background: #d0eee4;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  /* INFO PANEL (Ontdek mode) */
+  .info-panel {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 3px 14px rgba(0,0,0,0.08);
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid #2a7a4a;
+    display: none;
+  }
+  .info-panel.show { display: block; animation: fadeSlide 0.3s ease; }
+  .info-panel h3 { color: #1a3a5a; font-size: 1.05rem; margin-bottom: 0.4rem; }
+  .info-panel p { font-size: 0.92rem; line-height: 1.55; color: #333; }
+  .info-close {
+    float: right; background: none; border: none; font-size: 1.2rem;
+    cursor: pointer; color: #999; font-weight: 700;
+  }
+
+  /* INGREDIENT CHECKLIST */
+  .checklist {
+    display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;
+    padding: 0.6rem; background: #fff; border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 1rem;
+  }
+  .check-item {
+    padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.82rem;
+    font-weight: 700; border: 2px solid #ccc; color: #888; background: #f8f8f8;
+    transition: all 0.3s;
+  }
+  .check-item.found {
+    border-color: #2a7a4a; color: #2a7a4a; background: #e0f5e8;
+  }
+
+  /* LEER MODE */
+  .leer-controls {
+    display: none; align-items: center; justify-content: center; gap: 0.8rem;
+    padding: 0.8rem; flex-wrap: wrap;
+  }
+  .leer-controls.show { display: flex; }
+  .leer-btn {
+    font-family: 'Nunito', sans-serif; font-size: 0.85rem; font-weight: 700;
+    padding: 0.5rem 1.2rem; border-radius: 20px; border: 2px solid #1a3a5a;
+    background: #1a3a5a; color: #fff; cursor: pointer; transition: all 0.2s;
+  }
+  .leer-btn:hover { background: #2a5a7a; }
+  .leer-btn:disabled { opacity: 0.4; cursor: default; }
+  .leer-text {
+    background: #fff; border-radius: 14px; box-shadow: 0 3px 14px rgba(0,0,0,0.08);
+    padding: 1rem 1.4rem; margin-bottom: 1rem; display: none; border-left: 4px solid #1a3a5a;
+  }
+  .leer-text.show { display: block; animation: fadeSlide 0.3s ease; }
+  .leer-text h3 { color: #1a3a5a; margin-bottom: 0.3rem; font-size: 1rem; }
+  .leer-text p { font-size: 0.92rem; line-height: 1.55; }
+  .mnemonic {
+    background: #fef9e7; border: 2px dashed #e6a800; border-radius: 10px;
+    padding: 0.6rem 1rem; margin-top: 0.6rem; font-size: 0.85rem;
+    font-weight: 700; color: #8a6d00;
+  }
+
+  /* TOETS MODE */
+  .toets-area { display: none; }
+  .toets-area.show { display: block; }
+  .quiz-card {
+    background: #fff; border-radius: 14px; box-shadow: 0 3px 14px rgba(0,0,0,0.08);
+    padding: 1.2rem 1.4rem; margin-bottom: 1rem;
+  }
+  .quiz-card h3 { color: #1a3a5a; font-size: 1rem; margin-bottom: 0.8rem; }
+  .quiz-option {
+    display: block; width: 100%; text-align: left; font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem; font-weight: 600; padding: 0.6rem 1rem; margin-bottom: 0.4rem;
+    border-radius: 10px; border: 2px solid #d0dde8; background: #f8fbfe;
+    cursor: pointer; transition: all 0.2s; color: #1a3a5a;
+  }
+  .quiz-option:hover { border-color: #1a3a5a; background: #e8f0f8; }
+  .quiz-option.correct { border-color: #2a7a4a; background: #e0f5e8; color: #1a5a2a; }
+  .quiz-option.wrong { border-color: #c0392b; background: #fde8e8; color: #8a2020; }
+  .quiz-option:disabled { cursor: default; opacity: 0.85; }
+  .quiz-feedback {
+    margin-top: 0.5rem; font-weight: 700; font-size: 0.9rem; min-height: 1.4em;
+  }
+  .score-bar {
+    text-align: center; padding: 1rem; background: #fff; border-radius: 14px;
+    box-shadow: 0 3px 14px rgba(0,0,0,0.08); font-size: 1.1rem; font-weight: 800;
+    color: #1a3a5a;
+  }
+  .score-bar .score-num { color: #2a7a4a; font-size: 1.4rem; }
+
+  /* SVG INTERACTIVE PARTS */
+  .svg-clickable { cursor: pointer; transition: filter 0.3s, opacity 0.3s; }
+  .svg-clickable:hover { filter: brightness(1.1) drop-shadow(0 0 6px rgba(42,122,74,0.4)); }
+  .svg-dimmed { opacity: 0.15; transition: opacity 0.5s; }
+  .svg-highlight { filter: drop-shadow(0 0 10px rgba(42,122,74,0.6)); }
+
+  /* ANIMATIONS */
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes rainFall {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(40px); opacity: 0; }
+  }
+  @keyframes sunPulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+  }
+  @keyframes arrowDraw {
+    from { stroke-dashoffset: 200; }
+    to { stroke-dashoffset: 0; }
+  }
+  .rain-drop { animation: rainFall 1.2s linear infinite; }
+  .sun-ray { animation: sunPulse 2s ease-in-out infinite; }
+  .arrow-animated {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    animation: arrowDraw 1s ease forwards;
+  }
+
+  @media (max-width: 600px) {
+    .page-header h1 { font-size: 1.2rem; }
+    .mode-btn { font-size: 0.8rem; padding: 0.4rem 0.9rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top-nav">
+  <a href="index.html">&#x1F4CB; Studiegids</a>
+  <a href="flitskaarte.html">&#x1F0CF; Flitskaarte</a>
+  <a href="breinkaart.html">&#x1F9E0; Breinkaart</a>
+  <a href="vergelyk.html">&#x2696;&#xFE0F; Vergelyk</a>
+  <a href="prosesse.html">&#x1F504; Prosesse</a>
+  <a href="habitats.html">&#x1F30D; Habitats</a>
+  <span class="nav-active">&#x1F33F; Fotosintese</span>
+</nav>
+
+<!-- HEADER -->
+<div class="page-header">
+  <h1>&#x1F33F; Fotosintese &mdash; Hoe Plante Kos Maak</h1>
+  <p>Klik, leer en toets jou kennis oor hoe plante hul eie voedsel vervaardig</p>
+</div>
+
+<!-- MODE TABS -->
+<div class="mode-tabs">
+  <button class="mode-btn active" onclick="setMode('ontdek')">&#x1F50D; Ontdek</button>
+  <button class="mode-btn" onclick="setMode('leer')">&#x1F4A1; Leer</button>
+  <button class="mode-btn" onclick="setMode('toets')">&#x1F3AF; Toets</button>
+</div>
+
+<div class="main-area">
+
+  <!-- PROGRESS (Ontdek) -->
+  <div class="progress-bar" id="ontdekProgress">
+    <span id="progressText">0 / 6 ontdek</span>
+    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+
+  <!-- CHECKLIST (Ontdek) -->
+  <div class="checklist" id="checklist">
+    <div class="check-item" id="chk-sonlig">&#x2610; Sonlig</div>
+    <div class="check-item" id="chk-water">&#x2610; Water</div>
+    <div class="check-item" id="chk-lug">&#x2610; Lug (CO&#x2082;)</div>
+    <div class="check-item" id="chk-voedingstowwe">&#x2610; Voedingstowwe</div>
+  </div>
+
+  <!-- SVG SCENE -->
+  <div class="svg-wrap">
+    <svg id="sceneSvg" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="sunGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#fff176"/>
+          <stop offset="40%" stop-color="#ffca28"/>
+          <stop offset="100%" stop-color="#ff8f00"/>
+        </radialGradient>
+        <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#87ceeb"/>
+          <stop offset="70%" stop-color="#b6e3f4"/>
+          <stop offset="100%" stop-color="#d4f0f8"/>
+        </linearGradient>
+        <linearGradient id="soilGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#8B6914"/>
+          <stop offset="40%" stop-color="#6B4F12"/>
+          <stop offset="100%" stop-color="#4a3510"/>
+        </linearGradient>
+        <linearGradient id="stemGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#2d7a2d"/>
+          <stop offset="50%" stop-color="#3a9a3a"/>
+          <stop offset="100%" stop-color="#2d7a2d"/>
+        </linearGradient>
+        <linearGradient id="leafGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#4caf50"/>
+          <stop offset="50%" stop-color="#388e3c"/>
+          <stop offset="100%" stop-color="#2e7d32"/>
+        </linearGradient>
+        <radialGradient id="tomatoGrad" cx="40%" cy="35%" r="55%">
+          <stop offset="0%" stop-color="#ff6659"/>
+          <stop offset="60%" stop-color="#e53935"/>
+          <stop offset="100%" stop-color="#b71c1c"/>
+        </radialGradient>
+        <linearGradient id="cloudGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#eceff1"/>
+          <stop offset="100%" stop-color="#90a4ae"/>
+        </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <marker id="arrowHead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#1a3a5a"/>
+        </marker>
+        <marker id="arrowHeadGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#2a7a4a"/>
+        </marker>
+      </defs>
+
+      <!-- SKY -->
+      <rect x="0" y="0" width="800" height="440" fill="url(#skyGrad)"/>
+
+      <!-- SOIL -->
+      <rect x="0" y="440" width="800" height="160" fill="url(#soilGrad)"/>
+      <!-- soil texture -->
+      <g opacity="0.3">
+        <circle cx="50" cy="470" r="3" fill="#3a2510"/><circle cx="150" cy="490" r="2.5" fill="#3a2510"/>
+        <circle cx="280" cy="465" r="2" fill="#3a2510"/><circle cx="400" cy="500" r="3" fill="#3a2510"/>
+        <circle cx="520" cy="475" r="2" fill="#3a2510"/><circle cx="650" cy="495" r="2.5" fill="#3a2510"/>
+        <circle cx="730" cy="460" r="2" fill="#3a2510"/><circle cx="100" cy="520" r="3" fill="#3a2510"/>
+        <circle cx="350" cy="540" r="2" fill="#3a2510"/><circle cx="600" cy="530" r="2.5" fill="#3a2510"/>
+      </g>
+
+      <!-- SUN -->
+      <g id="el-son" class="svg-clickable" data-el="son">
+        <!-- rays -->
+        <g class="sun-ray">
+          <line x1="670" y1="90" x2="670" y2="30" stroke="#ffca28" stroke-width="3" stroke-linecap="round"/>
+          <line x1="670" y1="90" x2="730" y2="50" stroke="#ffca28" stroke-width="3" stroke-linecap="round"/>
+          <line x1="670" y1="90" x2="740" y2="90" stroke="#ffca28" stroke-width="3" stroke-linecap="round"/>
+          <line x1="670" y1="90" x2="730" y2="130" stroke="#ffca28" stroke-width="3" stroke-linecap="round"/>
+          <line x1="670" y1="90" x2="670" y2="150" stroke="#ffca28" stroke-width="3" stroke-linecap="round"/>
+          <line x1="670" y1="90" x2="610" y2="50" stroke="#ffca28" stroke-width="3" stroke-linecap="round"/>
+          <line x1="670" y1="90" x2="600" y2="90" stroke="#ffca28" stroke-width="3" stroke-linecap="round"/>
+          <line x1="670" y1="90" x2="610" y2="130" stroke="#ffca28" stroke-width="3" stroke-linecap="round"/>
+        </g>
+        <!-- outer glow -->
+        <circle cx="670" cy="90" r="52" fill="#ffca28" opacity="0.25"/>
+        <!-- sun body -->
+        <circle cx="670" cy="90" r="40" fill="url(#sunGrad)" stroke="#ff8f00" stroke-width="2"/>
+        <!-- face (cute for kids) -->
+        <circle cx="658" cy="84" r="4" fill="#e65100"/>
+        <circle cx="682" cy="84" r="4" fill="#e65100"/>
+        <path d="M656 98 Q670 110 684 98" stroke="#e65100" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      </g>
+
+      <!-- CLOUD + RAIN -->
+      <g id="el-wolk" class="svg-clickable" data-el="wolk">
+        <ellipse cx="160" cy="75" rx="60" ry="32" fill="url(#cloudGrad)"/>
+        <ellipse cx="130" cy="68" rx="35" ry="25" fill="#cfd8dc"/>
+        <ellipse cx="190" cy="70" rx="38" ry="24" fill="#cfd8dc"/>
+        <ellipse cx="155" cy="55" rx="30" ry="22" fill="#e8eced"/>
+        <!-- rain drops -->
+        <g>
+          <line x1="130" y1="100" x2="128" y2="112" stroke="#4fc3f7" stroke-width="2.5" stroke-linecap="round" class="rain-drop"/>
+          <line x1="150" y1="105" x2="148" y2="117" stroke="#4fc3f7" stroke-width="2.5" stroke-linecap="round" class="rain-drop" style="animation-delay:0.3s"/>
+          <line x1="170" y1="100" x2="168" y2="112" stroke="#4fc3f7" stroke-width="2.5" stroke-linecap="round" class="rain-drop" style="animation-delay:0.6s"/>
+          <line x1="145" y1="108" x2="143" y2="120" stroke="#4fc3f7" stroke-width="2" stroke-linecap="round" class="rain-drop" style="animation-delay:0.15s"/>
+          <line x1="165" y1="104" x2="163" y2="116" stroke="#4fc3f7" stroke-width="2" stroke-linecap="round" class="rain-drop" style="animation-delay:0.45s"/>
+          <line x1="185" y1="102" x2="183" y2="114" stroke="#4fc3f7" stroke-width="2" stroke-linecap="round" class="rain-drop" style="animation-delay:0.75s"/>
+        </g>
+      </g>
+
+      <!-- CO2 text in air -->
+      <g id="el-lug" class="svg-clickable" data-el="lug">
+        <rect x="70" y="175" rx="8" ry="8" width="80" height="30" fill="rgba(255,255,255,0.7)" stroke="#78909c" stroke-width="1"/>
+        <text x="110" y="196" text-anchor="middle" font-size="14" font-weight="700" fill="#546e7a" font-family="Nunito, sans-serif">CO&#x2082; (Lug)</text>
+      </g>
+
+      <!-- O2 output -->
+      <g id="el-suurstof" class="svg-clickable" data-el="suurstof" opacity="0.85">
+        <rect x="540" y="220" rx="8" ry="8" width="65" height="28" fill="rgba(200,240,255,0.8)" stroke="#0288d1" stroke-width="1"/>
+        <text x="572" y="240" text-anchor="middle" font-size="13" font-weight="700" fill="#0277bd" font-family="Nunito, sans-serif">O&#x2082; &#x2192;</text>
+      </g>
+
+      <!-- PLANT - ROOTS -->
+      <g id="el-wortels" class="svg-clickable" data-el="wortels">
+        <!-- main root -->
+        <path d="M400 440 L400 510" stroke="#5d4037" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <!-- side roots -->
+        <path d="M400 460 Q360 480 330 505" stroke="#5d4037" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M400 460 Q440 480 470 505" stroke="#5d4037" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M400 480 Q350 495 310 530" stroke="#5d4037" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M400 480 Q450 495 490 530" stroke="#5d4037" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M400 495 Q370 510 350 545" stroke="#5d4037" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M400 495 Q430 510 450 545" stroke="#5d4037" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <!-- tiny root hairs -->
+        <path d="M330 505 Q315 515 305 525" stroke="#6d5037" stroke-width="1.5" fill="none"/>
+        <path d="M470 505 Q485 515 495 525" stroke="#6d5037" stroke-width="1.5" fill="none"/>
+        <path d="M310 530 Q295 540 290 548" stroke="#6d5037" stroke-width="1.5" fill="none"/>
+        <path d="M490 530 Q505 540 510 548" stroke="#6d5037" stroke-width="1.5" fill="none"/>
+      </g>
+
+      <!-- SOIL label region (clickable) -->
+      <g id="el-grond" class="svg-clickable" data-el="grond">
+        <rect x="0" y="440" width="800" height="160" fill="transparent"/>
+      </g>
+
+      <!-- PLANT - STEM -->
+      <g id="el-stam">
+        <path d="M400 440 L400 260" stroke="url(#stemGrad)" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <!-- side branches -->
+        <path d="M400 300 Q360 280 330 250" stroke="#3a9a3a" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M400 300 Q440 280 470 250" stroke="#3a9a3a" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M400 350 Q355 335 310 320" stroke="#3a9a3a" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M400 350 Q445 335 490 320" stroke="#3a9a3a" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M400 390 Q365 380 340 375" stroke="#3a9a3a" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M400 390 Q435 380 460 375" stroke="#3a9a3a" stroke-width="4" fill="none" stroke-linecap="round"/>
+      </g>
+
+      <!-- PLANT - LEAVES -->
+      <g id="el-blare" class="svg-clickable" data-el="blare">
+        <!-- top leaves -->
+        <ellipse cx="370" cy="240" rx="40" ry="18" fill="url(#leafGrad)" transform="rotate(-25 370 240)"/>
+        <line x1="350" y1="248" x2="390" y2="232" stroke="#1b5e20" stroke-width="1" opacity="0.5"/>
+        <line x1="360" y1="235" x2="365" y2="250" stroke="#1b5e20" stroke-width="0.7" opacity="0.4"/>
+        <line x1="380" y1="230" x2="375" y2="248" stroke="#1b5e20" stroke-width="0.7" opacity="0.4"/>
+
+        <ellipse cx="435" cy="238" rx="38" ry="17" fill="url(#leafGrad)" transform="rotate(20 435 238)"/>
+        <line x1="415" y1="230" x2="455" y2="245" stroke="#1b5e20" stroke-width="1" opacity="0.5"/>
+        <line x1="425" y1="244" x2="430" y2="228" stroke="#1b5e20" stroke-width="0.7" opacity="0.4"/>
+        <line x1="445" y1="247" x2="440" y2="230" stroke="#1b5e20" stroke-width="0.7" opacity="0.4"/>
+
+        <!-- mid-left leaf -->
+        <ellipse cx="300" cy="305" rx="38" ry="16" fill="url(#leafGrad)" transform="rotate(-15 300 305)"/>
+        <line x1="280" y1="310" x2="320" y2="300" stroke="#1b5e20" stroke-width="1" opacity="0.5"/>
+        <line x1="290" y1="298" x2="295" y2="314" stroke="#1b5e20" stroke-width="0.7" opacity="0.4"/>
+        <line x1="310" y1="296" x2="305" y2="313" stroke="#1b5e20" stroke-width="0.7" opacity="0.4"/>
+
+        <!-- mid-right leaf -->
+        <ellipse cx="500" cy="308" rx="38" ry="16" fill="url(#leafGrad)" transform="rotate(15 500 308)"/>
+        <line x1="480" y1="300" x2="520" y2="315" stroke="#1b5e20" stroke-width="1" opacity="0.5"/>
+        <line x1="490" y1="315" x2="495" y2="298" stroke="#1b5e20" stroke-width="0.7" opacity="0.4"/>
+        <line x1="510" y1="318" x2="505" y2="300" stroke="#1b5e20" stroke-width="0.7" opacity="0.4"/>
+
+        <!-- lower leaves -->
+        <ellipse cx="330" cy="365" rx="30" ry="14" fill="url(#leafGrad)" transform="rotate(-10 330 365)"/>
+        <line x1="315" y1="369" x2="345" y2="361" stroke="#1b5e20" stroke-width="0.7" opacity="0.4"/>
+
+        <ellipse cx="470" cy="367" rx="30" ry="14" fill="url(#leafGrad)" transform="rotate(10 470 367)"/>
+        <line x1="455" y1="361" x2="485" y2="373" stroke="#1b5e20" stroke-width="0.7" opacity="0.4"/>
+
+        <!-- top crown leaf -->
+        <ellipse cx="400" cy="248" rx="30" ry="14" fill="#43a047"/>
+        <line x1="385" y1="248" x2="415" y2="248" stroke="#1b5e20" stroke-width="0.8" opacity="0.5"/>
+      </g>
+
+      <!-- PLANT - TOMATOES -->
+      <g id="el-vrugte" class="svg-clickable" data-el="vrugte">
+        <circle cx="340" cy="340" r="14" fill="url(#tomatoGrad)" stroke="#b71c1c" stroke-width="1"/>
+        <path d="M336 327 Q340 323 344 327" stroke="#2e7d32" stroke-width="1.5" fill="none"/>
+
+        <circle cx="470" cy="345" r="13" fill="url(#tomatoGrad)" stroke="#b71c1c" stroke-width="1"/>
+        <path d="M466 333 Q470 329 474 333" stroke="#2e7d32" stroke-width="1.5" fill="none"/>
+
+        <circle cx="420" cy="395" r="12" fill="url(#tomatoGrad)" stroke="#b71c1c" stroke-width="1"/>
+        <path d="M416 384 Q420 380 424 384" stroke="#2e7d32" stroke-width="1.5" fill="none"/>
+
+        <circle cx="365" cy="400" r="11" fill="url(#tomatoGrad)" stroke="#b71c1c" stroke-width="1"/>
+        <path d="M361 390 Q365 386 369 390" stroke="#2e7d32" stroke-width="1.5" fill="none"/>
+      </g>
+
+      <!-- ARROWS & LABELS (Ontdek mode) -->
+      <g id="labelGroup">
+        <!-- Arrow: Sun to leaves -->
+        <path d="M628 110 Q550 160 440 235" stroke="#e6a800" stroke-width="2.5" fill="none" marker-end="url(#arrowHead)" stroke-dasharray="6 3"/>
+        <rect x="480" y="148" rx="6" ry="6" width="175" height="24" fill="rgba(255,255,255,0.85)"/>
+        <text x="488" y="165" font-size="11.5" font-weight="700" fill="#1a3a5a" font-family="Nunito, sans-serif">Die blare absorbeer die sonlig</text>
+
+        <!-- Arrow: CO2 to leaves -->
+        <path d="M150 190 Q220 210 290 260" stroke="#546e7a" stroke-width="2.5" fill="none" marker-end="url(#arrowHead)" stroke-dasharray="6 3"/>
+        <rect x="130" y="218" rx="6" ry="6" width="218" height="36" fill="rgba(255,255,255,0.85)"/>
+        <text x="138" y="234" font-size="10.5" font-weight="600" fill="#1a3a5a" font-family="Nunito, sans-serif">Die blare absorbeer ook die</text>
+        <text x="138" y="248" font-size="10.5" font-weight="600" fill="#1a3a5a" font-family="Nunito, sans-serif">koolstofdioksied uit die lug</text>
+
+        <!-- Label: Leaves make food -->
+        <rect x="505" y="268" rx="6" ry="6" width="195" height="24" fill="rgba(224,245,232,0.9)" stroke="#2a7a4a" stroke-width="1"/>
+        <text x="513" y="285" font-size="11.5" font-weight="700" fill="#2a7a4a" font-family="Nunito, sans-serif">Die groen blare maak die voedsel</text>
+
+        <!-- Arrow: Soil up through roots -->
+        <path d="M400 555 L400 510" stroke="#8B6914" stroke-width="2.5" fill="none" marker-end="url(#arrowHeadGreen)"/>
+        <rect x="220" y="558" rx="6" ry="6" width="285" height="36" fill="rgba(255,255,255,0.85)"/>
+        <text x="228" y="574" font-size="10.5" font-weight="600" fill="#1a3a5a" font-family="Nunito, sans-serif">Die wortels neem die water en</text>
+        <text x="228" y="588" font-size="10.5" font-weight="600" fill="#1a3a5a" font-family="Nunito, sans-serif">voedingstowwe uit die grond op</text>
+
+        <!-- Arrow: O2 output from leaves -->
+        <path d="M510 280 L538 255" stroke="#0288d1" stroke-width="2" fill="none" marker-end="url(#arrowHead)" stroke-dasharray="4 3"/>
+      </g>
+
+    </svg>
+  </div>
+
+  <!-- INFO PANEL (Ontdek popup) -->
+  <div class="info-panel" id="infoPanel">
+    <button class="info-close" onclick="closeInfo()">&times;</button>
+    <h3 id="infoTitle"></h3>
+    <p id="infoText"></p>
+  </div>
+
+  <!-- LEER MODE -->
+  <div class="leer-text" id="leerText">
+    <h3 id="leerTitle"></h3>
+    <p id="leerBody"></p>
+    <div class="mnemonic" id="leerMnemonic" style="display:none"></div>
+  </div>
+  <div class="leer-controls" id="leerControls">
+    <button class="leer-btn" id="leerPrev" onclick="leerStep(-1)">&#x25C0; Vorige</button>
+    <span id="leerCounter" style="font-weight:700;color:#1a3a5a;">Stap 1 / 7</span>
+    <button class="leer-btn" id="leerNext" onclick="leerStep(1)">Volgende &#x25B6;</button>
+  </div>
+
+  <!-- TOETS MODE -->
+  <div class="toets-area" id="toetsArea">
+    <div class="score-bar" id="scoreBar">Vraag <span id="qNum">1</span> / 8 &nbsp;&bull;&nbsp; Telling: <span class="score-num" id="scoreNum">0</span> / 8</div>
+    <div class="quiz-card" id="quizCard" style="margin-top:1rem;">
+      <h3 id="quizQ"></h3>
+      <div id="quizOpts"></div>
+      <div class="quiz-feedback" id="quizFeedback"></div>
+    </div>
+    <div style="text-align:center;margin-top:0.5rem;">
+      <button class="leer-btn" id="nextQBtn" onclick="nextQuestion()" style="display:none;">Volgende vraag &#x25B6;</button>
+    </div>
+    <div class="quiz-card" id="finalResult" style="display:none;text-align:center;">
+      <h3 id="finalTitle"></h3>
+      <p id="finalMsg" style="margin-top:0.5rem;font-size:1rem;"></p>
+      <button class="leer-btn" onclick="resetQuiz()" style="margin-top:1rem;">Probeer weer</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ===== DATA =====
+const infoData = {
+  son: {
+    title: "Die Son (Sonlig)",
+    text: "Groen plante gebruik die ligenergie van die son om voedsel te maak. Sonder sonlig kan plante nie fotosintese doen nie en sal hulle nie groei nie. Die blare absorbeer die sonlig.",
+    checks: ["sonlig"]
+  },
+  wolk: {
+    title: "Water (Reen)",
+    text: "Plante het water nodig om voedsel te maak. Hulle kry water uit die grond deur hul wortels. Water ondersteun ook die plant en vervoer stowwe binne die plant.",
+    checks: ["water"]
+  },
+  lug: {
+    title: "Lug (Koolstofdioksied / CO\u2082)",
+    text: "Plante het 'n gas uit die lug met die naam koolstofdioksied (CO\u2082) nodig om voedsel te vervaardig. Plante neem koolstofdioksied deur hulle blare in.",
+    checks: ["lug"]
+  },
+  blare: {
+    title: "Die Groen Blare",
+    text: "Die groen blare van plante vang die ligenergie van die son op. Die plant gebruik hierdie energie saam met water en koolstofdioksied om voedsel te maak. Die blare is die \"kosfabriek\" van die plant!",
+    checks: ["sonlig", "lug"]
+  },
+  wortels: {
+    title: "Die Wortels",
+    text: "Plante gebruik hulle wortels om water en mineraalsoute (voedingstowwe) uit die grond op te neem. Die wortels anker ook die plant stewig in die grond.",
+    checks: ["water", "voedingstowwe"]
+  },
+  grond: {
+    title: "Die Grond (Voedingstowwe)",
+    text: "Daar is voedingstowwe soos minerale en soute in die grond. Die grond dien ook as 'n anker om die plante stewig te hou. Die wortels neem water en voedingstowwe uit die grond op.",
+    checks: ["voedingstowwe"]
+  },
+  vrugte: {
+    title: "Die Vrugte (Tamaties)",
+    text: "Plante gebruik die voedsel wat hulle maak om te groei en om dele soos stamme, blare, blomme en vrugte te bou. Hierdie tamaties is gemaak met die energie wat die plant vervaardig het!",
+    checks: []
+  },
+  suurstof: {
+    title: "Suurstof (O\u2082)",
+    text: "Plante gee suurstof (O\u2082) af wanneer hulle voedsel maak. Lewende dinge — mense en diere — het suurstof nodig om asem te haal. Sonder plante sou ons nie genoeg suurstof h\u00ea nie!",
+    checks: []
+  }
+};
+
+const leerSteps = [
+  { title: "Stap 1: Plante is Vervaardigers",
+    body: "Groen plante is soos kosfabrieke — hulle is die enigste lewende dinge wat voedsel in hulle liggame kan maak. Daarom noem ons plante <strong>VERVAARDIGERS</strong>.",
+    highlight: ["el-blare","el-stam","el-vrugte","el-wortels"],
+    mnemonic: "Plante = VERVAARDIGERS (hulle maak/vervaardig hul eie kos)" },
+  { title: "Stap 2: Die 4 Bestanddele",
+    body: "Plante het <strong>4 dinge</strong> nodig om voedsel te maak:<br>1. <strong>Sonlig</strong> (energie van die son)<br>2. <strong>Water</strong> (uit die grond)<br>3. <strong>Lug</strong> — koolstofdioksied / CO\u2082<br>4. <strong>Voedingstowwe</strong> (minerale en soute uit die grond)",
+    highlight: ["el-son","el-wolk","el-lug","el-grond"],
+    mnemonic: "SWLV — Sonlig, Water, Lug, Voedingstowwe = 4 bestanddele vir fotosintese" },
+  { title: "Stap 3: Blare absorbeer sonlig en CO\u2082",
+    body: "Die <strong>groen blare</strong> van plante vang die ligenergie van die son op. Die blare absorbeer ook <strong>koolstofdioksied</strong> (CO\u2082) uit die lug.",
+    highlight: ["el-blare","el-son","el-lug"], mnemonic: null },
+  { title: "Stap 4: Wortels absorbeer water en voedingstowwe",
+    body: "Die <strong>wortels</strong> neem water en mineraalsoute (voedingstowwe) uit die <strong>grond</strong> op. Die wortels anker ook die plant stewig.",
+    highlight: ["el-wortels","el-grond"], mnemonic: null },
+  { title: "Stap 5: Die groen blare maak die voedsel",
+    body: "Die plant gebruik die sonlig-energie saam met water en koolstofdioksied om <strong>voedsel te maak</strong>. Hierdie proses gebeur in die groen blare en word <strong>fotosintese</strong> genoem.",
+    highlight: ["el-blare"], mnemonic: null },
+  { title: "Stap 6: Plante gee suurstof af",
+    body: "Wanneer plante voedsel maak, gee hulle ook <strong>suurstof</strong> (O\u2082) af. Mense en diere het suurstof nodig om asem te haal. Plante is dus baie belangrik vir alle lewe!",
+    highlight: ["el-blare","el-suurstof"], mnemonic: null },
+  { title: "Stap 7: Diere is Verbruikers",
+    body: "Diere kan <strong>NIE</strong> hulle eie voedsel maak nie — hulle moet plante of ander diere eet om aan die lewe te bly. Ons noem diere <strong>VERBRUIKERS</strong>.",
+    highlight: ["el-vrugte"],
+    mnemonic: "Plante = VERVAARDIGERS (maak kos) | Diere = VERBRUIKERS (eet kos)" }
+];
+
+const quizData = [
+  { q: "Wat absorbeer die blare uit die lug?", opts: ["Suurstof","Koolstofdioksied","Stikstof","Waterstof"], ans: 1 },
+  { q: "Wat neem die wortels uit die grond op?", opts: ["Sonlig en lug","Koolstofdioksied","Water en voedingstowwe","Suurstof"], ans: 2 },
+  { q: "Hoeveel dinge het plante nodig om kos te maak?",  opts: ["2","3","4","5"], ans: 2 },
+  { q: "Hoekom noem ons plante vervaardigers?", opts: ["Hulle eet ander plante","Hulle maak hul eie voedsel","Hulle koop kos","Hulle kry kos van diere"], ans: 1 },
+  { q: "Wat gee plante af wat mense nodig het om asem te haal?", opts: ["Koolstofdioksied","Water","Suurstof","Stikstof"], ans: 2 },
+  { q: "Kan diere hul eie kos maak?", opts: ["Ja, altyd","Net sommige diere","Nee, nooit nie","Net in die somer"], ans: 2 },
+  { q: "Watter deel van die plant maak die voedsel?", opts: ["Die wortels","Die stam","Die groen blare","Die vrugte"], ans: 2 },
+  { q: "Waar kry die plant water?", opts: ["Uit die lug","Uit die son","Uit die grond via die wortels","Uit die blare"], ans: 2 }
+];
+
+// ===== STATE =====
+let mode = 'ontdek';
+let discovered = new Set();
+let leerIdx = 0;
+let quizIdx = 0;
+let score = 0;
+let answered = false;
+
+// ===== MODE SWITCHING =====
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.mode-btn').forEach((b,i) => {
+    b.classList.toggle('active', ['ontdek','leer','toets'][i] === m);
+  });
+
+  // visibility
+  const show = (id, v) => { const e = document.getElementById(id); if(e) e.style.display = v ? '' : 'none'; };
+  const showC = (id, v) => { const e = document.getElementById(id); if(e) e.classList.toggle('show', v); };
+
+  show('ontdekProgress', m==='ontdek');
+  show('checklist', m==='ontdek');
+  show('labelGroup', m!=='toets');
+  showC('infoPanel', false);
+  showC('leerText', m==='leer');
+  showC('leerControls', false);
+  document.getElementById('leerControls').classList.toggle('show', m==='leer');
+  showC('toetsArea', false);
+  document.getElementById('toetsArea').classList.toggle('show', m==='toets');
+
+  // reset SVG dims
+  resetSvgDim();
+
+  if (m === 'ontdek') updateOntdek();
+  if (m === 'leer') { leerIdx = 0; renderLeer(); }
+  if (m === 'toets') { resetQuiz(); }
+}
+
+function resetSvgDim() {
+  const allEls = ['el-son','el-wolk','el-lug','el-suurstof','el-blare','el-wortels','el-grond','el-vrugte','el-stam'];
+  allEls.forEach(id => {
+    const e = document.getElementById(id);
+    if(e) { e.classList.remove('svg-dimmed','svg-highlight'); }
+  });
+}
+
+// ===== ONTDEK MODE =====
+const svgEl = document.getElementById('sceneSvg');
+svgEl.addEventListener('click', function(e) {
+  if (mode !== 'ontdek') return;
+  const t = e.target.closest('.svg-clickable');
+  if (!t) return;
+  const key = t.dataset.el;
+  if (!key || !infoData[key]) return;
+
+  discovered.add(key);
+  const d = infoData[key];
+  d.checks.forEach(c => {
+    const el = document.getElementById('chk-' + c);
+    if (el && !el.classList.contains('found')) {
+      el.classList.add('found');
+      el.innerHTML = '\u2611 ' + el.textContent.substring(2);
+    }
+  });
+
+  document.getElementById('infoTitle').textContent = d.title;
+  document.getElementById('infoText').textContent = d.text;
+  document.getElementById('infoPanel').classList.add('show');
+  updateOntdek();
+});
+
+function closeInfo() { document.getElementById('infoPanel').classList.remove('show'); }
+
+function updateOntdek() {
+  const n = discovered.size;
+  const max = 6;
+  document.getElementById('progressText').textContent = n + ' / ' + max + ' ontdek';
+  document.getElementById('progressFill').style.width = (n/max*100) + '%';
+}
+
+// ===== LEER MODE =====
+function renderLeer() {
+  const s = leerSteps[leerIdx];
+  document.getElementById('leerTitle').textContent = s.title;
+  document.getElementById('leerBody').innerHTML = s.body;
+  const mn = document.getElementById('leerMnemonic');
+  if (s.mnemonic) { mn.style.display = 'block'; mn.textContent = '\uD83D\uDCA1 ' + s.mnemonic; }
+  else { mn.style.display = 'none'; }
+
+  document.getElementById('leerText').classList.add('show');
+  document.getElementById('leerCounter').textContent = 'Stap ' + (leerIdx+1) + ' / ' + leerSteps.length;
+  document.getElementById('leerPrev').disabled = leerIdx === 0;
+  document.getElementById('leerNext').disabled = leerIdx === leerSteps.length - 1;
+
+  // highlight SVG
+  const allEls = ['el-son','el-wolk','el-lug','el-suurstof','el-blare','el-wortels','el-grond','el-vrugte','el-stam'];
+  allEls.forEach(id => {
+    const e = document.getElementById(id);
+    if (!e) return;
+    if (s.highlight.includes(id)) {
+      e.classList.remove('svg-dimmed');
+      e.classList.add('svg-highlight');
+    } else {
+      e.classList.add('svg-dimmed');
+      e.classList.remove('svg-highlight');
+    }
+  });
+}
+
+function leerStep(dir) {
+  leerIdx = Math.max(0, Math.min(leerSteps.length-1, leerIdx + dir));
+  renderLeer();
+}
+
+// ===== TOETS MODE =====
+function resetQuiz() {
+  quizIdx = 0; score = 0; answered = false;
+  document.getElementById('finalResult').style.display = 'none';
+  document.getElementById('quizCard').style.display = 'block';
+  document.getElementById('scoreBar').style.display = 'block';
+  renderQuiz();
+}
+
+function renderQuiz() {
+  const q = quizData[quizIdx];
+  document.getElementById('qNum').textContent = quizIdx + 1;
+  document.getElementById('scoreNum').textContent = score;
+  document.getElementById('quizQ').textContent = (quizIdx+1) + '. ' + q.q;
+  document.getElementById('quizFeedback').textContent = '';
+  document.getElementById('nextQBtn').style.display = 'none';
+  answered = false;
+
+  const c = document.getElementById('quizOpts');
+  c.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-option';
+    btn.textContent = o;
+    btn.onclick = () => answerQuiz(i);
+    c.appendChild(btn);
+  });
+}
+
+function answerQuiz(idx) {
+  if (answered) return;
+  answered = true;
+  const q = quizData[quizIdx];
+  const btns = document.querySelectorAll('#quizOpts .quiz-option');
+  btns.forEach((b, i) => {
+    b.disabled = true;
+    if (i === q.ans) b.classList.add('correct');
+    if (i === idx && idx !== q.ans) b.classList.add('wrong');
+  });
+  const fb = document.getElementById('quizFeedback');
+  if (idx === q.ans) {
+    score++;
+    fb.textContent = '\u2705 Korrek! Goed gedoen!';
+    fb.style.color = '#2a7a4a';
+  } else {
+    fb.textContent = '\u274C Nie heeltemal nie. Die regte antwoord is: ' + q.opts[q.ans];
+    fb.style.color = '#c0392b';
+  }
+  document.getElementById('scoreNum').textContent = score;
+
+  if (quizIdx < quizData.length - 1) {
+    document.getElementById('nextQBtn').style.display = 'inline-block';
+  } else {
+    setTimeout(showFinal, 1200);
+  }
+}
+
+function nextQuestion() {
+  quizIdx++;
+  renderQuiz();
+}
+
+function showFinal() {
+  document.getElementById('quizCard').style.display = 'none';
+  document.getElementById('nextQBtn').style.display = 'none';
+  const pct = Math.round(score / quizData.length * 100);
+  let title, msg;
+  if (pct === 100) { title = '\uD83C\uDF1F Perfek! 8/8!'; msg = 'Jy verstaan fotosintese uitstekend! Jy is \'n ware wetenskaplike!'; }
+  else if (pct >= 75) { title = '\uD83C\uDF89 Baie goed! ' + score + '/8'; msg = 'Jy ken fotosintese goed. Hersien net die dele wat jy gemis het.'; }
+  else if (pct >= 50) { title = '\uD83D\uDC4D Goeie poging! ' + score + '/8'; msg = 'Gaan terug na die Leer-modus en hersien die stappe weer.'; }
+  else { title = '\uD83D\uDCDA Hou aan leer! ' + score + '/8'; msg = 'Geen probleem nie — gebruik die Leer-modus om die konsepte te hersien, en probeer dan weer.'; }
+  document.getElementById('finalTitle').textContent = title;
+  document.getElementById('finalMsg').textContent = msg;
+  document.getElementById('finalResult').style.display = 'block';
+}
+
+// Init
+setMode('ontdek');
+</script>
+</body>
+</html>

@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="af">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Habitats — Interaktiewe Ontdekker</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #e8f4f0;
+    font-family: 'Nunito', sans-serif;
+    color: #1a2a3a;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* TOP NAV */
+  .top-nav {
+    display: flex;
+    gap: 0.3rem;
+    padding: 0.5rem 0.8rem;
+    background: linear-gradient(135deg, #1a3a5a, #1a4a6a);
+    justify-content: center;
+    flex-wrap: wrap;
+    border-bottom: 2px solid #2a7a4a;
+  }
+  .top-nav a, .top-nav span {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.35rem 0.7rem;
+    border-radius: 16px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.25s;
+  }
+  .top-nav a {
+    background: rgba(255,255,255,0.1);
+    color: #c0e8d8;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .top-nav a:hover {
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+  }
+  .top-nav span.nav-active {
+    background: #2a7a4a;
+    color: #fff;
+    border: 1px solid #2a7a4a;
+    box-shadow: 0 2px 8px rgba(42,122,74,0.4);
+  }
+
+  header {
+    background: linear-gradient(135deg, #1a3a5a, #2a5a7a);
+    color: #e0f5ea;
+    padding: 1rem 1.2rem;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+    border-bottom: 3px solid #2a7a4a;
+  }
+  header h1 { font-size: 1.3rem; font-weight: 800; }
+  header p { font-size: 0.75rem; opacity: 0.7; margin-top: 0.2rem; }
+
+  /* MODE TABS */
+  .mode-bar {
+    display: flex;
+    gap: 0.4rem;
+    padding: 0.6rem 0.8rem;
+    background: #d0eae0;
+    border-bottom: 2px solid #b0d8c8;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .mode-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.5rem 1.2rem;
+    border-radius: 20px;
+    border: 2px solid #5a9a7a;
+    background: #fff;
+    color: #1a3a5a;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .mode-btn:hover { background: #e0f5ea; }
+  .mode-btn.active {
+    background: #2a7a4a;
+    color: #fff;
+    border-color: #2a7a4a;
+  }
+
+  main {
+    max-width: 950px;
+    margin: 0 auto;
+    padding: 1.2rem;
+  }
+
+  /* ===== EXPLORE MODE ===== */
+  .explore-section { display: block; }
+
+  .explore-intro {
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #4a7a6a;
+    margin-bottom: 1rem;
+  }
+
+  /* PROGRESS ROW */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .prog-dot {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #c0d8c8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+    cursor: pointer;
+    filter: grayscale(100%) opacity(0.5);
+  }
+  .prog-dot.found {
+    background: #2a7a4a;
+    color: #fff;
+    font-size: 0.95rem;
+    filter: none;
+  }
+  .prog-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #4a7a6a;
+  }
+
+  /* HABITAT CARDS GRID */
+  .habitat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.8rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .hab-card {
+    background: linear-gradient(145deg, #ffffff, #e8f5f0);
+    border-radius: 16px;
+    padding: 1.2rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    border: 3px solid #b0d8c8;
+  }
+  .hab-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(42,122,74,0.25);
+    border-color: #2a7a4a;
+  }
+  .hab-card.active {
+    border-color: #2a7a4a;
+    background: linear-gradient(145deg, #d8f5e8, #c8ead8);
+    transform: translateY(-4px);
+    box-shadow: 0 0 20px rgba(42,122,74,0.35);
+  }
+  .hab-card.discovered {
+    border-color: #2a7a4a;
+    background: linear-gradient(145deg, #e0f8f0, #d5f0e8);
+  }
+  .hab-card .card-emoji { font-size: 2.2rem; line-height: 1; margin-bottom: 0.4rem; }
+  .hab-card .card-label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #1a3a5a;
+    line-height: 1.2;
+  }
+  .hab-card:not(.discovered):not(.active) {
+    animation: cardPulse 2.5s ease-in-out infinite;
+  }
+  @keyframes cardPulse {
+    0%, 100% { box-shadow: 0 3px 12px rgba(0,0,0,0.08); }
+    50% { box-shadow: 0 3px 20px rgba(42,122,74,0.2); }
+  }
+
+  /* INFO PANEL */
+  .info-panel {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border: 2px solid #b0d8c8;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 1rem;
+    min-height: 120px;
+    transition: border-color 0.3s;
+  }
+  .info-panel.active { border-color: #2a7a4a; }
+
+  .info-empty {
+    text-align: center;
+    color: #7a9a8a;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 2rem;
+  }
+
+  .info-header {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 0.6rem;
+  }
+  .info-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+    animation: iconBounce 0.5s ease;
+  }
+  @keyframes iconBounce {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+  .info-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #1a3a5a;
+  }
+
+  .info-desc {
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 0.6rem;
+    padding: 0.6rem 0.8rem;
+    background: linear-gradient(135deg, #e8f5f0, #d8ecf0);
+    border-radius: 10px;
+    border-left: 4px solid #2a7a4a;
+  }
+
+  .info-section {
+    margin-bottom: 0.6rem;
+  }
+  .info-section h4 {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #2a7a4a;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.4rem;
+  }
+  .info-section ul {
+    list-style: none;
+    padding: 0;
+  }
+  .info-section li {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.35rem 0.6rem;
+    margin-bottom: 0.3rem;
+    background: #f0f8f4;
+    border-radius: 8px;
+    border-left: 3px solid #2a7a4a;
+    line-height: 1.4;
+  }
+  .info-section li::before {
+    content: "\2022 ";
+    color: #2a7a4a;
+    font-weight: 800;
+  }
+
+  .info-mnemonic {
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.6rem 0.8rem;
+    background: linear-gradient(135deg, #d8f0e8, #c8e8d8);
+    border-radius: 10px;
+    border-left: 4px solid #2a7a4a;
+    color: #1a4a3a;
+  }
+  .info-mnemonic .mnem-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.7;
+    margin-bottom: 0.2rem;
+  }
+
+  /* ===== QUIZ MODE ===== */
+  .quiz-section { display: none; }
+
+  .quiz-question {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #1a3a5a;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+  }
+  .quiz-prompt {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 0.8rem;
+  }
+  .quiz-counter {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #4a7a6a;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+  }
+
+  .quiz-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+    max-width: 600px;
+    margin: 0 auto 1.2rem;
+  }
+  .quiz-opt {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.8rem 1rem;
+    border-radius: 12px;
+    border: 2px solid #b0d8c8;
+    background: #fff;
+    color: #1a3a5a;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    line-height: 1.4;
+  }
+  .quiz-opt:hover { border-color: #2a7a4a; background: #e8f5f0; }
+  .quiz-opt.correct {
+    background: #d0f0e0;
+    border-color: #2a7a4a;
+    color: #1a4a3a;
+  }
+  .quiz-opt.wrong {
+    background: #f5d0c0;
+    border-color: #d05030;
+    color: #8a2010;
+  }
+  .quiz-opt:disabled { cursor: default; opacity: 0.7; }
+
+  .quiz-feedback {
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    min-height: 1.5rem;
+  }
+
+  .quiz-score {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  .quiz-score-bar {
+    display: inline-flex;
+    gap: 0.3rem;
+    align-items: center;
+  }
+  .score-pip {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #c0d8c8;
+    transition: all 0.3s;
+  }
+  .score-pip.right { background: #2a7a4a; }
+  .score-pip.wrong-pip { background: #d05030; }
+
+  .quiz-next-btn {
+    display: block;
+    margin: 0 auto;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 0.7rem 2rem;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, #1a3a5a, #2a7a4a);
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 3px 10px rgba(42,122,74,0.3);
+  }
+  .quiz-next-btn:hover { transform: translateY(-1px); }
+
+  .quiz-result {
+    text-align: center;
+    display: none;
+  }
+  .quiz-result.show { display: block; }
+  .result-emoji { font-size: 3rem; margin-bottom: 0.5rem; }
+  .result-score { font-size: 1.3rem; font-weight: 800; color: #1a3a5a; }
+  .result-msg { font-size: 0.9rem; font-weight: 600; color: #4a7a6a; margin: 0.5rem 0 1rem; }
+
+  /* BACK LINK */
+  .back-link {
+    text-align: center;
+    padding: 1.5rem;
+  }
+  .back-link a {
+    color: #1a3a5a;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 0.5rem 1.2rem;
+    border: 2px solid #2a7a4a;
+    border-radius: 10px;
+    transition: all 0.2s;
+  }
+  .back-link a:hover { background: #2a7a4a; color: #fff; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 600px) {
+    .habitat-grid { grid-template-columns: repeat(2, 1fr); }
+    .hab-card .card-emoji { font-size: 1.6rem; }
+    .hab-card .card-label { font-size: 0.65rem; }
+    .quiz-options { grid-template-columns: 1fr; }
+    header h1 { font-size: 1.1rem; }
+    .top-nav { gap: 0.2rem; padding: 0.4rem 0.4rem; }
+    .top-nav a, .top-nav span { font-size: 0.6rem; padding: 0.3rem 0.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP NAVIGATION -->
+<nav class="top-nav">
+  <a href="index.html">📋 Studiegids</a>
+  <a href="flitskaarte.html">🃏 Flitskaarte</a>
+  <a href="breinkaart.html">🧠 Breinkaart</a>
+  <a href="vergelyk.html">⚖️ Vergelyk</a>
+  <a href="prosesse.html">🔄 Prosesse</a>
+  <span class="nav-active">🌍 Habitats</span>
+</nav>
+
+<header>
+  <h1>🌍 Habitats van Suid-Afrika</h1>
+  <p>Graad 5 · Natuurwetenskap · Kwartaal 1 · Onderwerp 1, Eenheid 1</p>
+</header>
+
+<!-- MODE TABS -->
+<div class="mode-bar">
+  <button class="mode-btn active" onclick="switchMode('explore')">🔍 Ontdek</button>
+  <button class="mode-btn" onclick="switchMode('quiz')">🎯 Toets Jouself</button>
+</div>
+
+<main>
+
+  <!-- ===== EXPLORE MODE ===== -->
+  <section class="explore-section" id="exploreSection">
+    <p class="explore-intro">👇 Klik op elke habitat om meer te leer!</p>
+
+    <!-- Progress dots -->
+    <div class="progress-row" id="progressRow"></div>
+
+    <!-- HABITAT CARDS GRID -->
+    <div class="habitat-grid" id="habitatGrid"></div>
+
+    <!-- INFO PANEL -->
+    <div class="info-panel" id="infoPanel">
+      <div class="info-empty" id="infoEmpty">
+        👆 Klik op 'n habitat hierbo om inligting te sien
+      </div>
+      <div id="infoContent" style="display:none;"></div>
+    </div>
+  </section>
+
+  <!-- ===== QUIZ MODE ===== -->
+  <section class="quiz-section" id="quizSection">
+    <div id="quizActive">
+      <div class="quiz-score" id="quizScore"></div>
+      <div class="quiz-prompt" id="quizPrompt"></div>
+      <div class="quiz-question" id="quizQuestion"></div>
+      <div class="quiz-counter" id="quizCounter"></div>
+      <div id="quizOptionsWrap"></div>
+      <div class="quiz-feedback" id="quizFeedback"></div>
+      <button class="quiz-next-btn" id="quizNextBtn" style="display:none;" onclick="nextQuestion()">Volgende ➡️</button>
+    </div>
+    <div class="quiz-result" id="quizResult">
+      <div class="result-emoji" id="resultEmoji"></div>
+      <div class="result-score" id="resultScore"></div>
+      <div class="result-msg" id="resultMsg"></div>
+      <button class="quiz-next-btn" onclick="startQuiz()">🔄 Probeer Weer</button>
+    </div>
+  </section>
+
+</main>
+
+<div class="back-link">
+  <a href="index.html">← Terug na Studiegids</a>
+</div>
+
+<script>
+// ===== DATA =====
+const habitats = [
+  {
+    id: 'woestyn',
+    emoji: '🏜️',
+    title: 'WOESTYN',
+    desc: 'Baie droë habitat met min reën. Temperature kan oordag baie warm en snags baie koud wees.',
+    sections: [
+      {
+        heading: 'Eienskappe',
+        items: ['Baie droë — min reën', 'Sanderige of klipperige grond', 'Groot temperatuurverskille tussen dag en nag']
+      },
+      {
+        heading: 'Plante',
+        items: ['Aalwyne het dik, vleesagtige blare wat water opgaar', 'Rooibosplante het dun, klein blare — minder waterverlies', 'Plante het lang wortels om diep water te bereik']
+      },
+      {
+        heading: 'Diere',
+        items: ['Kamele kan lank sonder water oorleef', 'Slange en akkedisse (reptiele) is koudbloedig en gebruik die son se hitte', 'Skerpioene het eksoskelette wat hulle teen uitdroging beskerm']
+      },
+      {
+        heading: 'Aanpassings',
+        items: ['Dik blare gaar water op (aalwyn)', 'Diere is meestal snags aktief om die hitte te vermy', 'Waterdigde eksoskelette voorkom waterverlies']
+      }
+    ],
+    mnemonic: 'WOESTYN = WARM + WEINIG water — dik blare gaar, diere skuil snags'
+  },
+  {
+    id: 'woud',
+    emoji: '🌳',
+    title: 'WOUD',
+    desc: 'Vogtige habitat met baie bome en digte plantegroei. Volop water en skaduwee.',
+    sections: [
+      {
+        heading: 'Eienskappe',
+        items: ['Vogtig met baie reën', 'Digte boomkruin wat sonlig blokkeer', 'Ryk biodiversiteit — baie verskillende spesies']
+      },
+      {
+        heading: 'Plante',
+        items: ['Orgideë groei op boomstamme — hulle het lugwortels wat vog uit die lug absorbeer', 'Voëlent groei op gasheerplante en kry voedingstowwe van hulle af', 'Groot bome verskaf skuiling en habitat vir ander organismes']
+      },
+      {
+        heading: 'Diere',
+        items: ['Loeries woon in woude — hulle het vlerke om mee te vlieg en bene om op takke rond te spring', 'Houtkapper-voëls maak neste binne-in boomstamme', 'Baie insekte, paddas en reptiele leef in die ondergroei']
+      },
+      {
+        heading: 'Aanpassings',
+        items: ['Lugwortels absorbeer vog uit die lug (orgideë)', 'Vlerke + sterk bene vir lewe in bome (loeries)', 'Boomstam-neste beskerm kleintjies teen roofdiere (houtkapper)']
+      }
+    ],
+    mnemonic: 'WOUD = WET (vogtig) — orgideë se lugwortels, loeries se vlerke + bene'
+  },
+  {
+    id: 'grasveld',
+    emoji: '🌾',
+    title: 'GRASVELD',
+    desc: 'Oop landskap met hoofsaaklik gras en min bome. Groot kuddes diere wei hier.',
+    sections: [
+      {
+        heading: 'Eienskappe',
+        items: ['Oop landskap — min of geen bome', 'Gras is die hoofplant', 'Seisoenale reën — droë winters en nat somers']
+      },
+      {
+        heading: 'Plante',
+        items: ['Verskillende soorte gras is die dominante plant', 'Gras se wortels hou die grond vas en voorkom erosie', 'Enkelbome en struike kom voor maar is skaars']
+      },
+      {
+        heading: 'Diere',
+        items: ['Sebras woon in grasvelde — hulle het bene om mee te loop en te hardloop', 'Die wit strepe op sebras verblind roofdiere (soos leeus) tydelik wanneer hulle weghardloop', 'Leeus, wildehonde en jagluiperds is roofdiere van die grasveld']
+      },
+      {
+        heading: 'Aanpassings',
+        items: ['Sebras se strepe skep verwarring vir roofdiere tydens \'n jagtog', 'Sterk bene vir vinnige hardloop (vlug van gevaar)', 'Groot oë en ore om gevaar vinnig te bespeur']
+      }
+    ],
+    mnemonic: 'GRASVELD = GRAS + GROOT oop vlaktes — sebras se strepe VERBLIND roofdiere'
+  },
+  {
+    id: 'fynbos',
+    emoji: '🌺',
+    title: 'FYNBOS',
+    desc: 'Uniek aan Suid-Afrika! Meer as 6 000 plantspesies — die rykste plantkoninkryk ter wêreld vir sy grootte.',
+    sections: [
+      {
+        heading: 'Eienskappe',
+        items: ['Uniek aan die Wes-Kaap van Suid-Afrika', 'Meer as 6 000 plantspesies — ongelooflike biodiversiteit', 'Winterreënvalgebied met droë, warm somers', 'Die kleinste maar rykste plantkoninkryk']
+      },
+      {
+        heading: 'Plante',
+        items: ['Erikas — klein, kleurryke blommetjies', 'Restio\'s — rietsoort plante', 'Proteas — Suid-Afrika se nasionale blom (koning protea)', 'Silwerboom en ander unieke spesies']
+      },
+      {
+        heading: 'Diere',
+        items: ['Suikerbekkie — drink nektar uit fynbosblomme en help met bestuiwing', 'Dassie (klipkonyn) — leef tussen die rotse', 'Die Groot Vyf: leeu, olifant, buffel, luiperd, renoster', 'Die Klein Vyf: olifantskewertjie, buffelwewer, luiperdpadda, renostervoël, mierenleeu']
+      },
+      {
+        heading: 'Aanpassings',
+        items: ['Fynbosplante oorleef veldbrande — sommige sade ontkiem eers na vuur!', 'Suikerbekkies het lang, geboë bekke om nektar uit diep blomme te drink', 'Dik, leeragtige blare om waterverlies te verminder']
+      }
+    ],
+    mnemonic: 'FYNBOS = 6000+ spesies — ERP (Erikas, Restio\'s, Proteas) + Groot & Klein VYF'
+  },
+  {
+    id: 'soutwater',
+    emoji: '🌊',
+    title: 'SOUTWATER (See)',
+    desc: 'Die oseaan — die grootste habitat op Aarde. Sout water met \'n wye verskeidenheid lewe.',
+    sections: [
+      {
+        heading: 'Eienskappe',
+        items: ['Sout water — nie drinkbaar vir die meeste landdiere', 'Bedek meer as 70% van die Aarde se oppervlak', 'Verskillende dieptes, temperature en druk']
+      },
+      {
+        heading: 'Plante',
+        items: ['Seewier — verskaf voedsel en suurstof', 'Kelp (groot seewier) — vorm onderwaterwoudë', 'Fitoplankton — mikroskopiese plantjies wat die basis van die voedselketting vorm']
+      },
+      {
+        heading: 'Diere',
+        items: ['Visse het vinne om te swem en \'n vaartbelynde liggaam om maklik deur water te beweeg', 'Walvisse, dolfyne, haaie en robbe', 'Seesterre, krappe en krewe het eksoskelette', 'Seeskilpaaie — die sjirurgynvis maak hulle doppe skoon']
+      },
+      {
+        heading: 'Aanpassings',
+        items: ['Vinne en vaartbelynde liggame vir doeltreffende swem (visse)', 'Kieue haal suurstof uit die water', 'Eksoskelette beskerm teen roofdiere en waterdruk (krappe)']
+      }
+    ],
+    mnemonic: 'SOUTWATER = SOUT + SEE — visse se VINNE + VAARTBELYN liggaam'
+  },
+  {
+    id: 'varswater',
+    emoji: '🏞️',
+    title: 'VARSWATER',
+    desc: 'Riviere, mere, damme en vleilande met vars (nie-sout) water.',
+    sections: [
+      {
+        heading: 'Eienskappe',
+        items: ['Vars (nie-sout) water', 'Riviere, mere, damme, vleilande en strome', 'Water kan stilstaande of vloeiend wees']
+      },
+      {
+        heading: 'Plante',
+        items: ['Waterlelies het groot, plat blare wat op die water dryf', 'Riete en papirus groei langs die waterkant', 'Onderwaterplante verskaf suurstof en skuiling']
+      },
+      {
+        heading: 'Diere',
+        items: ['Paddas het gewebde tone om mee te swem', 'Flaminke drink water en vang klein diertjies', 'Varswatervisse, krokodille en waterslange', 'Insekte soos waterspringers leef op die wateroppervlak']
+      },
+      {
+        heading: 'Aanpassings',
+        items: ['Gewebde tone help paddas om in water te swem', 'Plat blare dryf op die water om sonlig op te vang (waterlelie)', 'Lang pote help flaminke om in vlak water te staan en kos te vang']
+      }
+    ],
+    mnemonic: 'VARSWATER = VARS + VLEI — waterlelies DRYF, paddas se GEWEBDE tone'
+  }
+];
+
+let discovered = new Set();
+let activeHabitat = null;
+
+// ===== BUILD GRID =====
+function buildGrid() {
+  const grid = document.getElementById('habitatGrid');
+  grid.innerHTML = '';
+
+  habitats.forEach(hab => {
+    const card = document.createElement('div');
+    card.className = 'hab-card';
+    card.id = 'card-' + hab.id;
+    if (discovered.has(hab.id)) card.classList.add('discovered');
+    if (activeHabitat === hab.id) card.classList.add('active');
+    card.innerHTML = '<div class="card-emoji">' + hab.emoji + '</div><div class="card-label">' + hab.title + '</div>';
+    card.onclick = () => selectHabitat(hab.id);
+    grid.appendChild(card);
+  });
+
+  buildProgress();
+}
+
+function buildProgress() {
+  const row = document.getElementById('progressRow');
+  row.innerHTML = '<span class="prog-label">Ontdek: </span>';
+  habitats.forEach(hab => {
+    const dot = document.createElement('span');
+    dot.className = 'prog-dot' + (discovered.has(hab.id) ? ' found' : '');
+    dot.textContent = discovered.has(hab.id) ? '\u2713' : hab.emoji;
+    dot.onclick = () => selectHabitat(hab.id);
+    row.appendChild(dot);
+  });
+  const countSpan = document.createElement('span');
+  countSpan.className = 'prog-label';
+  countSpan.textContent = discovered.size + '/' + habitats.length;
+  row.appendChild(countSpan);
+}
+
+function selectHabitat(id) {
+  const hab = habitats.find(h => h.id === id);
+  if (!hab) return;
+
+  document.querySelectorAll('.hab-card').forEach(c => c.classList.remove('active'));
+  const card = document.getElementById('card-' + id);
+  card.classList.add('active');
+
+  if (!discovered.has(id)) {
+    discovered.add(id);
+    card.classList.add('discovered');
+    buildProgress();
+  }
+
+  activeHabitat = id;
+
+  // Build info panel
+  document.getElementById('infoEmpty').style.display = 'none';
+  const content = document.getElementById('infoContent');
+  content.style.display = 'block';
+  document.getElementById('infoPanel').classList.add('active');
+
+  let html = '<div class="info-header"><span class="info-icon">' + hab.emoji + '</span><span class="info-title">' + hab.title + '</span></div>';
+  html += '<div class="info-desc">' + hab.desc + '</div>';
+
+  hab.sections.forEach(sec => {
+    html += '<div class="info-section"><h4>' + sec.heading + '</h4><ul>';
+    sec.items.forEach(item => {
+      html += '<li>' + item + '</li>';
+    });
+    html += '</ul></div>';
+  });
+
+  html += '<div class="info-mnemonic"><div class="mnem-label">Onthou-truuk</div>' + hab.mnemonic + '</div>';
+  content.innerHTML = html;
+}
+
+// ===== MODE SWITCHING =====
+function switchMode(mode) {
+  document.querySelectorAll('.mode-btn').forEach((b, i) => {
+    b.classList.toggle('active', (mode === 'explore' && i === 0) || (mode === 'quiz' && i === 1));
+  });
+
+  document.getElementById('exploreSection').style.display = mode === 'explore' ? 'block' : 'none';
+  document.getElementById('quizSection').style.display = mode === 'quiz' ? 'block' : 'none';
+
+  if (mode === 'quiz') startQuiz();
+}
+
+// ===== QUIZ =====
+const quizQuestions = [
+  { q: "Watter habitat het meer as 6 000 plantspesies?", emoji: "🌺", opts: ["Grasveld", "Fynbos", "Woud", "Woestyn"], ans: 1 },
+  { q: "Aalwyne het dik, vleesagtige blare om water op te gaar. In watter habitat groei hulle?", emoji: "🏜️", opts: ["Varswater", "Woud", "Woestyn", "Soutwater"], ans: 2 },
+  { q: "Orgideë het lugwortels wat vog uit die lug absorbeer. Waar groei hulle?", emoji: "🌳", opts: ["Woud", "Grasveld", "Woestyn", "Fynbos"], ans: 0 },
+  { q: "Sebras se strepe verblind roofdiere tydelik. In watter habitat leef hulle?", emoji: "🌾", opts: ["Fynbos", "Woestyn", "Soutwater", "Grasveld"], ans: 3 },
+  { q: "Waterlelies het groot, plat blare wat op die water dryf. Watter habitat?", emoji: "🏞️", opts: ["Soutwater", "Varswater", "Woud", "Grasveld"], ans: 1 },
+  { q: "Visse het vinne en 'n vaartbelynde liggaam. Watter habitat pas die beste?", emoji: "🌊", opts: ["Woestyn", "Grasveld", "Soutwater", "Fynbos"], ans: 2 },
+  { q: "Suikerbekkies drink nektar uit blomme in hierdie habitat:", emoji: "🌺", opts: ["Grasveld", "Woestyn", "Woud", "Fynbos"], ans: 3 },
+  { q: "Paddas het gewebde tone om mee te swem. In watter habitat?", emoji: "🏞️", opts: ["Varswater", "Woestyn", "Fynbos", "Grasveld"], ans: 0 },
+  { q: "Loeries het vlerke en bene om in bome rond te spring. Watter habitat?", emoji: "🌳", opts: ["Grasveld", "Woud", "Soutwater", "Woestyn"], ans: 1 },
+  { q: "Die Groot Vyf (leeu, olifant, buffel, luiperd, renoster) is deel van watter habitat se erfenis?", emoji: "🌺", opts: ["Woud", "Grasveld", "Woestyn", "Fynbos"], ans: 3 },
+  { q: "Krappe en krewe het eksoskelette. In watter habitat leef baie van hulle?", emoji: "🌊", opts: ["Varswater", "Fynbos", "Soutwater", "Grasveld"], ans: 2 },
+  { q: "Watter habitat is baie droë met sanderige grond en groot temperatuurverskille?", emoji: "🏜️", opts: ["Woestyn", "Woud", "Fynbos", "Varswater"], ans: 0 }
+];
+
+let quizOrder = [];
+let quizIdx = 0;
+let quizScore = 0;
+let quizTotal = 0;
+let quizAnswered = false;
+
+function startQuiz() {
+  quizOrder = quizQuestions.map((_, i) => i).sort(() => Math.random() - 0.5);
+  quizIdx = 0;
+  quizScore = 0;
+  quizTotal = quizQuestions.length;
+  document.getElementById('quizResult').classList.remove('show');
+  document.getElementById('quizActive').style.display = 'block';
+  buildScorePips();
+  showQuestion();
+}
+
+function buildScorePips() {
+  const bar = document.getElementById('quizScore');
+  let html = '<div class="quiz-score-bar">';
+  for (let i = 0; i < quizTotal; i++) {
+    html += '<span class="score-pip" id="pip-' + i + '"></span>';
+  }
+  html += '</div>';
+  bar.innerHTML = html;
+}
+
+function showQuestion() {
+  quizAnswered = false;
+  const q = quizQuestions[quizOrder[quizIdx]];
+  document.getElementById('quizPrompt').textContent = q.emoji;
+  document.getElementById('quizQuestion').textContent = q.q;
+  document.getElementById('quizCounter').textContent = 'Vraag ' + (quizIdx + 1) + ' van ' + quizTotal;
+  document.getElementById('quizFeedback').textContent = '';
+  document.getElementById('quizNextBtn').style.display = 'none';
+
+  const wrap = document.getElementById('quizOptionsWrap');
+  let html = '<div class="quiz-options">';
+  q.opts.forEach((opt, i) => {
+    html += '<button class="quiz-opt" onclick="pickAnswer(' + i + ')" id="opt-' + i + '">' + opt + '</button>';
+  });
+  html += '</div>';
+  wrap.innerHTML = html;
+}
+
+function pickAnswer(idx) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+
+  const q = quizQuestions[quizOrder[quizIdx]];
+  const btns = document.querySelectorAll('.quiz-opt');
+  btns.forEach(b => b.disabled = true);
+
+  const pip = document.getElementById('pip-' + quizIdx);
+
+  if (idx === q.ans) {
+    quizScore++;
+    document.getElementById('opt-' + idx).classList.add('correct');
+    document.getElementById('quizFeedback').innerHTML = '✅ Korrek!';
+    pip.classList.add('right');
+  } else {
+    document.getElementById('opt-' + idx).classList.add('wrong');
+    document.getElementById('opt-' + q.ans).classList.add('correct');
+    document.getElementById('quizFeedback').innerHTML = '❌ Die antwoord is: <strong>' + q.opts[q.ans] + '</strong>';
+    pip.classList.add('wrong-pip');
+  }
+
+  if (quizIdx < quizTotal - 1) {
+    document.getElementById('quizNextBtn').style.display = 'block';
+  } else {
+    setTimeout(showResult, 1200);
+  }
+}
+
+function nextQuestion() {
+  quizIdx++;
+  showQuestion();
+}
+
+function showResult() {
+  document.getElementById('quizActive').style.display = 'none';
+  const result = document.getElementById('quizResult');
+  result.classList.add('show');
+
+  const pct = Math.round((quizScore / quizTotal) * 100);
+  let emoji, msg;
+  if (pct === 100) { emoji = '🏆'; msg = 'Perfek! Jy ken al die habitats uitstekend!'; }
+  else if (pct >= 80) { emoji = '🌟'; msg = 'Baie goed! Jy verstaan die habitats!'; }
+  else if (pct >= 60) { emoji = '👍'; msg = 'Goeie poging! Gaan ontdek die habitats weer hierbo.'; }
+  else { emoji = '📖'; msg = 'Hou aan leer! Klik op elke habitat in Ontdek-modus om meer te leer.'; }
+
+  document.getElementById('resultEmoji').textContent = emoji;
+  document.getElementById('resultScore').textContent = quizScore + ' / ' + quizTotal + ' (' + pct + '%)';
+  document.getElementById('resultMsg').textContent = msg;
+}
+
+// ===== INIT =====
+buildGrid();
+</script>
+</body>
+</html>

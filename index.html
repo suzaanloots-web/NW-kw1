@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="af">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studiegids — NW Kwartaal 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #e8f4f0; font-family: 'Nunito', sans-serif; color: #1a2a3a; min-height: 100vh; }
+.top-nav { background: linear-gradient(135deg, #1a3a5a, #2a5a7a); padding: 0.5rem 1rem; display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 3px 12px rgba(0,0,0,0.3); border-bottom: 3px solid #2a7a4a; }
+.top-nav a, .top-nav span { color: #d0f0e0; text-decoration: none; padding: 0.35rem 0.7rem; border-radius: 8px; font-size: 0.85rem; font-weight: 700; white-space: nowrap; }
+.top-nav a:hover { background: rgba(255,255,255,0.15); }
+.top-nav .active { background: rgba(42,122,74,0.5); color: #fff; }
+.top-nav .sep { color: rgba(255,255,255,0.3); padding: 0 0.2rem; }
+.hero { background: linear-gradient(135deg, #1a3a5a 0%, #2a5a7a 50%, #2a7a4a 100%); color: white; text-align: center; padding: 2rem 1rem 1.5rem; }
+.hero h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+.hero p { font-size: 1rem; opacity: 0.85; }
+.container { max-width: 900px; margin: 0 auto; padding: 1rem; }
+.onderwerp { margin-bottom: 1.5rem; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+.onderwerp-header { padding: 1rem 1.2rem; color: white; font-size: 1.1rem; font-weight: 800; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+.onderwerp-header .arrow { transition: transform 0.3s; font-size: 1.2rem; }
+.onderwerp-header.open .arrow { transform: rotate(180deg); }
+.o1 .onderwerp-header { background: linear-gradient(135deg, #1a6a3a, #2a8a5a); }
+.o2 .onderwerp-header { background: linear-gradient(135deg, #1a4a7a, #2a6a9a); }
+.o3 .onderwerp-header { background: linear-gradient(135deg, #6a3a2a, #8a5a3a); }
+.o4 .onderwerp-header { background: linear-gradient(135deg, #5a6a1a, #7a8a3a); }
+.o5 .onderwerp-header { background: linear-gradient(135deg, #6a1a5a, #8a3a7a); }
+.onderwerp-body { background: white; padding: 0; max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s ease; }
+.onderwerp-body.open { max-height: 5000px; padding: 0.8rem; }
+.eenheid { margin-bottom: 0.8rem; }
+.eenheid-title { font-size: 0.95rem; font-weight: 800; color: #1a3a5a; padding: 0.5rem 0 0.3rem; border-bottom: 2px solid #e0ece8; margin-bottom: 0.5rem; }
+.study-item { display: flex; align-items: center; gap: 0.6rem; padding: 0.55rem 0.8rem; margin: 0.3rem 0; border-radius: 10px; text-decoration: none; color: #1a2a3a; font-size: 0.88rem; font-weight: 600; transition: all 0.2s; background: #f0f8f4; border: 1px solid #d0e8e0; }
+.study-item:hover { background: #d0f0e0; border-color: #2a7a4a; transform: translateX(4px); }
+.study-item .icon { font-size: 1.3rem; min-width: 28px; text-align: center; }
+.study-item .badge { margin-left: auto; font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 10px; font-weight: 700; white-space: nowrap; }
+.badge-flits { background: #e8d8f8; color: #5a2a8a; }
+.badge-brein { background: #d8e8f8; color: #1a4a8a; }
+.badge-vergelyk { background: #f8e8d8; color: #8a4a1a; }
+.badge-proses { background: #d8f8e8; color: #1a6a3a; }
+.badge-habitat { background: #d8f0f8; color: #1a5a7a; }
+.footer { text-align: center; padding: 1.5rem; color: #8a9a8a; font-size: 0.8rem; }
+@media (max-width: 600px) { .hero h1 { font-size: 1.4rem; } .top-nav a, .top-nav span { font-size: 0.75rem; padding: 0.3rem 0.5rem; } .study-item { font-size: 0.82rem; padding: 0.5rem 0.6rem; } }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <span class="active">📋 Studiegids</span>
+  <span class="sep">│</span>
+  <a href="flitskaarte.html">🃏 Flitskaarte</a>
+  <a href="breinkaart.html">🧠 Breinkaart</a>
+  <a href="vergelyk.html">⚖️ Vergelyk</a>
+  <a href="prosesse.html">🔄 Prosesse</a>
+  <a href="habitats.html">🌍 Habitats</a>
+</nav>
+
+<div class="hero">
+  <h1>📖 Natuurwetenskap Kwartaal 1</h1>
+  <p>Graad 5 · Lewe en Lewende Dinge en Strukture</p>
+</div>
+
+<div class="container">
+
+<!-- O1 -->
+<div class="onderwerp o1">
+  <div class="onderwerp-header open" onclick="toggleOnderwerp(this)">
+    <span>🌿 Onderwerp 1 — Plante en Diere op Aarde</span>
+    <span class="arrow">▼</span>
+  </div>
+  <div class="onderwerp-body open">
+    <div class="eenheid">
+      <div class="eenheid-title">📘 Eenheid 1 — Baie Verskillende Soorte Plante en Diere</div>
+      <a class="study-item" href="breinkaart.html#habitats"><span class="icon">🧠</span><span>Breinkaart: Habitats &amp; Biodiversiteit</span><span class="badge badge-brein">Breinkaart</span></a>
+      <a class="study-item" href="habitats.html"><span class="icon">🌍</span><span>Habitats Ontdekker (6 habitats)</span><span class="badge badge-habitat">Habitats</span></a>
+      <a class="study-item" href="flitskaarte.html#sleutelwoorde-o1e1"><span class="icon">🃏</span><span>Sleutelwoorde</span><span class="badge badge-flits">Flitskaarte</span></a>
+      <a class="study-item" href="flitskaarte.html#habitats"><span class="icon">🃏</span><span>Habitats</span><span class="badge badge-flits">Flitskaarte</span></a>
+      <a class="study-item" href="flitskaarte.html#plante-habitats"><span class="icon">🃏</span><span>Plante in Verskillende Habitats</span><span class="badge badge-flits">Flitskaarte</span></a>
+      <a class="study-item" href="flitskaarte.html#diere-habitats"><span class="icon">🃏</span><span>Diere in Verskillende Habitats</span><span class="badge badge-flits">Flitskaarte</span></a>
+    </div>
+    <div class="eenheid">
+      <div class="eenheid-title">📗 Eenheid 2 — Interafhanklikheid</div>
+      <a class="study-item" href="breinkaart.html#interafhanklikheid"><span class="icon">🧠</span><span>Breinkaart: Interafhanklikheid</span><span class="badge badge-brein">Breinkaart</span></a>
+      <a class="study-item" href="flitskaarte.html#sleutelwoorde-o1e2"><span class="icon">🃏</span><span>Sleutelwoorde</span><span class="badge badge-flits">Flitskaarte</span></a>
+      <a class="study-item" href="flitskaarte.html#interafhanklikheid"><span class="icon">🃏</span><span>Interafhanklikheid</span><span class="badge badge-flits">Flitskaarte</span></a>
+      <a class="study-item" href="prosesse.html#saadverspreiding"><span class="icon">🔄</span><span>Prosesse: Saadverspreiding</span><span class="badge badge-proses">Prosesse</span></a>
+    </div>
+    <div class="eenheid">
+      <div class="eenheid-title">📙 Eenheid 3 — Soorte Diere</div>
+      <a class="study-item" href="breinkaart.html#skelette"><span class="icon">🧠</span><span>Breinkaart: Skelette &amp; Soorte Diere</span><span class="badge badge-brein">Breinkaart</span></a>
+      <a class="study-item" href="flitskaarte.html#sleutelwoorde-o1e3"><span class="icon">🃏</span><span>Sleutelwoorde</span><span class="badge badge-flits">Flitskaarte</span></a>
+      <a class="study-item" href="flitskaarte.html#eksoskelet"><span class="icon">🃏</span><span>Eksoskelet (Ongewerweldes)</span><span class="badge badge-flits">Flitskaarte</span></a>
+      <a class="study-item" href="flitskaarte.html#endoskelet"><span class="icon">🃏</span><span>Endoskelet (Gewerweldes)</span><span class="badge badge-flits">Flitskaarte</span></a>
+      <a class="study-item" href="vergelyk.html"><span class="icon">⚖️</span><span>Vergelyk: Eksoskelet vs Endoskelet</span><span class="badge badge-vergelyk">Vergelyk</span></a>
+      <a class="study-item" href="diagram-skelette.html"><span class="icon">🪲</span><span>Interaktiewe Diagram: Eksoskelet vs Endoskelet</span><span class="badge" style="background:#f8e8f0;color:#7a2a5a">Diagram</span></a>
+      <a class="study-item" href="prosesse.html#vervelling"><span class="icon">🔄</span><span>Prosesse: Vervelling</span><span class="badge badge-proses">Prosesse</span></a>
+    </div>
+  </div>
+</div>
+
+<!-- O2 -->
+<div class="onderwerp o2">
+  <div class="onderwerp-header" onclick="toggleOnderwerp(this)">
+    <span>🦴 Onderwerp 2 — Diereskelette</span>
+    <span class="arrow">▼</span>
+  </div>
+  <div class="onderwerp-body">
+    <div class="eenheid">
+      <div class="eenheid-title">📘 Eenheid 1 — Skelette van Gewerweldes</div>
+      <a class="study-item" href="flitskaarte.html#sleutelwoorde-o2e1"><span class="icon">🃏</span><span>Sleutelwoorde</span><span class="badge badge-flits">Flitskaarte</span></a>
+      <a class="study-item" href="flitskaarte.html#skelet-funksies"><span class="icon">🃏</span><span>Skelet Funksies</span><span class="badge badge-flits">Flitskaarte</span></a>
+      <a class="study-item" href="diagram-skelet.html"><span class="icon">🦴</span><span>Interaktiewe Diagram: Menslike Skelet (12 bene)</span><span class="badge" style="background:#f8e8f0;color:#7a2a5a">Diagram</span></a>
+      <a class="study-item" href="flitskaarte.html#ledemate-gordels"><span class="icon">🃏</span><span>Ledemate &amp; Gordels</span><span class="badge badge-flits">Flitskaarte</span></a>
+    </div>
+    <div class="eenheid">
+      <div class="eenheid-title">📗 Eenheid 2 — Beweging</div>
+      <a class="study-item" href="flitskaarte.html#sleutelwoorde-o2e2"><span class="icon">🃏</span><span>Sleutelwoorde</span><span class="badge badge-flits">Flitskaarte</span></a>
+      <a class="study-item" href="flitskaarte.html#spiere-beweging"><span class="icon">🃏</span><span>Spiere &amp; Beweging</span><span class="badge badge-flits">Flitskaarte</span></a>
+      <a class="study-item" href="diagram-spiere.html"><span class="icon">💪</span><span>Interaktiewe Diagram: Spiere in Pare (Biseps/Triseps)</span><span class="badge" style="background:#f8e8f0;color:#7a2a5a">Diagram</span></a>
+      <a class="study-item" href="flitskaarte.html#diere-beweging"><span class="icon">🃏</span><span>Hoe Diere Beweeg</span><span class="badge badge-flits">Flitskaarte</span></a>
+    </div>
+  </div>
+</div>
+
+<!-- O3 -->
+<div class="onderwerp o3">
+  <div class="onderwerp-header" onclick="toggleOnderwerp(this)">
+    <span>🏗️ Onderwerp 3 — Skelette as Strukture</span>
+    <span class="arrow">▼</span>
+  </div>
+  <div class="onderwerp-body">
+    <div class="eenheid">
+      <div class="eenheid-title">📘 Eenheid 1 — Raam- en Dopstrukture</div>
+      <a class="study-item" href="flitskaarte.html#sleutelwoorde-o3"><span class="icon">🃏</span><span>Sleutelwoorde</span><span class="badge badge-flits">Flitskaarte</span></a>
+      <a class="study-item" href="flitskaarte.html#raam-dop"><span class="icon">🃏</span><span>Raam- &amp; Dopstrukture</span><span class="badge badge-flits">Flitskaarte</span></a>
+    </div>
+  </div>
+</div>
+
+<!-- O4 -->
+<div class="onderwerp o4">
+  <div class="onderwerp-header" onclick="toggleOnderwerp(this)">
+    <span>🔗 Onderwerp 4 — Voedselkettings</span>
+    <span class="arrow">▼</span>
+  </div>
+  <div class="onderwerp-body">
+    <div class="eenheid">
+      <div class="eenheid-title">📘 Eenheid 1 — Voedsel en Voeding</div>
+      <a class="study-item" href="breinkaart.html#voedselkettings"><span class="icon">🧠</span><span>Breinkaart: Voedselkettings</span><span class="badge badge-brein">Breinkaart</span></a>
+      <a class="study-item" href="flitskaarte.html#sleutelwoorde-o4"><span class="icon">🃏</span><span>Sleutelwoorde</span><span class="badge badge-flits">Flitskaarte</span></a>
+      <a class="study-item" href="flitskaarte.html#plante-voedsel"><span class="icon">🃏</span><span>Plante Maak Voedsel</span><span class="badge badge-flits">Flitskaarte</span></a>
+      <a class="study-item" href="diagram-fotosintese.html"><span class="icon">🌱</span><span>Interaktiewe Diagram: Fotosintese (Hoe Plante Kos Maak)</span><span class="badge" style="background:#f8e8f0;color:#7a2a5a">Diagram</span></a>
+      <a class="study-item" href="flitskaarte.html#diere-voedsel"><span class="icon">🃏</span><span>Herbivore, Karnivore &amp; Omnivore</span><span class="badge badge-flits">Flitskaarte</span></a>
+    </div>
+    <div class="eenheid">
+      <div class="eenheid-title">📗 Eenheid 2 — Voedselkettings</div>
+      <a class="study-item" href="flitskaarte.html#voedselketting"><span class="icon">🃏</span><span>Voedselkettings</span><span class="badge badge-flits">Flitskaarte</span></a>
+    </div>
+  </div>
+</div>
+
+<!-- O5 -->
+<div class="onderwerp o5">
+  <div class="onderwerp-header" onclick="toggleOnderwerp(this)">
+    <span>🔄 Onderwerp 5 — Lewensiklusse</span>
+    <span class="arrow">▼</span>
+  </div>
+  <div class="onderwerp-body">
+    <div class="eenheid">
+      <div class="eenheid-title">📘 Eenheid 1 — Groei en Ontwikkeling</div>
+      <a class="study-item" href="breinkaart.html#lewensiklusse"><span class="icon">🧠</span><span>Breinkaart: Lewensiklusse</span><span class="badge badge-brein">Breinkaart</span></a>
+      <a class="study-item" href="flitskaarte.html#sleutelwoorde-o5"><span class="icon">🃏</span><span>Sleutelwoorde</span><span class="badge badge-flits">Flitskaarte</span></a>
+      <a class="study-item" href="flitskaarte.html#plant-lewensiklus"><span class="icon">🃏</span><span>Plant Lewensiklus</span><span class="badge badge-flits">Flitskaarte</span></a>
+      <a class="study-item" href="prosesse.html#plant-lewensiklus"><span class="icon">🔄</span><span>Prosesse: Plant Lewensiklus</span><span class="badge badge-proses">Prosesse</span></a>
+      <a class="study-item" href="flitskaarte.html#blom-dele"><span class="icon">🃏</span><span>Dele van 'n Blom</span><span class="badge badge-flits">Flitskaarte</span></a>
+      <a class="study-item" href="diagram-blom.html"><span class="icon">🌸</span><span>Interaktiewe Diagram: Dele van 'n Blom (SVG)</span><span class="badge" style="background:#f8e8f0;color:#7a2a5a">Diagram</span></a>
+      <a class="study-item" href="diagram-bestuiwing.html"><span class="icon">🦋</span><span>Interaktiewe Diagram: Bestuiwing (Animasie)</span><span class="badge" style="background:#f8e8f0;color:#7a2a5a">Diagram</span></a>
+      <a class="study-item" href="prosesse.html#bestuiwing"><span class="icon">🔄</span><span>Prosesse: Bestuiwing</span><span class="badge badge-proses">Prosesse</span></a>
+      <a class="study-item" href="flitskaarte.html#dier-lewensiklus"><span class="icon">🃏</span><span>Dier Lewensiklus</span><span class="badge badge-flits">Flitskaarte</span></a>
+      <a class="study-item" href="prosesse.html#koei-lewensiklus"><span class="icon">🔄</span><span>Prosesse: Koei Lewensiklus</span><span class="badge badge-proses">Prosesse</span></a>
+      <a class="study-item" href="flitskaarte.html#bevrugting"><span class="icon">🃏</span><span>Bevrugting</span><span class="badge badge-flits">Flitskaarte</span></a>
+      <a class="study-item" href="flitskaarte.html#versorging"><span class="icon">🃏</span><span>Versorging van Kleintjies</span><span class="badge badge-flits">Flitskaarte</span></a>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="footer">Graad 5 Natuurwetenskap · Kwartaal 1 · Platinum KABV</div>
+
+<script>
+function toggleOnderwerp(header) {
+  header.classList.toggle('open');
+  header.nextElementSibling.classList.toggle('open');
+}
+</script>
+</body>
+</html>

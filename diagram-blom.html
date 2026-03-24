@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="af">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dele van 'n Blom — Interaktiewe Diagram</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #e8f4f0;
+    font-family: 'Nunito', sans-serif;
+    color: #1a2a3a;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* TOP NAV */
+  .top-nav {
+    display: flex;
+    gap: 0.3rem;
+    padding: 0.5rem 0.8rem;
+    background: linear-gradient(135deg, #1a3a5a, #1a4a6a);
+    justify-content: center;
+    flex-wrap: wrap;
+    border-bottom: 2px solid #2a7a4a;
+  }
+  .top-nav a, .top-nav span {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.35rem 0.7rem;
+    border-radius: 16px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.25s;
+  }
+  .top-nav a {
+    background: rgba(255,255,255,0.1);
+    color: #c0e8d8;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .top-nav a:hover {
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+  }
+  .top-nav span.nav-active {
+    background: #2a7a4a;
+    color: #fff;
+    border: 1px solid #2a7a4a;
+    box-shadow: 0 2px 8px rgba(42,122,74,0.4);
+  }
+
+  header {
+    background: linear-gradient(135deg, #1a3a5a, #2a5a7a);
+    color: #e0f5ea;
+    padding: 1rem 1.2rem;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+    border-bottom: 3px solid #2a7a4a;
+  }
+  header h1 { font-size: 1.3rem; font-weight: 800; }
+  header p { font-size: 0.75rem; opacity: 0.7; margin-top: 0.2rem; }
+
+  /* MODE TABS */
+  .mode-bar {
+    display: flex;
+    gap: 0.4rem;
+    padding: 0.6rem 0.8rem;
+    background: #d0eae0;
+    border-bottom: 2px solid #b0d8c8;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .mode-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.5rem 1.2rem;
+    border-radius: 20px;
+    border: 2px solid #5a9a7a;
+    background: #fff;
+    color: #1a3a5a;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .mode-btn:hover { background: #e0f5ea; }
+  .mode-btn.active {
+    background: #2a7a4a;
+    color: #fff;
+    border-color: #2a7a4a;
+  }
+
+  main {
+    max-width: 950px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+
+  /* SVG CONTAINER */
+  .diagram-wrap {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .diagram-wrap svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* FLOWER SVG PARTS */
+  .flower-part {
+    cursor: pointer;
+    transition: filter 0.25s, opacity 0.25s;
+  }
+  .flower-part:hover, .flower-part.highlight {
+    filter: drop-shadow(0 0 8px rgba(255,255,100,0.8)) drop-shadow(0 0 16px rgba(255,255,100,0.5));
+  }
+  .flower-part.dim {
+    opacity: 0.3;
+  }
+  .flower-part.wrong-flash {
+    animation: shakeX 0.4s ease;
+  }
+  .flower-part.correct-flash {
+    animation: pulseGreen 0.5s ease;
+  }
+  @keyframes shakeX {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+  @keyframes pulseGreen {
+    0% { filter: drop-shadow(0 0 0 rgba(0,200,0,0)); }
+    50% { filter: drop-shadow(0 0 20px rgba(0,200,0,0.9)); }
+    100% { filter: drop-shadow(0 0 0 rgba(0,200,0,0)); }
+  }
+
+  /* SVG LABELS */
+  .svg-label {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    fill: #1a3a5a;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .svg-label.hidden { opacity: 0; }
+  .svg-leader { stroke: #555; stroke-width: 1; fill: none; pointer-events: none; transition: opacity 0.3s; }
+  .svg-leader.hidden { opacity: 0; }
+  .svg-label-bg {
+    fill: rgba(255,255,255,0.9);
+    stroke: #ccc;
+    stroke-width: 0.5;
+    rx: 4;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .svg-label-bg.hidden { opacity: 0; }
+
+  /* INFO PANEL */
+  .info-panel {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+    min-height: 80px;
+    border-left: 5px solid #2a7a4a;
+    transition: all 0.3s;
+  }
+  .info-panel h3 {
+    color: #1a3a5a;
+    font-size: 1.1rem;
+    margin-bottom: 0.3rem;
+  }
+  .info-panel .eng-name {
+    color: #2a7a4a;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .info-panel p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #333;
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  .progress-bar .label { font-weight: 700; color: #1a3a5a; font-size: 0.85rem; }
+  .progress-dots {
+    display: flex;
+    gap: 0.3rem;
+  }
+  .progress-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #888;
+    transition: all 0.3s;
+  }
+  .progress-dot.done {
+    background: #2a7a4a;
+    color: #fff;
+  }
+  .progress-dot.active {
+    background: #1a3a5a;
+    color: #fff;
+    box-shadow: 0 0 8px rgba(26,58,90,0.4);
+  }
+
+  /* LEARN MODE */
+  .learn-controls {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  .learn-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.5rem 1.5rem;
+    border-radius: 20px;
+    border: 2px solid #1a3a5a;
+    background: #1a3a5a;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .learn-btn:hover { background: #2a5a7a; border-color: #2a5a7a; }
+  .learn-btn:disabled { opacity: 0.4; cursor: default; }
+
+  .mnemonic-box {
+    background: linear-gradient(135deg, #fffbe6, #fff3cd);
+    border: 2px solid #f0d060;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+  .mnemonic-box strong { color: #8a6a00; }
+
+  /* QUIZ MODE */
+  .quiz-panel {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  .quiz-question {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a3a5a;
+    margin-bottom: 0.5rem;
+  }
+  .quiz-score {
+    font-size: 0.9rem;
+    color: #555;
+  }
+  .quiz-final {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1a3a5a;
+    margin: 1rem 0;
+  }
+  .quiz-final .emoji { font-size: 2rem; }
+  .quiz-restart-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 0.6rem 2rem;
+    border-radius: 20px;
+    border: none;
+    background: #2a7a4a;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .quiz-restart-btn:hover { background: #1a5a3a; }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 600px) {
+    header h1 { font-size: 1.1rem; }
+    .mode-btn { font-size: 0.72rem; padding: 0.4rem 0.8rem; }
+    .info-panel { padding: 0.8rem; }
+    .svg-label { font-size: 9px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="top-nav">
+  <a href="index.html">&#x1F4CB; Studiegids</a>
+  <a href="flitskaarte.html">&#x1F0CF; Flitskaarte</a>
+  <a href="breinkaart.html">&#x1F9E0; Breinkaart</a>
+  <a href="vergelyk.html">&#x2696;&#xFE0F; Vergelyk</a>
+  <a href="prosesse.html">&#x1F504; Prosesse</a>
+  <a href="habitats.html">&#x1F30D; Habitats</a>
+  <span class="nav-active">&#x1F338; Blom-diagram</span>
+</nav>
+
+<header>
+  <h1>&#x1F338; Dele van 'n Blom</h1>
+  <p>Interaktiewe deursnit-diagram &mdash; Graad 5 Natuurwetenskap</p>
+</header>
+
+<!-- MODE TABS -->
+<div class="mode-bar">
+  <button class="mode-btn active" data-mode="explore" onclick="setMode('explore')">&#x1F50D; Ontdek</button>
+  <button class="mode-btn" data-mode="learn" onclick="setMode('learn')">&#x1F4A1; Leer</button>
+  <button class="mode-btn" data-mode="quiz" onclick="setMode('quiz')">&#x1F3AF; Toets</button>
+</div>
+
+<main>
+  <!-- PROGRESS -->
+  <div class="progress-bar" id="progressBar">
+    <span class="label" id="progressLabel">0/8 ontdek</span>
+    <div class="progress-dots" id="progressDots"></div>
+  </div>
+
+  <!-- LEARN CONTROLS -->
+  <div class="learn-controls hidden" id="learnControls">
+    <button class="learn-btn" id="btnPrev" onclick="learnStep(-1)">&#x25C0; Vorige</button>
+    <button class="learn-btn" id="btnNext" onclick="learnStep(1)">Volgende &#x25B6;</button>
+  </div>
+
+  <!-- QUIZ PANEL -->
+  <div class="quiz-panel hidden" id="quizPanel">
+    <div class="quiz-question" id="quizQuestion"></div>
+    <div class="quiz-score" id="quizScore"></div>
+  </div>
+
+  <!-- DIAGRAM -->
+  <div class="diagram-wrap">
+    <svg id="flowerSVG" viewBox="0 0 700 560" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <!-- Gradients -->
+        <radialGradient id="petalGrad" cx="50%" cy="40%" r="60%">
+          <stop offset="0%" stop-color="#f9a8d4"/>
+          <stop offset="60%" stop-color="#e05090"/>
+          <stop offset="100%" stop-color="#c03070"/>
+        </radialGradient>
+        <radialGradient id="petalGrad2" cx="50%" cy="40%" r="60%">
+          <stop offset="0%" stop-color="#dda0f0"/>
+          <stop offset="60%" stop-color="#b060d0"/>
+          <stop offset="100%" stop-color="#9040b0"/>
+        </radialGradient>
+        <linearGradient id="sepalGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#5aaa5a"/>
+          <stop offset="100%" stop-color="#2a7a2a"/>
+        </linearGradient>
+        <linearGradient id="stylGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#b0dda0"/>
+          <stop offset="100%" stop-color="#80bb70"/>
+        </linearGradient>
+        <radialGradient id="ovaryGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#90dd80"/>
+          <stop offset="70%" stop-color="#50aa40"/>
+          <stop offset="100%" stop-color="#308030"/>
+        </radialGradient>
+        <radialGradient id="stigmaGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ffe080"/>
+          <stop offset="100%" stop-color="#ccaa20"/>
+        </radialGradient>
+        <linearGradient id="antherGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#ffdd44"/>
+          <stop offset="100%" stop-color="#ddaa00"/>
+        </linearGradient>
+        <linearGradient id="filamentGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#d0e8c0"/>
+          <stop offset="100%" stop-color="#a0c890"/>
+        </linearGradient>
+        <linearGradient id="stemGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#3a8a3a"/>
+          <stop offset="50%" stop-color="#5aaa5a"/>
+          <stop offset="100%" stop-color="#3a8a3a"/>
+        </linearGradient>
+        <!-- Glow filter -->
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="4" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- Background -->
+      <rect width="700" height="560" fill="#f8fcfa" rx="12"/>
+
+      <!-- STEM -->
+      <path d="M348 400 Q346 450 344 520" stroke="url(#stemGrad)" stroke-width="10" fill="none" stroke-linecap="round"/>
+
+      <!-- KELKBLARE (Sepals) - green leaves at base -->
+      <g class="flower-part" data-part="kelkblare">
+        <path d="M350 385 Q310 400 270 420 Q310 395 320 370 Z" fill="url(#sepalGrad)" stroke="#2a6a2a" stroke-width="1"/>
+        <path d="M350 385 Q390 400 430 420 Q390 395 380 370 Z" fill="url(#sepalGrad)" stroke="#2a6a2a" stroke-width="1"/>
+        <path d="M350 390 Q330 410 300 440 Q330 405 340 380 Z" fill="url(#sepalGrad)" stroke="#2a6a2a" stroke-width="1" opacity="0.8"/>
+        <path d="M350 390 Q370 410 400 440 Q370 405 360 380 Z" fill="url(#sepalGrad)" stroke="#2a6a2a" stroke-width="1" opacity="0.8"/>
+        <path d="M350 388 Q350 415 350 450 Q355 415 355 388 Z" fill="url(#sepalGrad)" stroke="#2a6a2a" stroke-width="0.5" opacity="0.6"/>
+      </g>
+
+      <!-- KROONBLARE (Petals) - large colorful outer parts -->
+      <g class="flower-part" data-part="kroonblare">
+        <!-- Back petals -->
+        <path d="M350 240 Q290 180 230 130 Q270 200 280 250 Q300 280 340 310 Z" fill="url(#petalGrad2)" stroke="#8040a0" stroke-width="1.2" opacity="0.85"/>
+        <path d="M350 240 Q410 180 470 130 Q430 200 420 250 Q400 280 360 310 Z" fill="url(#petalGrad2)" stroke="#8040a0" stroke-width="1.2" opacity="0.85"/>
+        <!-- Side petals -->
+        <path d="M340 280 Q270 250 190 230 Q250 280 290 310 Q320 330 340 340 Z" fill="url(#petalGrad)" stroke="#a03060" stroke-width="1.2"/>
+        <path d="M360 280 Q430 250 510 230 Q450 280 410 310 Q380 330 360 340 Z" fill="url(#petalGrad)" stroke="#a03060" stroke-width="1.2"/>
+        <!-- Top petal -->
+        <path d="M350 260 Q320 190 310 120 Q350 170 390 120 Q380 190 350 260 Z" fill="url(#petalGrad)" stroke="#a03060" stroke-width="1.2"/>
+        <!-- Petal veins -->
+        <path d="M350 260 Q335 200 315 140" stroke="#c06088" stroke-width="0.6" fill="none" opacity="0.5"/>
+        <path d="M350 260 Q365 200 385 140" stroke="#c06088" stroke-width="0.6" fill="none" opacity="0.5"/>
+        <path d="M340 280 Q290 265 210 245" stroke="#c06088" stroke-width="0.6" fill="none" opacity="0.4"/>
+        <path d="M360 280 Q410 265 490 245" stroke="#c06088" stroke-width="0.6" fill="none" opacity="0.4"/>
+      </g>
+
+      <!-- VRUGBEGINSEL (Ovary) - at base of pistil -->
+      <g class="flower-part" data-part="vrugbeginsel">
+        <ellipse cx="350" cy="375" rx="22" ry="28" fill="url(#ovaryGrad)" stroke="#308030" stroke-width="1.5"/>
+        <!-- Ovules inside -->
+        <circle cx="342" cy="370" r="4" fill="#fffde0" stroke="#aa9930" stroke-width="0.8" opacity="0.7"/>
+        <circle cx="358" cy="370" r="4" fill="#fffde0" stroke="#aa9930" stroke-width="0.8" opacity="0.7"/>
+        <circle cx="350" cy="382" r="4" fill="#fffde0" stroke="#aa9930" stroke-width="0.8" opacity="0.7"/>
+        <circle cx="345" cy="362" r="3" fill="#fffde0" stroke="#aa9930" stroke-width="0.6" opacity="0.5"/>
+        <circle cx="355" cy="362" r="3" fill="#fffde0" stroke="#aa9930" stroke-width="0.6" opacity="0.5"/>
+      </g>
+
+      <!-- STYL (Style) - tube connecting stigma to ovary -->
+      <g class="flower-part" data-part="styl">
+        <path d="M346 348 Q348 310 350 275 Q352 310 354 348" fill="url(#stylGrad)" stroke="#5a9a4a" stroke-width="1"/>
+      </g>
+
+      <!-- STEMPEL (Stigma) - sticky top part -->
+      <g class="flower-part" data-part="stempel">
+        <ellipse cx="350" cy="268" rx="14" ry="8" fill="url(#stigmaGrad)" stroke="#aa8800" stroke-width="1.2"/>
+        <!-- Sticky texture dots -->
+        <circle cx="344" cy="266" r="1.5" fill="#ddc040" opacity="0.7"/>
+        <circle cx="350" cy="264" r="1.5" fill="#ddc040" opacity="0.7"/>
+        <circle cx="356" cy="266" r="1.5" fill="#ddc040" opacity="0.7"/>
+        <circle cx="347" cy="270" r="1.2" fill="#ddc040" opacity="0.6"/>
+        <circle cx="353" cy="270" r="1.2" fill="#ddc040" opacity="0.6"/>
+      </g>
+
+      <!-- HELMDRADE (Filaments) - clickable as helmdraad -->
+      <g class="flower-part" data-part="helmdraad">
+        <path d="M330 340 Q310 300 295 260" stroke="url(#filamentGrad)" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M340 340 Q325 305 315 270" stroke="url(#filamentGrad)" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M360 340 Q375 305 385 270" stroke="url(#filamentGrad)" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M370 340 Q390 300 405 260" stroke="url(#filamentGrad)" stroke-width="4" fill="none" stroke-linecap="round"/>
+      </g>
+
+      <!-- HELMKNOPPIES (Anthers) - clickable as meeldrade -->
+      <g class="flower-part" data-part="meeldrade">
+        <ellipse cx="293" cy="255" rx="9" ry="13" fill="url(#antherGrad)" stroke="#bb8800" stroke-width="1.5" transform="rotate(-15,293,255)"/>
+        <circle cx="289" cy="250" r="2" fill="#fff080" opacity="0.8"/>
+        <circle cx="296" cy="258" r="2" fill="#fff080" opacity="0.8"/>
+        <ellipse cx="313" cy="265" rx="8" ry="12" fill="url(#antherGrad)" stroke="#bb8800" stroke-width="1.5" transform="rotate(-8,313,265)"/>
+        <circle cx="310" cy="260" r="1.8" fill="#fff080" opacity="0.7"/>
+        <ellipse cx="387" cy="265" rx="8" ry="12" fill="url(#antherGrad)" stroke="#bb8800" stroke-width="1.5" transform="rotate(8,387,265)"/>
+        <circle cx="390" cy="260" r="1.8" fill="#fff080" opacity="0.7"/>
+        <ellipse cx="407" cy="255" rx="9" ry="13" fill="url(#antherGrad)" stroke="#bb8800" stroke-width="1.5" transform="rotate(15,407,255)"/>
+        <circle cx="411" cy="250" r="2" fill="#fff080" opacity="0.8"/>
+        <circle cx="404" cy="258" r="2" fill="#fff080" opacity="0.8"/>
+      </g>
+
+      <!-- STAMPER group (for quiz: stamper = stempel + styl + vrugbeginsel combined) -->
+      <g class="flower-part" data-part="stamper" style="display:none;">
+        <!-- This is an invisible overlay for the stamper quiz question -->
+        <rect x="326" y="260" width="48" height="120" fill="transparent"/>
+      </g>
+
+      <!-- LEADER LINES AND LABELS -->
+      <!-- Kroonblare -->
+      <line class="svg-leader" data-label="kroonblare" x1="280" y1="200" x2="130" y2="140"/>
+      <rect class="svg-label-bg" data-label="kroonblare" x="30" y="125" width="105" height="22" rx="4"/>
+      <text class="svg-label" data-label="kroonblare" x="82" y="140" text-anchor="middle">Kroonblare</text>
+
+      <!-- Kelkblare -->
+      <line class="svg-leader" data-label="kelkblare" x1="290" y1="410" x2="130" y2="440"/>
+      <rect class="svg-label-bg" data-label="kelkblare" x="40" y="427" width="95" height="22" rx="4"/>
+      <text class="svg-label" data-label="kelkblare" x="87" y="442" text-anchor="middle">Kelkblare</text>
+
+      <!-- Stempel -->
+      <line class="svg-leader" data-label="stempel" x1="364" y1="268" x2="560" y2="140"/>
+      <rect class="svg-label-bg" data-label="stempel" x="520" y="125" width="80" height="22" rx="4"/>
+      <text class="svg-label" data-label="stempel" x="560" y="140" text-anchor="middle">Stempel</text>
+
+      <!-- Styl -->
+      <line class="svg-leader" data-label="styl" x1="356" y1="310" x2="580" y2="240"/>
+      <rect class="svg-label-bg" data-label="styl" x="555" y="227" width="55" height="22" rx="4"/>
+      <text class="svg-label" data-label="styl" x="582" y="242" text-anchor="middle">Styl</text>
+
+      <!-- Vrugbeginsel -->
+      <line class="svg-leader" data-label="vrugbeginsel" x1="372" y1="375" x2="570" y2="380"/>
+      <rect class="svg-label-bg" data-label="vrugbeginsel" x="520" y="367" width="105" height="22" rx="4"/>
+      <text class="svg-label" data-label="vrugbeginsel" x="572" y="382" text-anchor="middle">Vrugbeginsel</text>
+
+      <!-- Meeldrade -->
+      <line class="svg-leader" data-label="meeldrade" x1="420" y1="260" x2="580" y2="310"/>
+      <rect class="svg-label-bg" data-label="meeldrade" x="520" y="297" width="130" height="22" rx="4"/>
+      <text class="svg-label" data-label="meeldrade" x="585" y="312" text-anchor="middle">Helmknoppie</text>
+
+      <!-- Helmdraad label -->
+      <line class="svg-leader" data-label="helmdraad" x1="330" y1="320" x2="100" y2="350"/>
+      <rect class="svg-label-bg" data-label="helmdraad" x="35" y="339" width="105" height="22" rx="4"/>
+      <text class="svg-label" data-label="helmdraad" x="87" y="354" text-anchor="middle">Helmdraad</text>
+
+      <!-- Stamper bracket (right side) -->
+      <path class="svg-leader" data-label="stamper" d="M500 155 Q520 155 520 260 Q520 370 500 370" fill="none" stroke="#1a3a5a" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <line class="svg-leader" data-label="stamper" x1="520" y1="260" x2="600" y2="260"/>
+      <rect class="svg-label-bg" data-label="stamper" x="555" y="247" width="140" height="22" rx="4"/>
+      <text class="svg-label" data-label="stamper" x="625" y="262" text-anchor="middle" fill="#1a3a5a" font-size="10">Stamper (vroulik)</text>
+
+      <!-- Title inside SVG -->
+      <text x="350" y="30" text-anchor="middle" font-family="Nunito, sans-serif" font-weight="800" font-size="16" fill="#1a3a5a">Deursnit van 'n Blom</text>
+
+    </svg>
+  </div>
+
+  <!-- MNEMONIC (learn mode) -->
+  <div class="mnemonic-box hidden" id="mnemonicBox">
+    <strong>Onthou-rympie:</strong><br>
+    <strong>K</strong>roonblare &mdash; <strong>K</strong>leur lok insekte<br>
+    <strong>K</strong>elkblare &mdash; <strong>K</strong>eep (beskerm) die knop<br>
+    <strong>S</strong>tamper = <strong>S</strong>tempel + <strong>S</strong>tyl + <strong>V</strong>rugbeginsel (<strong>SSV</strong>)<br>
+    <strong>M</strong>eeldrade &mdash; <strong>M</strong>anlike deel met stuifmeel
+  </div>
+
+  <!-- INFO PANEL -->
+  <div class="info-panel" id="infoPanel">
+    <h3 id="infoTitle">Klik op 'n deel van die blom</h3>
+    <div class="eng-name" id="infoEng"></div>
+    <p id="infoDesc">Kies enige deel in die diagram hierbo om meer te leer.</p>
+  </div>
+
+</main>
+
+<script>
+// ── DATA ──
+const parts = {
+  kroonblare: {
+    name: "Kroonblare",
+    eng: "Petals",
+    desc: "Die kleurvolle blare wat insekte en voëls na die blom toe aanlok. Hulle trek bestuiwers aan sodat bestuiwing kan plaasvind.",
+    short: "Kleurvolle blare wat bestuiwers lok"
+  },
+  kelkblare: {
+    name: "Kelkblare",
+    eng: "Sepals",
+    desc: "Die groen blare aan die buitekant wat die blom beskerm terwyl dit nog 'n knop is. Hulle vou oop wanneer die blom begin bloei.",
+    short: "Groen blare wat die knop beskerm"
+  },
+  stamper: {
+    name: "Stamper",
+    eng: "Pistil (Stigma + Style + Ovary)",
+    desc: "Die VROULIKE deel van die blom. Dit bestaan uit drie dele: die stempel (bo-aan), die styl (middel), en die vrugbeginsel (onder). Die stamper is verantwoordelik vir die vroulike voortplantingsproses.",
+    short: "Vroulike deel = Stempel + Styl + Vrugbeginsel"
+  },
+  stempel: {
+    name: "Stempel",
+    eng: "Stigma",
+    desc: "<ul style='margin:0.3rem 0;padding-left:1.2rem'><li>Die <b>taaierige vroulike deel</b> wat stuifmeel opvang</li><li>Wanneer stuifmeel hier land, maak dit \u2019n dun pypie — die <b>stuifmeelbuis</b></li><li>Die stuifmeelbuis groei af tot in die <b>vrugbeginsel</b> van die blom</li></ul>",
+    short: "Klewerige deel bo-aan waar stuifmeel land"
+  },
+  styl: {
+    name: "Styl",
+    eng: "Style",
+    desc: "Die lang, dun buis wat die stempel met die vrugbeginsel verbind. Dit ondersteun die stempel en lei die stuifmeelbuis na die vrugbeginsel.",
+    short: "Dun buis tussen stempel en vrugbeginsel"
+  },
+  vrugbeginsel: {
+    name: "Vrugbeginsel",
+    eng: "Ovary",
+    desc: "<ul style='margin:0.3rem 0;padding-left:1.2rem'><li>Hou die <b>saadknoppies</b> wat sade sal vorm as dit bevrug word</li><li>Nadat bevrugting plaasgevind het, groei die vrugbeginsel om \u2019n <b>vrug</b> te word</li><li>Die sade binne-in die vrug word deur <b>wind, water, diere en vo\u00EBls</b> versprei</li><li>Die sade kan <b>nuwe plante</b> word</li></ul>",
+    short: "Hou saadknoppies; word later die vrug met sade"
+  },
+  helmdraad: {
+    name: "Helmdraad",
+    eng: "Filament",
+    desc: "Die dun steeltjie wat die <b>helmknoppie ondersteun</b>. Dit hou die helmknoppie in posisie sodat stuifmeel maklik deur insekte, vo\u00EBls of wind oorgedra kan word.",
+    short: "Dun steeltjie wat die helmknoppie ondersteun"
+  },
+  meeldrade: {
+    name: "Meeldrade (Helmknoppie + Helmdraad)",
+    eng: "Stamens (Anther + Filament)",
+    desc: "<ul style='margin:0.3rem 0;padding-left:1.2rem'><li>Die <b>MANLIKE deel</b> van die blom</li><li><b>Helmknoppie:</b> maak stuifmeel</li><li><b>Helmdraad:</b> ondersteun die helmknoppie</li><li>Stuifmeel moet by die stempel uitkom</li><li>Insekte, vo\u00EBls en wind help om stuifmeel van blom tot blom te dra</li></ul>",
+    short: "Manlike deel: helmknoppie (stuifmeel) + helmdraad (steeltjie)"
+  }
+};
+
+const partOrder = ["kroonblare", "kelkblare", "stamper", "stempel", "styl", "vrugbeginsel", "helmdraad", "meeldrade"];
+const quizOrder = ["kroonblare", "kelkblare", "stempel", "styl", "vrugbeginsel", "helmdraad", "meeldrade", "stamper"];
+
+let currentMode = "explore";
+let discovered = new Set();
+let learnIndex = 0;
+let quizIndex = 0;
+let quizScore = 0;
+let quizAnswered = false;
+let quizFinished = false;
+let shuffledQuiz = [];
+
+// ── ELEMENTS ──
+const svgEl = document.getElementById("flowerSVG");
+const infoPanel = document.getElementById("infoPanel");
+const infoTitle = document.getElementById("infoTitle");
+const infoEng = document.getElementById("infoEng");
+const infoDesc = document.getElementById("infoDesc");
+const progressBar = document.getElementById("progressBar");
+const progressLabel = document.getElementById("progressLabel");
+const progressDots = document.getElementById("progressDots");
+const learnControls = document.getElementById("learnControls");
+const quizPanel = document.getElementById("quizPanel");
+const mnemonicBox = document.getElementById("mnemonicBox");
+
+// Build progress dots
+partOrder.forEach((key, i) => {
+  const dot = document.createElement("div");
+  dot.className = "progress-dot";
+  dot.textContent = i + 1;
+  dot.dataset.part = key;
+  progressDots.appendChild(dot);
+});
+
+// ── GET SVG PARTS ──
+function getFlowerParts() {
+  return svgEl.querySelectorAll(".flower-part");
+}
+function getLabelEls(partKey) {
+  return svgEl.querySelectorAll(`[data-label="${partKey}"]`);
+}
+
+// Show/hide the stamper invisible overlay based on mode
+function setStamperOverlay(show) {
+  const el = svgEl.querySelector('.flower-part[data-part="stamper"]');
+  if (el) el.style.display = show ? "block" : "none";
+}
+
+// ── MODE SWITCHING ──
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll(".mode-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.mode === mode);
+  });
+
+  // Reset highlights
+  getFlowerParts().forEach(p => { p.classList.remove("highlight", "dim"); });
+
+  // Show/hide panels
+  learnControls.classList.toggle("hidden", mode !== "learn");
+  quizPanel.classList.toggle("hidden", mode !== "quiz");
+  mnemonicBox.classList.toggle("hidden", mode !== "learn");
+
+  // Labels visibility
+  setLabelsVisible(mode !== "quiz" || quizFinished);
+
+  // Stamper overlay: show only in quiz mode
+  setStamperOverlay(mode === "quiz" && !quizFinished);
+
+  if (mode === "explore") {
+    progressBar.classList.remove("hidden");
+    infoPanel.classList.remove("hidden");
+    updateProgress();
+    showInfo(null);
+  } else if (mode === "learn") {
+    progressBar.classList.remove("hidden");
+    infoPanel.classList.remove("hidden");
+    learnIndex = 0;
+    showLearnStep();
+  } else if (mode === "quiz") {
+    progressBar.classList.add("hidden");
+    infoPanel.classList.add("hidden");
+    quizPanel.classList.remove("hidden");
+    if (!quizFinished) startQuiz();
+  }
+}
+
+// ── LABELS ──
+function setLabelsVisible(show) {
+  svgEl.querySelectorAll(".svg-label, .svg-leader, .svg-label-bg").forEach(el => {
+    el.classList.toggle("hidden", !show);
+  });
+}
+
+// ── INFO PANEL ──
+function showInfo(partKey) {
+  if (!partKey) {
+    infoTitle.textContent = "Klik op 'n deel van die blom";
+    infoEng.textContent = "";
+    infoDesc.textContent = "Kies enige deel in die diagram hierbo om meer te leer.";
+    return;
+  }
+  const p = parts[partKey];
+  infoTitle.textContent = p.name;
+  infoEng.textContent = p.eng;
+  infoDesc.innerHTML = p.desc;
+}
+
+// ── EXPLORE MODE ──
+function updateProgress() {
+  progressLabel.textContent = `${discovered.size}/8 ontdek`;
+  document.querySelectorAll(".progress-dot").forEach(dot => {
+    dot.classList.toggle("done", discovered.has(dot.dataset.part));
+    if (discovered.has(dot.dataset.part)) {
+      dot.textContent = "\u2713";
+    }
+  });
+}
+
+function handleExploreClick(partKey) {
+  discovered.add(partKey);
+  updateProgress();
+  showInfo(partKey);
+  // Highlight clicked part
+  getFlowerParts().forEach(p => {
+    p.classList.toggle("highlight", p.dataset.part === partKey);
+  });
+}
+
+// ── LEARN MODE ──
+function showLearnStep() {
+  const key = partOrder[learnIndex];
+  showInfo(key);
+
+  // Update progress dots
+  document.querySelectorAll(".progress-dot").forEach((dot, i) => {
+    dot.classList.remove("done", "active");
+    if (i < learnIndex) { dot.classList.add("done"); dot.textContent = "\u2713"; }
+    else if (i === learnIndex) { dot.classList.add("active"); dot.textContent = i + 1; }
+    else { dot.textContent = i + 1; }
+  });
+  progressLabel.textContent = `${learnIndex + 1}/${partOrder.length}`;
+
+  // Highlight only current part, dim others
+  getFlowerParts().forEach(p => {
+    const pk = p.dataset.part;
+    if (pk === key) {
+      p.classList.add("highlight");
+      p.classList.remove("dim");
+    } else {
+      p.classList.remove("highlight");
+      p.classList.add("dim");
+    }
+  });
+
+  // Buttons
+  document.getElementById("btnPrev").disabled = learnIndex === 0;
+  document.getElementById("btnNext").disabled = learnIndex === partOrder.length - 1;
+}
+
+function learnStep(dir) {
+  learnIndex = Math.max(0, Math.min(partOrder.length - 1, learnIndex + dir));
+  showLearnStep();
+}
+
+// ── QUIZ MODE ──
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  quizIndex = 0;
+  quizScore = 0;
+  quizFinished = false;
+  quizAnswered = false;
+  shuffledQuiz = shuffleArray(quizOrder);
+  setLabelsVisible(false);
+  setStamperOverlay(true);
+  getFlowerParts().forEach(p => p.classList.remove("highlight", "dim"));
+  showQuizQuestion();
+}
+
+function showQuizQuestion() {
+  if (quizIndex >= shuffledQuiz.length) {
+    endQuiz();
+    return;
+  }
+  quizAnswered = false;
+  const key = shuffledQuiz[quizIndex];
+  const p = parts[key];
+  document.getElementById("quizQuestion").textContent = `Wys die: ${p.name}`;
+  document.getElementById("quizScore").textContent = `Vraag ${quizIndex + 1} van ${shuffledQuiz.length} \u2022 Telling: ${quizScore}/${quizIndex}`;
+  getFlowerParts().forEach(p => { p.classList.remove("highlight", "dim", "correct-flash", "wrong-flash"); });
+}
+
+function handleQuizClick(partKey) {
+  if (quizAnswered || quizFinished) return;
+  quizAnswered = true;
+  const correctKey = shuffledQuiz[quizIndex];
+  const clickedEl = svgEl.querySelector(`.flower-part[data-part="${partKey}"]`);
+
+  if (partKey === correctKey) {
+    quizScore++;
+    clickedEl.classList.add("correct-flash");
+  } else {
+    clickedEl.classList.add("wrong-flash");
+    // Also highlight the correct one
+    const correctEl = svgEl.querySelector(`.flower-part[data-part="${correctKey}"]`);
+    if (correctEl) correctEl.classList.add("highlight");
+  }
+
+  setTimeout(() => {
+    quizIndex++;
+    showQuizQuestion();
+  }, 1200);
+}
+
+function endQuiz() {
+  quizFinished = true;
+  setLabelsVisible(true);
+  setStamperOverlay(false);
+  getFlowerParts().forEach(p => p.classList.remove("highlight", "dim"));
+
+  const pct = Math.round((quizScore / shuffledQuiz.length) * 100);
+  let emoji = "";
+  let msg = "";
+  if (pct === 100) { emoji = "\u2B50\u2B50\u2B50"; msg = "Perfek! Jy ken al die dele!"; }
+  else if (pct >= 70) { emoji = "\u2B50\u2B50"; msg = "Goed gedoen! Oefen nog 'n bietjie."; }
+  else if (pct >= 40) { emoji = "\u2B50"; msg = "Nie sleg nie! Probeer weer."; }
+  else { emoji = "\uD83D\uDCAA"; msg = "Hou aan oefen \u2014 jy sal dit leer!"; }
+
+  quizPanel.innerHTML = `
+    <div class="quiz-final">
+      <div class="emoji">${emoji}</div>
+      ${quizScore} / ${shuffledQuiz.length} korrek (${pct}%)
+    </div>
+    <p style="margin-bottom:1rem;color:#555">${msg}</p>
+    <button class="quiz-restart-btn" onclick="restartQuiz()">Probeer Weer</button>
+  `;
+}
+
+function restartQuiz() {
+  quizPanel.innerHTML = `
+    <div class="quiz-question" id="quizQuestion"></div>
+    <div class="quiz-score" id="quizScore"></div>
+  `;
+  startQuiz();
+}
+
+// ── CLICK HANDLER ──
+function bindClicks() {
+  getFlowerParts().forEach(part => {
+    part.style.cursor = "pointer";
+    part.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const key = part.dataset.part;
+      if (!key) return;
+
+      if (currentMode === "explore") handleExploreClick(key);
+      else if (currentMode === "quiz") handleQuizClick(key);
+      else if (currentMode === "learn") {
+        const idx = partOrder.indexOf(key);
+        if (idx !== -1) { learnIndex = idx; showLearnStep(); }
+      }
+    });
+  });
+}
+
+// Also bind label clicks to their parts
+svgEl.querySelectorAll(".svg-label, .svg-label-bg").forEach(lbl => {
+  lbl.style.cursor = "pointer";
+  lbl.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const key = lbl.dataset.label;
+    if (!key || !parts[key]) return;
+    if (currentMode === "explore") handleExploreClick(key);
+    else if (currentMode === "quiz") handleQuizClick(key);
+    else if (currentMode === "learn") {
+      const idx = partOrder.indexOf(key);
+      if (idx !== -1) { learnIndex = idx; showLearnStep(); }
+    }
+  });
+});
+
+// Initialize
+bindClicks();
+setMode("explore");
+</script>
+</body>
+</html>

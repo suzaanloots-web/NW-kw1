@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="af">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eksoskelet vs Endoskelet — Interaktiewe Vergelyking</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #e8f4f0;
+    font-family: 'Nunito', sans-serif;
+    color: #1a2a3a;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* TOP NAV */
+  .top-nav {
+    display: flex;
+    gap: 0.3rem;
+    padding: 0.5rem 0.8rem;
+    background: linear-gradient(135deg, #1a3a5a, #1a4a6a);
+    justify-content: center;
+    flex-wrap: wrap;
+    border-bottom: 2px solid #2a7a4a;
+  }
+  .top-nav a, .top-nav span {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.35rem 0.7rem;
+    border-radius: 16px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.25s;
+  }
+  .top-nav a {
+    background: rgba(255,255,255,0.1);
+    color: #c0e8d8;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .top-nav a:hover {
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+  }
+  .top-nav span.nav-active {
+    background: #2a7a4a;
+    color: #fff;
+    border: 1px solid #2a7a4a;
+    box-shadow: 0 2px 8px rgba(42,122,74,0.4);
+  }
+
+  header {
+    background: linear-gradient(135deg, #1a3a5a, #2a5a7a);
+    color: #e0f5ea;
+    padding: 1rem 1.2rem;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+    border-bottom: 3px solid #2a7a4a;
+  }
+  header h1 { font-size: 1.3rem; font-weight: 800; }
+  header p { font-size: 0.75rem; opacity: 0.7; margin-top: 0.2rem; }
+
+  /* MNEMONIC BANNER */
+  .mnemonic {
+    background: linear-gradient(135deg, #c87533, #2a7a4a);
+    color: #fff;
+    text-align: center;
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+  }
+
+  /* MODE TABS */
+  .mode-bar {
+    display: flex;
+    gap: 0.4rem;
+    padding: 0.6rem 0.8rem;
+    background: #d0eae0;
+    border-bottom: 2px solid #b0d8c8;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .mode-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.5rem 1.2rem;
+    border-radius: 20px;
+    border: 2px solid #5a9a7a;
+    background: #fff;
+    color: #1a3a5a;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .mode-btn:hover { background: #e0f5ea; }
+  .mode-btn.active {
+    background: #2a7a4a;
+    color: #fff;
+    border-color: #2a7a4a;
+  }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+
+  /* DIAGRAM AREA */
+  .diagram-row {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .diagram-panel {
+    flex: 1;
+    min-width: 300px;
+    max-width: 500px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: all 0.4s;
+    border: 3px solid transparent;
+  }
+  .diagram-panel.highlight-ekso { border-color: #c87533; box-shadow: 0 0 20px rgba(200,117,51,0.4); }
+  .diagram-panel.highlight-endo { border-color: #2a7a4a; box-shadow: 0 0 20px rgba(42,122,74,0.4); }
+  .diagram-panel h2 {
+    text-align: center;
+    padding: 0.6rem;
+    font-size: 1rem;
+    font-weight: 800;
+  }
+  .panel-ekso h2 { background: linear-gradient(135deg, #c87533, #a05520); color: #fff; }
+  .panel-endo h2 { background: linear-gradient(135deg, #2a7a4a, #1a5a3a); color: #fff; }
+
+  .svg-wrap {
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+    min-height: 300px;
+  }
+  .svg-wrap svg {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    cursor: pointer;
+  }
+
+  /* CLICKABLE PARTS */
+  .part-clickable {
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .part-clickable:hover {
+    filter: brightness(1.15);
+    stroke-width: 2.5;
+  }
+
+  /* INFO POPUP */
+  .info-popup {
+    display: none;
+    background: #fff;
+    border: 2px solid #2a7a4a;
+    border-radius: 12px;
+    padding: 0.8rem 1rem;
+    margin: 0.5rem auto;
+    max-width: 600px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    animation: popIn 0.3s ease;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .info-popup.show { display: block; }
+  .info-popup h3 { font-size: 0.95rem; color: #1a3a5a; margin-bottom: 0.3rem; }
+  @keyframes popIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  /* LEER MODE */
+  .leer-section {
+    display: none;
+    text-align: center;
+  }
+  .leer-section.show { display: block; }
+  .leer-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.2rem;
+    margin: 0.8rem auto;
+    max-width: 700px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    border-left: 5px solid #c87533;
+    border-right: 5px solid #2a7a4a;
+  }
+  .leer-card h3 { font-size: 1.1rem; color: #1a3a5a; margin-bottom: 0.5rem; }
+  .leer-compare {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+  .leer-side {
+    flex: 1;
+    padding: 0.6rem;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .leer-side.ekso-side { background: #fef3e6; color: #8a4a10; }
+  .leer-side.endo-side { background: #e6f5ec; color: #1a5a3a; }
+  .leer-nav {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 0.8rem;
+  }
+  .leer-nav button {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.5rem 1.5rem;
+    border-radius: 20px;
+    border: 2px solid #1a3a5a;
+    background: #1a3a5a;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .leer-nav button:hover { background: #2a5a7a; }
+  .leer-nav button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .step-indicator {
+    font-size: 0.8rem;
+    color: #5a7a6a;
+    margin-top: 0.4rem;
+  }
+
+  /* TOETS MODE */
+  .toets-section {
+    display: none;
+    text-align: center;
+  }
+  .toets-section.show { display: block; }
+  .toets-question {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.2rem;
+    margin: 0.8rem auto;
+    max-width: 600px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    min-height: 120px;
+  }
+  .toets-question p {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a3a5a;
+    margin-bottom: 0.3rem;
+  }
+  .toets-fact {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #2a5a7a;
+    padding: 0.6rem;
+    background: #f0f8f4;
+    border-radius: 10px;
+    margin: 0.5rem 0;
+  }
+  .toets-btns {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 0.8rem;
+  }
+  .toets-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    padding: 0.8rem 2rem;
+    border-radius: 16px;
+    border: 3px solid;
+    cursor: pointer;
+    transition: all 0.25s;
+    min-width: 140px;
+  }
+  .toets-btn.btn-ekso {
+    background: #fef3e6;
+    color: #8a4a10;
+    border-color: #c87533;
+  }
+  .toets-btn.btn-ekso:hover { background: #c87533; color: #fff; }
+  .toets-btn.btn-endo {
+    background: #e6f5ec;
+    color: #1a5a3a;
+    border-color: #2a7a4a;
+  }
+  .toets-btn.btn-endo:hover { background: #2a7a4a; color: #fff; }
+  .toets-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .feedback {
+    font-size: 1rem;
+    font-weight: 800;
+    padding: 0.5rem;
+    border-radius: 10px;
+    margin-top: 0.5rem;
+    display: none;
+  }
+  .feedback.correct { display: block; background: #d4edda; color: #155724; }
+  .feedback.wrong { display: block; background: #f8d7da; color: #721c24; }
+
+  .score-bar {
+    background: #fff;
+    border-radius: 12px;
+    padding: 0.6rem 1rem;
+    margin: 0.5rem auto;
+    max-width: 400px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+  .score-fill {
+    height: 8px;
+    border-radius: 4px;
+    background: #2a7a4a;
+    transition: width 0.5s;
+    margin-top: 0.3rem;
+  }
+
+  .toets-restart {
+    display: none;
+    margin: 1rem auto;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 0.6rem 2rem;
+    border-radius: 20px;
+    border: 2px solid #1a3a5a;
+    background: #1a3a5a;
+    color: #fff;
+    cursor: pointer;
+  }
+  .toets-restart:hover { background: #2a5a7a; }
+
+  .final-score {
+    display: none;
+    font-size: 1.3rem;
+    font-weight: 800;
+    padding: 1rem;
+    margin: 1rem auto;
+    max-width: 400px;
+    border-radius: 16px;
+    text-align: center;
+  }
+  .final-score.show { display: block; }
+
+  /* RESPONSIVE */
+  @media (max-width: 700px) {
+    .diagram-row { flex-direction: column; align-items: center; }
+    .diagram-panel { max-width: 100%; }
+    .leer-compare { flex-direction: column; }
+    header h1 { font-size: 1.1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top-nav">
+  <a href="index.html">&#x1F4CB; Studiegids</a>
+  <a href="flitskaarte.html">&#x1F0CF; Flitskaarte</a>
+  <a href="breinkaart.html">&#x1F9E0; Breinkaart</a>
+  <a href="vergelyk.html">&#x2696;&#xFE0F; Vergelyk</a>
+  <a href="prosesse.html">&#x1F504; Prosesse</a>
+  <a href="habitats.html">&#x1F30D; Habitats</a>
+  <span class="nav-active">&#x1F9B4; Skelette</span>
+</nav>
+
+<header>
+  <h1>&#x1F9B4; Eksoskelet vs Endoskelet</h1>
+  <p>Interaktiewe vergelyking — Klik, leer en toets jouself!</p>
+</header>
+
+<div class="mnemonic">
+  EKSO = EXIT = BUITE &#x1F6AA; &nbsp;|&nbsp; ENDO = IN = BINNE &#x1F3E0;
+</div>
+
+<!-- MODE BAR -->
+<div class="mode-bar">
+  <button class="mode-btn active" onclick="setMode('ontdek')">&#x1F50D; Ontdek</button>
+  <button class="mode-btn" onclick="setMode('leer')">&#x1F4A1; Leer</button>
+  <button class="mode-btn" onclick="setMode('toets')">&#x1F3AF; Toets</button>
+</div>
+
+<main>
+
+<!-- DIAGRAMS -->
+<div class="diagram-row" id="diagramRow">
+
+  <!-- EKSOSKELET PANEL -->
+  <div class="diagram-panel panel-ekso" id="panelEkso">
+    <h2>&#x1FAB2; Eksoskelet</h2>
+    <div class="svg-wrap">
+      <svg viewBox="0 0 300 320" xmlns="http://www.w3.org/2000/svg">
+        <!-- BEETLE SVG -->
+        <!-- Antennae -->
+        <path d="M120 80 Q105 50 90 35" stroke="#5a3a1a" stroke-width="2.5" fill="none" stroke-linecap="round" class="part-clickable" onclick="showInfo('ekso','antenne')"/>
+        <path d="M180 80 Q195 50 210 35" stroke="#5a3a1a" stroke-width="2.5" fill="none" stroke-linecap="round" class="part-clickable" onclick="showInfo('ekso','antenne')"/>
+        <circle cx="88" cy="33" r="4" fill="#5a3a1a"/>
+        <circle cx="212" cy="33" r="4" fill="#5a3a1a"/>
+
+        <!-- Head -->
+        <ellipse cx="150" cy="95" rx="35" ry="28" fill="#c87533" stroke="#8a4a10" stroke-width="2" class="part-clickable" onclick="showInfo('ekso','kop')"/>
+        <!-- Eyes -->
+        <circle cx="135" cy="88" r="6" fill="#1a1a1a"/>
+        <circle cx="165" cy="88" r="6" fill="#1a1a1a"/>
+        <circle cx="136" cy="87" r="2" fill="#fff"/>
+        <circle cx="166" cy="87" r="2" fill="#fff"/>
+
+        <!-- Body - hard outer shell -->
+        <ellipse cx="150" cy="185" rx="65" ry="85" fill="#c87533" stroke="#8a4a10" stroke-width="2.5" class="part-clickable" onclick="showInfo('ekso','dop')"/>
+        <!-- Wing line -->
+        <line x1="150" y1="110" x2="150" y2="265" stroke="#8a4a10" stroke-width="2"/>
+        <!-- Shell segments -->
+        <path d="M95 150 Q150 160 205 150" stroke="#a05520" stroke-width="1.5" fill="none"/>
+        <path d="M90 185 Q150 200 210 185" stroke="#a05520" stroke-width="1.5" fill="none"/>
+        <path d="M95 220 Q150 235 205 220" stroke="#a05520" stroke-width="1.5" fill="none"/>
+        <!-- Shell shine -->
+        <ellipse cx="125" cy="165" rx="18" ry="30" fill="rgba(255,255,255,0.15)" transform="rotate(-10 125 165)"/>
+
+        <!-- Soft body inside (visible through translucent area) -->
+        <ellipse cx="150" cy="185" rx="40" ry="55" fill="#f0b0b0" opacity="0.4" class="part-clickable" onclick="showInfo('ekso','liggaam')"/>
+
+        <!-- Legs -->
+        <g class="part-clickable" onclick="showInfo('ekso','pote')">
+          <!-- Left legs -->
+          <path d="M95 145 Q60 135 40 155 Q30 170 25 190" stroke="#8a4a10" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M88 185 Q55 180 35 200 Q25 215 20 235" stroke="#8a4a10" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M92 220 Q60 225 42 250 Q35 265 30 280" stroke="#8a4a10" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <!-- Right legs -->
+          <path d="M205 145 Q240 135 260 155 Q270 170 275 190" stroke="#8a4a10" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M212 185 Q245 180 265 200 Q275 215 280 235" stroke="#8a4a10" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M208 220 Q240 225 258 250 Q265 265 270 280" stroke="#8a4a10" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </g>
+
+        <!-- Labels -->
+        <rect x="5" y="130" width="70" height="15" rx="3" fill="rgba(200,117,51,0.9)"/>
+        <text x="40" y="141" text-anchor="middle" fill="#fff" font-size="7" font-weight="800" font-family="Nunito">HARDE DOP</text>
+        <line x1="75" y1="137" x2="90" y2="160" stroke="#c87533" stroke-width="1.5"/>
+
+        <rect x="175" y="170" width="85" height="15" rx="3" fill="rgba(240,176,176,0.9)"/>
+        <text x="217" y="181" text-anchor="middle" fill="#7a2020" font-size="7" font-weight="800" font-family="Nunito">SAGTE LIGGAAM</text>
+        <line x1="175" y1="177" x2="160" y2="185" stroke="#f0b0b0" stroke-width="1.5"/>
+
+        <text x="150" y="310" text-anchor="middle" fill="#8a4a10" font-size="9" font-weight="800" font-family="Nunito">Harde dop BUITEKANT</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ENDOSKELET PANEL -->
+  <div class="diagram-panel panel-endo" id="panelEndo">
+    <h2>&#x1F9B4; Endoskelet</h2>
+    <div class="svg-wrap">
+      <svg viewBox="0 0 300 320" xmlns="http://www.w3.org/2000/svg">
+        <!-- DOG SVG -->
+        <!-- Body outline (skin/muscle) -->
+        <ellipse cx="155" cy="170" rx="85" ry="55" fill="#c4956a" stroke="#8a6540" stroke-width="2" class="part-clickable" onclick="showInfo('endo','vel')"/>
+        <!-- Fur texture -->
+        <ellipse cx="155" cy="170" rx="80" ry="50" fill="#d4a57a" opacity="0.6"/>
+
+        <!-- Head -->
+        <ellipse cx="60" cy="125" rx="38" ry="34" fill="#c4956a" stroke="#8a6540" stroke-width="2" class="part-clickable" onclick="showInfo('endo','kop')"/>
+        <ellipse cx="60" cy="125" rx="34" ry="30" fill="#d4a57a" opacity="0.5"/>
+        <!-- Snout -->
+        <ellipse cx="32" cy="135" rx="18" ry="12" fill="#c4956a" stroke="#8a6540" stroke-width="1.5"/>
+        <ellipse cx="28" cy="132" rx="5" ry="4" fill="#3a2a1a"/>
+        <!-- Eye -->
+        <circle cx="55" cy="118" r="6" fill="#3a2a1a"/>
+        <circle cx="56" cy="117" r="2" fill="#fff"/>
+        <!-- Ears -->
+        <path d="M75 100 Q85 70 72 60 Q60 55 55 75" fill="#b0805a" stroke="#8a6540" stroke-width="1.5" class="part-clickable" onclick="showInfo('endo','ore')"/>
+
+        <!-- SKELETON INSIDE (white bones) -->
+        <g class="part-clickable" onclick="showInfo('endo','bene')">
+          <!-- Skull -->
+          <ellipse cx="58" cy="125" rx="22" ry="18" fill="none" stroke="#f5f0e0" stroke-width="2" stroke-dasharray="4 2" opacity="0.8"/>
+          <!-- Spine -->
+          <path d="M82 135 Q120 145 160 148 Q200 150 230 155" stroke="#f5f0e0" stroke-width="3" fill="none" opacity="0.85"/>
+          <!-- Spine vertebrae -->
+          <circle cx="95" cy="140" r="3" fill="#f5f0e0" opacity="0.7"/>
+          <circle cx="115" cy="144" r="3" fill="#f5f0e0" opacity="0.7"/>
+          <circle cx="135" cy="147" r="3" fill="#f5f0e0" opacity="0.7"/>
+          <circle cx="155" cy="148" r="3" fill="#f5f0e0" opacity="0.7"/>
+          <circle cx="175" cy="149" r="3" fill="#f5f0e0" opacity="0.7"/>
+          <circle cx="195" cy="151" r="3" fill="#f5f0e0" opacity="0.7"/>
+          <circle cx="215" cy="153" r="3" fill="#f5f0e0" opacity="0.7"/>
+          <!-- Ribs -->
+          <path d="M115 144 Q110 165 115 185" stroke="#f5f0e0" stroke-width="1.5" fill="none" opacity="0.6"/>
+          <path d="M135 147 Q130 170 133 190" stroke="#f5f0e0" stroke-width="1.5" fill="none" opacity="0.6"/>
+          <path d="M155 148 Q150 172 152 192" stroke="#f5f0e0" stroke-width="1.5" fill="none" opacity="0.6"/>
+          <path d="M175 149 Q172 172 174 190" stroke="#f5f0e0" stroke-width="1.5" fill="none" opacity="0.6"/>
+          <path d="M195 151 Q193 170 195 185" stroke="#f5f0e0" stroke-width="1.5" fill="none" opacity="0.6"/>
+        </g>
+
+        <!-- Legs -->
+        <g class="part-clickable" onclick="showInfo('endo','pote')">
+          <!-- Front legs -->
+          <rect x="95" y="210" width="14" height="65" rx="5" fill="#c4956a" stroke="#8a6540" stroke-width="1.5"/>
+          <rect x="115" y="210" width="14" height="65" rx="5" fill="#d4a57a" stroke="#8a6540" stroke-width="1.5"/>
+          <!-- Front leg bones -->
+          <line x1="102" y1="215" x2="102" y2="270" stroke="#f5f0e0" stroke-width="2" opacity="0.7"/>
+          <line x1="122" y1="215" x2="122" y2="270" stroke="#f5f0e0" stroke-width="2" opacity="0.7"/>
+          <!-- Back legs -->
+          <rect x="195" y="205" width="16" height="70" rx="5" fill="#c4956a" stroke="#8a6540" stroke-width="1.5"/>
+          <rect x="215" y="205" width="16" height="70" rx="5" fill="#d4a57a" stroke="#8a6540" stroke-width="1.5"/>
+          <!-- Back leg bones -->
+          <line x1="203" y1="210" x2="203" y2="270" stroke="#f5f0e0" stroke-width="2" opacity="0.7"/>
+          <line x1="223" y1="210" x2="223" y2="270" stroke="#f5f0e0" stroke-width="2" opacity="0.7"/>
+          <!-- Paws -->
+          <ellipse cx="102" cy="278" rx="9" ry="5" fill="#b0805a"/>
+          <ellipse cx="122" cy="278" rx="9" ry="5" fill="#b0805a"/>
+          <ellipse cx="203" cy="278" rx="9" ry="5" fill="#b0805a"/>
+          <ellipse cx="223" cy="278" rx="9" ry="5" fill="#b0805a"/>
+        </g>
+
+        <!-- Tail -->
+        <path d="M235 150 Q260 130 270 100 Q275 85 268 80" stroke="#c4956a" stroke-width="6" fill="none" stroke-linecap="round" class="part-clickable" onclick="showInfo('endo','stert')"/>
+        <path d="M235 150 Q260 130 270 100 Q275 85 268 80" stroke="#d4a57a" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.5"/>
+
+        <!-- Labels -->
+        <rect x="160" y="132" width="85" height="15" rx="3" fill="rgba(245,240,224,0.95)"/>
+        <text x="202" y="143" text-anchor="middle" fill="#5a4a2a" font-size="7" font-weight="800" font-family="Nunito">BENE BINNEKANT</text>
+        <line x1="160" y1="139" x2="150" y2="148" stroke="#f5f0e0" stroke-width="1.5"/>
+
+        <rect x="5" y="165" width="85" height="15" rx="3" fill="rgba(196,149,106,0.95)"/>
+        <text x="47" y="176" text-anchor="middle" fill="#fff" font-size="7" font-weight="800" font-family="Nunito">SPIERE EN VEL</text>
+        <line x1="90" y1="172" x2="100" y2="170" stroke="#c4956a" stroke-width="1.5"/>
+
+        <text x="150" y="310" text-anchor="middle" fill="#1a5a3a" font-size="9" font-weight="800" font-family="Nunito">Bene BINNEKANT</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- INFO POPUP (Ontdek mode) -->
+<div class="info-popup" id="infoPopup">
+  <h3 id="infoTitle"></h3>
+  <p id="infoText"></p>
+</div>
+
+<!-- LEER SECTION -->
+<div class="leer-section" id="leerSection">
+  <div class="leer-card" id="leerCard">
+    <h3 id="leerTitle"></h3>
+    <div class="leer-compare">
+      <div class="leer-side ekso-side" id="leerEkso"></div>
+      <div class="leer-side endo-side" id="leerEndo"></div>
+    </div>
+  </div>
+  <div class="step-indicator" id="stepIndicator"></div>
+  <div class="leer-nav">
+    <button onclick="leerPrev()" id="btnPrev">&#x2B05; Vorige</button>
+    <button onclick="leerNext()" id="btnNext">Volgende &#x27A1;</button>
+  </div>
+</div>
+
+<!-- TOETS SECTION -->
+<div class="toets-section" id="toetsSection">
+  <div class="score-bar" id="scoreBar">
+    Telling: <span id="scoreText">0 / 10</span>
+    <div style="background:#e0e0e0;border-radius:4px;overflow:hidden;"><div class="score-fill" id="scoreFill" style="width:0%"></div></div>
+  </div>
+  <div class="toets-question" id="toetsQ">
+    <p>Eksoskelet of Endoskelet?</p>
+    <div class="toets-fact" id="toetsFact"></div>
+    <div class="toets-btns">
+      <button class="toets-btn btn-ekso" id="btnEkso" onclick="toetsAnswer('ekso')">&#x1FAB2; Eksoskelet</button>
+      <button class="toets-btn btn-endo" id="btnEndo" onclick="toetsAnswer('endo')">&#x1F9B4; Endoskelet</button>
+    </div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+  <div class="final-score" id="finalScore"></div>
+  <button class="toets-restart" id="toetsRestart" onclick="toetsStart()">&#x1F504; Begin weer</button>
+</div>
+
+</main>
+
+<script>
+// ===== INFO DATA =====
+const infoData = {
+  ekso: {
+    dop: {
+      title: "&#x1FAB2; Harde Dop (Eksoskelet)",
+      text: "Die eksoskelet is 'n harde laag of skulp aan die BUITEKANT van die dier. Dit is gemaak van harde plate wat aanmekaar geheg is. Dit beskerm die sagte dele binne-in en is ook waterdig, wat die dier teen uitdroging beskerm. Die dier moet VERVEL om te groei — die ou dop word afgegooi en 'n nuwe een groei."
+    },
+    kop: {
+      title: "&#x1FAB2; Kop van die Kewer",
+      text: "Die kop het 'n harde beskermende dop, oë en monddele. Die eksoskelet bedek ook die kop heeltemal. Die enigste plekke waar dit dun en sag is, is waar dit moet buig (bv. gewrigte)."
+    },
+    antenne: {
+      title: "&#x1FAB2; Antenne",
+      text: "Insekte gebruik hul antenne om te voel, te ruik en soms om te hoor. Dit help hulle om gevaar te ontdek en kos te vind."
+    },
+    liggaam: {
+      title: "&#x1FAB2; Sagte Liggaam Binne",
+      text: "Binne-in die harde dop is die dier se sagte organe en liggaamsdele. Die eksoskelet ondersteun en beskerm hierdie sagte dele. Sonder die harde dop sou die dier baie kwesbaar wees."
+    },
+    pote: {
+      title: "&#x1FAB2; Pote",
+      text: "Insekte het 6 pote, elk met gewrigte waar die eksoskelet dun en buigsaam is. Die harde pootdele word deur hierdie buigsame punte verbind sodat die dier kan loop, spring of klim."
+    }
+  },
+  endo: {
+    vel: {
+      title: "&#x1F9B4; Spiere en Vel",
+      text: "'n Endoskelet is met spiere en sagte liggaamsweefsel bedek. Spiere is massas taai, rekbare weefsel wat aan bene geheg is deur senings (taai koorde). Spiere trek aan bene om die dier te laat beweeg."
+    },
+    kop: {
+      title: "&#x1F9B4; Kop (Skedel)",
+      text: "Gewerweldes het skedels om hulle breine en sagter dele van die gesig (oë) te beskerm. Die skedel is 'n harde been wat die belangrikste orgaan — die brein — heeltemal omhul."
+    },
+    bene: {
+      title: "&#x1F9B4; Bene en Ruggraat",
+      text: "Die skelet bestaan uit bene wat hard en onbuigsaam is. Die ruggraat bestaan uit verskeie werwels (kleiner beentjies). Bene is lewend — hulle kan groei en aangroei. As 'n been breek, kan dit weer heel word! Kalsium hou bene sterk en gesond."
+    },
+    pote: {
+      title: "&#x1F9B4; Ledemate",
+      text: "Gewerweldes het ledemate met sterk bene. Arms, bene en vlerke het van die sterkste bene. Gewrigte is plekke waar bene bymekaarkom en kraakbeen dien as kussinkies tussen bene om skade te voorkom."
+    },
+    ore: {
+      title: "&#x1F9B4; Ore",
+      text: "Soogdiere het ore om mee te hoor. Die ore is sagte weefsel aan die buitekant, maar binne-in is daar klein beentjies wat help om klank te verwerk."
+    },
+    stert: {
+      title: "&#x1F9B4; Stert",
+      text: "Die ruggraat van baie gewerweldes eindig in 'n stert. Die stert het ook werwels (beentjies) binne-in en spiere om dit te beweeg. Diere gebruik hul sterte vir balans, kommunikasie en beweging."
+    }
+  }
+};
+
+// ===== LEER DATA =====
+const leerData = [
+  {
+    title: "1. Posisie",
+    ekso: "&#x1FAB2; BUITEKANT — Die harde dop is aan die buitenste laag van die liggaam.",
+    endo: "&#x1F9B4; BINNEKANT — Die bene is binne-in die liggaam, bedek met spiere en vel."
+  },
+  {
+    title: "2. Groei",
+    ekso: "&#x1FAB2; Kan NIE groei nie — die dier moet VERVEL (ou dop afgooi) om groter te word.",
+    endo: "&#x1F9B4; Groei SAAM met die dier — bene is lewend en kan aangroei. Geen vervelling nodig."
+  },
+  {
+    title: "3. Grootte",
+    ekso: "&#x1FAB2; Beperk die grootte — eksoskeletdiere bly klein omdat die dop te swaar word vir groot liggame.",
+    endo: "&#x1F9B4; Kan GROOT word — bene kan groot liggame en meer gewig ondersteun."
+  },
+  {
+    title: "4. Beskerming",
+    ekso: "&#x1FAB2; Sterk beskerming — die harde dop beskerm sagte dele. Ook waterdig teen uitdroging.",
+    endo: "&#x1F9B4; Minder beskerming buite — maar die skedel beskerm die brein, en die ribbekas beskerm hart en longe."
+  },
+  {
+    title: "5. Temperatuur",
+    ekso: "&#x1FAB2; Meeste is koudbloedig — hulle liggaamstemperatuur verander met die omgewing.",
+    endo: "&#x1F9B4; Kan warmbloedig wees — soogdiere en voëls beheer hul eie temperatuur."
+  },
+  {
+    title: "6. Beweging",
+    ekso: "&#x1FAB2; Buig slegs by gewrigte — waar die dop dun en sag is. Pote, vlerke en antenne beweeg by hierdie punte.",
+    endo: "&#x1F9B4; Baie buigsaam — spiere trek aan bene by gewrigte. Ligamente en senings hou alles bymekaar."
+  },
+  {
+    title: "7. Herstel",
+    ekso: "&#x1FAB2; Na vervelling is die nuwe dop SAG — die dier is kwesbaar totdat dit hard word.",
+    endo: "&#x1F9B4; Bene kan HEEL — as 'n been breek, kan dit weer aangroei en herstel."
+  },
+  {
+    title: "8. Voorbeelde",
+    ekso: "&#x1FAB2; Ongewerwelde diere: insekte, spinnekoppe, kewers, krappe, krewe, garnale, skerpioen, bosluise.",
+    endo: "&#x1F9B4; Gewerwelde diere: honde, katte, visse, voëls, paddas, akkedisse, mense, sebras."
+  }
+];
+
+// ===== TOETS DATA =====
+const toetsData = [
+  { fact: "Die harde dop is aan die BUITEKANT van die liggaam.", ans: "ekso" },
+  { fact: "Die bene is BINNE-IN die liggaam.", ans: "endo" },
+  { fact: "Die dier moet VERVEL om te groei.", ans: "ekso" },
+  { fact: "Die skelet groei SAAM met die dier.", ans: "endo" },
+  { fact: "Spinnekoppe, krappe en kewers het hierdie tipe skelet.", ans: "ekso" },
+  { fact: "Honde, katte en mense het hierdie tipe skelet.", ans: "endo" },
+  { fact: "Die dop is waterdig en beskerm teen uitdroging.", ans: "ekso" },
+  { fact: "Bene kan breek en weer AANGROEI.", ans: "endo" },
+  { fact: "Die dier bly klein omdat die dop te swaar word.", ans: "ekso" },
+  { fact: "Die ribbekas beskerm die hart en longe.", ans: "endo" }
+];
+
+// ===== STATE =====
+let currentMode = 'ontdek';
+let leerStep = 0;
+let toetsIdx = 0;
+let toetsScore = 0;
+let toetsAnswered = false;
+let shuffledToets = [];
+
+// ===== MODE SWITCHING =====
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach((b, i) => {
+    b.classList.toggle('active', ['ontdek','leer','toets'][i] === mode);
+  });
+
+  document.getElementById('diagramRow').style.display = (mode === 'toets') ? 'none' : 'flex';
+  document.getElementById('infoPopup').classList.remove('show');
+  document.getElementById('leerSection').classList.toggle('show', mode === 'leer');
+  document.getElementById('toetsSection').classList.toggle('show', mode === 'toets');
+
+  // Reset highlights
+  document.getElementById('panelEkso').className = 'diagram-panel panel-ekso';
+  document.getElementById('panelEndo').className = 'diagram-panel panel-endo';
+
+  if (mode === 'leer') { leerStep = 0; showLeerStep(); }
+  if (mode === 'toets') { toetsStart(); }
+}
+
+// ===== ONTDEK MODE =====
+function showInfo(type, part) {
+  if (currentMode !== 'ontdek') return;
+  const d = infoData[type]?.[part];
+  if (!d) return;
+  const popup = document.getElementById('infoPopup');
+  document.getElementById('infoTitle').innerHTML = d.title;
+  document.getElementById('infoText').textContent = d.text;
+  popup.classList.remove('show');
+  void popup.offsetWidth; // trigger reflow for animation
+  popup.classList.add('show');
+}
+
+// ===== LEER MODE =====
+function showLeerStep() {
+  const d = leerData[leerStep];
+  document.getElementById('leerTitle').textContent = d.title;
+  document.getElementById('leerEkso').innerHTML = d.ekso;
+  document.getElementById('leerEndo').innerHTML = d.endo;
+  document.getElementById('stepIndicator').textContent = `Stap ${leerStep + 1} van ${leerData.length}`;
+  document.getElementById('btnPrev').disabled = (leerStep === 0);
+  document.getElementById('btnNext').textContent = (leerStep === leerData.length - 1) ? '&#x2705; Klaar' : 'Volgende &#x27A1;';
+
+  // Highlight both panels
+  const pe = document.getElementById('panelEkso');
+  const pn = document.getElementById('panelEndo');
+  pe.className = 'diagram-panel panel-ekso highlight-ekso';
+  pn.className = 'diagram-panel panel-endo highlight-endo';
+}
+
+function leerPrev() { if (leerStep > 0) { leerStep--; showLeerStep(); } }
+function leerNext() {
+  if (leerStep < leerData.length - 1) { leerStep++; showLeerStep(); }
+  else { setMode('toets'); }
+}
+
+// ===== TOETS MODE =====
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function toetsStart() {
+  shuffledToets = shuffleArray(toetsData);
+  toetsIdx = 0;
+  toetsScore = 0;
+  toetsAnswered = false;
+  document.getElementById('toetsQ').style.display = 'block';
+  document.getElementById('finalScore').classList.remove('show');
+  document.getElementById('toetsRestart').style.display = 'none';
+  updateScore();
+  showToetsQ();
+}
+
+function showToetsQ() {
+  const q = shuffledToets[toetsIdx];
+  document.getElementById('toetsFact').textContent = q.fact;
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('btnEkso').disabled = false;
+  document.getElementById('btnEndo').disabled = false;
+  toetsAnswered = false;
+}
+
+function toetsAnswer(choice) {
+  if (toetsAnswered) return;
+  toetsAnswered = true;
+  const q = shuffledToets[toetsIdx];
+  const correct = (choice === q.ans);
+  const fb = document.getElementById('feedback');
+
+  document.getElementById('btnEkso').disabled = true;
+  document.getElementById('btnEndo').disabled = true;
+
+  if (correct) {
+    toetsScore++;
+    fb.className = 'feedback correct';
+    fb.textContent = '&#x2705; Korrek! Uitstekend!'.replace(/&#x\w+;/g, m => {
+      const d = document.createElement('span'); d.innerHTML = m; return d.textContent;
+    });
+    fb.innerHTML = '&#x2705; Korrek! Uitstekend!';
+  } else {
+    fb.className = 'feedback wrong';
+    const rightLabel = q.ans === 'ekso' ? 'Eksoskelet' : 'Endoskelet';
+    fb.innerHTML = '&#x274C; Verkeerd. Die antwoord is: <strong>' + rightLabel + '</strong>';
+  }
+
+  updateScore();
+
+  setTimeout(() => {
+    toetsIdx++;
+    if (toetsIdx < shuffledToets.length) {
+      showToetsQ();
+    } else {
+      showFinalScore();
+    }
+  }, 1800);
+}
+
+function updateScore() {
+  document.getElementById('scoreText').textContent = `${toetsScore} / ${shuffledToets.length}`;
+  const pct = shuffledToets.length > 0 ? (toetsScore / shuffledToets.length) * 100 : 0;
+  document.getElementById('scoreFill').style.width = pct + '%';
+}
+
+function showFinalScore() {
+  document.getElementById('toetsQ').style.display = 'none';
+  const fs = document.getElementById('finalScore');
+  const pct = Math.round((toetsScore / shuffledToets.length) * 100);
+  let emoji, msg;
+  if (pct >= 80) { emoji = '&#x1F31F;'; msg = 'Fantasties! Jy ken jou skelette!'; }
+  else if (pct >= 60) { emoji = '&#x1F44D;'; msg = 'Goed gedoen! Oefen nog \'n bietjie.'; }
+  else { emoji = '&#x1F4AA;'; msg = 'Hou aan leer — jy sal dit kry!'; }
+
+  fs.innerHTML = `${emoji}<br>${toetsScore} uit ${shuffledToets.length} (${pct}%)<br><span style="font-size:0.9rem">${msg}</span>`;
+  fs.style.background = pct >= 60 ? '#d4edda' : '#fff3cd';
+  fs.style.color = pct >= 60 ? '#155724' : '#856404';
+  fs.classList.add('show');
+  document.getElementById('toetsRestart').style.display = 'block';
+}
+</script>
+</body>
+</html>

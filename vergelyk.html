@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="af">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eksoskelet vs Endoskelet — Vergelyking</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #e8f4f0;
+    font-family: 'Nunito', sans-serif;
+    color: #1a2a3a;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* TOP NAV BAR */
+  .top-nav {
+    display: flex;
+    justify-content: center;
+    gap: 0.3rem;
+    padding: 0.5rem 0.8rem;
+    background: linear-gradient(135deg, #1a3a5a, #1a4a6a);
+    flex-wrap: wrap;
+    border-bottom: 2px solid #2a7a4a;
+  }
+  .top-nav a, .top-nav span {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.35rem 0.7rem;
+    border-radius: 16px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.25s;
+  }
+  .top-nav a {
+    background: rgba(255,255,255,0.1);
+    color: #c0e8d8;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .top-nav a:hover {
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+  }
+  .top-nav span.nav-active {
+    background: #2a7a4a;
+    color: #fff;
+    border: 1px solid #2a7a4a;
+    box-shadow: 0 2px 8px rgba(42,122,74,0.4);
+  }
+
+  header {
+    background: linear-gradient(135deg, #1a3a5a, #2a5a7a);
+    color: #e0f5ea;
+    padding: 1rem 1.2rem;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+    border-bottom: 3px solid #2a7a4a;
+  }
+  header h1 { font-size: 1.4rem; font-weight: 800; margin: 0; }
+  header p { font-size: 0.75rem; opacity: 0.7; margin-top: 0.2rem; }
+
+  /* MNEMONIC BANNER */
+  .mnemonic-banner {
+    max-width: 960px;
+    margin: 1rem auto 0;
+    padding: 0 1.2rem;
+  }
+  .mnemonic-card {
+    background: linear-gradient(135deg, #d8f0e8, #c8e8d8);
+    border: 2px solid #2a7a4a;
+    border-radius: 14px;
+    padding: 1rem 1.5rem;
+    text-align: center;
+    font-weight: 700;
+    color: #1a3a5a;
+  }
+  .mnemonic-card .mnem-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.6;
+    margin-bottom: 0.4rem;
+  }
+  .mnemonic-card .mnem-line {
+    font-size: 0.95rem;
+    margin: 0.2rem 0;
+    line-height: 1.5;
+  }
+  .mnem-highlight-ekso { color: #3a6a9a; }
+  .mnem-highlight-endo { color: #2a7a4a; }
+
+  /* CATEGORY BUTTONS */
+  .cat-bar {
+    display: flex;
+    gap: 0.4rem;
+    padding: 0.6rem 0.8rem;
+    background: #d0eae0;
+    border-bottom: 2px solid #b0d8c8;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+    justify-content: center;
+  }
+  .cat-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.45rem 0.8rem;
+    border-radius: 20px;
+    border: 2px solid #5a9a7a;
+    background: #fff;
+    color: #1a3a5a;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all 0.25s;
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  .cat-btn.loaded {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .cat-btn:hover { background: #e0f5ea; }
+  .cat-btn.active {
+    background: #2a7a4a;
+    color: #fff;
+    border-color: #2a7a4a;
+    box-shadow: 0 2px 8px rgba(42,122,74,0.3);
+  }
+
+  /* COMPARISON AREA */
+  .compare-area {
+    display: flex;
+    gap: 1rem;
+    padding: 1.2rem;
+    max-width: 960px;
+    margin: 0 auto;
+    min-height: 300px;
+    align-items: stretch;
+  }
+
+  .side {
+    flex: 1;
+    border-radius: 16px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    border: 2px solid transparent;
+    transition: border-color 0.3s;
+  }
+
+  .side-ekso {
+    background: linear-gradient(145deg, #d0e8f8, #c0d8f0);
+    border-color: #3a6a9a;
+  }
+  .side-endo {
+    background: linear-gradient(145deg, #d8f5e8, #c8ead8);
+    border-color: #2a7a4a;
+  }
+
+  .side-header {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  .side-emoji {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 0.3rem;
+    transition: transform 0.4s;
+  }
+  .side-emoji.bounce {
+    animation: emojiBounce 0.5s ease;
+  }
+  @keyframes emojiBounce {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+  }
+
+  .side-name {
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin-bottom: 0.2rem;
+  }
+  .side-ekso .side-name { color: #1a3a5a; }
+  .side-endo .side-name { color: #2a6a3a; }
+
+  .side-subtitle {
+    font-size: 0.7rem;
+    font-weight: 600;
+    opacity: 0.6;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .side-content {
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .side-content.visible { opacity: 1; }
+
+  .side-content.slide-left {
+    animation: slideLeft 0.4s ease-out forwards;
+  }
+  .side-content.slide-right {
+    animation: slideRight 0.4s ease-out forwards;
+  }
+
+  @keyframes slideLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slideRight {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .cat-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px dashed rgba(0,0,0,0.1);
+  }
+
+  .fact-list {
+    list-style: none;
+    padding: 0;
+  }
+  .fact-list li {
+    padding: 0.4rem 0 0.4rem 1.5rem;
+    position: relative;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    font-weight: 600;
+  }
+  .fact-list li::before {
+    content: '\2022';
+    position: absolute;
+    left: 0.3rem;
+    font-weight: 800;
+    font-size: 1.1rem;
+  }
+  .side-ekso .fact-list li::before { color: #3a6a9a; }
+  .side-endo .fact-list li::before { color: #4a8a5a; }
+
+  /* SHARED FACT (bottom) */
+  .shared-row {
+    max-width: 960px;
+    margin: 0 auto 1rem;
+    padding: 0 1.2rem;
+  }
+  .shared-card {
+    background: linear-gradient(135deg, #d8f0e8, #c8e8d8);
+    border: 2px solid #2a7a4a;
+    border-radius: 12px;
+    padding: 0.8rem 1.2rem;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1a3a5a;
+    opacity: 0;
+    transition: opacity 0.4s 0.3s;
+  }
+  .shared-card.visible { opacity: 1; }
+  .shared-card .shared-emoji { font-size: 1.2rem; margin-right: 0.3rem; }
+
+  /* QUIZ SECTION */
+  .quiz-section {
+    max-width: 960px;
+    margin: 1rem auto 2rem;
+    padding: 0 1.2rem;
+  }
+  .quiz-header {
+    text-align: center;
+    background: linear-gradient(135deg, #1a3a5a, #2a5a7a);
+    color: #e0f5ea;
+    padding: 1rem;
+    border-radius: 16px 16px 0 0;
+    font-size: 1.2rem;
+    font-weight: 800;
+  }
+  .quiz-body {
+    background: #fff;
+    border-radius: 0 0 16px 16px;
+    padding: 1.2rem;
+    border: 2px solid #2a7a4a;
+    border-top: none;
+  }
+  .quiz-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.7rem 0.8rem;
+    margin-bottom: 0.5rem;
+    background: #f0f8f4;
+    border-radius: 12px;
+    border: 2px solid #d0e8d8;
+    transition: all 0.3s;
+  }
+  .quiz-item .q-label {
+    font-size: 0.95rem;
+    font-weight: 700;
+    flex: 1;
+    color: #1a3a5a;
+  }
+  .quiz-btns {
+    display: flex;
+    gap: 0.4rem;
+  }
+  .quiz-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.4rem 0.9rem;
+    border-radius: 20px;
+    border: 2px solid #aaa;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .quiz-btn:hover { background: #e8f4f0; }
+  .quiz-btn.btn-ekso { border-color: #3a6a9a; color: #1a3a5a; }
+  .quiz-btn.btn-endo { border-color: #4a8a5a; color: #2a6a3a; }
+  .quiz-btn.correct {
+    background: #2a7a4a !important;
+    color: #fff !important;
+    border-color: #2a7a4a !important;
+    transform: scale(1.05);
+  }
+  .quiz-btn.wrong {
+    background: #c03030 !important;
+    color: #fff !important;
+    border-color: #c03030 !important;
+    animation: shake 0.4s ease;
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+  .quiz-feedback {
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-left: 0.5rem;
+    min-width: 20px;
+  }
+  .quiz-score {
+    text-align: center;
+    margin-top: 1rem;
+    padding: 0.8rem;
+    background: linear-gradient(135deg, #d8f0e8, #c8e8d8);
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 800;
+    color: #1a3a5a;
+    display: none;
+  }
+  .quiz-score.show { display: block; animation: doneIn 0.5s ease; }
+  @keyframes doneIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .quiz-reset-btn {
+    display: none;
+    margin: 0.8rem auto 0;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.5rem 1.5rem;
+    border-radius: 12px;
+    border: 2px solid #2a7a4a;
+    background: #fff;
+    color: #1a3a5a;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .quiz-reset-btn.show { display: block; }
+  .quiz-reset-btn:hover { background: #2a7a4a; color: #fff; }
+
+  /* BACK LINK */
+  .back-link {
+    text-align: center;
+    padding: 1.5rem;
+  }
+  .back-link a {
+    color: #1a3a5a;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 0.5rem 1.2rem;
+    border: 2px solid #2a7a4a;
+    border-radius: 10px;
+    transition: all 0.2s;
+  }
+  .back-link a:hover {
+    background: #2a7a4a;
+    color: #fff;
+  }
+
+  /* MOBILE */
+  @media (max-width: 650px) {
+    header h1 { font-size: 1.15rem; }
+    .top-nav { gap: 0.2rem; padding: 0.4rem 0.4rem; }
+    .top-nav a, .top-nav span { font-size: 0.6rem; padding: 0.3rem 0.5rem; }
+    .cat-bar { justify-content: flex-start; padding: 0.4rem 0.5rem; gap: 0.3rem; }
+    .cat-btn { font-size: 0.65rem; padding: 0.35rem 0.6rem; }
+    .compare-area {
+      flex-direction: column;
+      gap: 0.8rem;
+      padding: 0.8rem;
+    }
+    .side { padding: 1rem; }
+    .side-emoji { font-size: 2rem; }
+    .side-name { font-size: 1rem; }
+    .fact-list li { font-size: 0.82rem; }
+
+    .side-content.slide-left { animation-name: slideUp; }
+    .side-content.slide-right { animation-name: slideUp; }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .quiz-item { flex-direction: column; gap: 0.4rem; align-items: flex-start; }
+    .quiz-btns { width: 100%; }
+    .quiz-btn { flex: 1; text-align: center; }
+    .mnemonic-card .mnem-line { font-size: 0.82rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a href="index.html">📋 Studiegids</a>
+  <a href="flitskaarte.html">🃏 Flitskaarte</a>
+  <a href="breinkaart.html">🧠 Breinkaart</a>
+  <span class="nav-active">⚖️ Vergelyk</span>
+  <a href="prosesse.html">🔄 Prosesse</a>
+  <a href="habitats.html">🌍 Habitats</a>
+</nav>
+
+<header>
+  <h1>⚖️ Eksoskelet vs Endoskelet</h1>
+  <p>Interaktiewe Vergelyking · Graad 5 Natuurwetenskap · Kwartaal 1 · Onderwerp 1, Eenheid 3</p>
+</header>
+
+<div class="mnemonic-banner">
+  <div class="mnemonic-card">
+    <div class="mnem-title">Onthou-truuk</div>
+    <div class="mnem-line"><span class="mnem-highlight-ekso">EKSOSKELET = EXIT = BUITE</span> (harde dop aan die buitekant)</div>
+    <div class="mnem-line"><span class="mnem-highlight-endo">ENDOSKELET = DOG = BINNE</span> (soos 'n hond se bene binne-in)</div>
+  </div>
+</div>
+
+<div class="cat-bar" id="cat-bar"></div>
+
+<div class="compare-area">
+  <div class="side side-ekso">
+    <div class="side-header">
+      <span class="side-emoji" id="ekso-emoji">🦀</span>
+      <div class="side-name">Eksoskelet</div>
+      <div class="side-subtitle">Insekte, spinnekoppe, krappe, krewe...</div>
+    </div>
+    <div class="side-content" id="ekso-content"></div>
+  </div>
+  <div class="side side-endo">
+    <div class="side-header">
+      <span class="side-emoji" id="endo-emoji">🐕</span>
+      <div class="side-name">Endoskelet</div>
+      <div class="side-subtitle">Soogdiere, voëls, visse, reptiele, amfibieë</div>
+    </div>
+    <div class="side-content" id="endo-content"></div>
+  </div>
+</div>
+
+<div class="shared-row">
+  <div class="shared-card" id="shared-card"></div>
+</div>
+
+<!-- QUIZ SECTION -->
+<div class="quiz-section">
+  <div class="quiz-header">🧪 Toets Jouself — Eksoskelet of Endoskelet?</div>
+  <div class="quiz-body" id="quiz-body"></div>
+  <div class="quiz-score" id="quiz-score"></div>
+  <button class="quiz-reset-btn" id="quiz-reset" onclick="resetQuiz()">Probeer Weer 🔄</button>
+</div>
+
+<div class="back-link">
+  <a href="index.html">← Terug na Studiegids</a>
+</div>
+
+<script>
+const categories = [
+  {
+    id: "struktuur", emoji: "🏗️", label: "Struktuur",
+    ekso: [
+      "Harde plate wat aanmekaar geheg is om 'n harde dop te vorm",
+      "Die enigste plek waar dit dun en sag is, is by die beengewrigte",
+      "Dit is 'n dopstruktuur wat die dier van buite af beskerm"
+    ],
+    endo: [
+      "Bestaan uit been en kraakbeen (rugwerwels)",
+      "Kraakbeen is buigbaar maar sterk — gevind in gewrigte",
+      "Dit is 'n raamstruktuur wat die liggaam van binne af ondersteun"
+    ],
+    shared: "Albei soorte skelette gee die dier sy vorm en ondersteuning"
+  },
+  {
+    id: "posisie", emoji: "📍", label: "Posisie",
+    ekso: [
+      "Aan die BUITEKANT van die liggaam (EXIT = BUITE)",
+      "Bedek die hele liggaam soos 'n harnas",
+      "Die sagte organe en spiere is binne-in die harde dop"
+    ],
+    endo: [
+      "Aan die BINNEKANT van die liggaam (DOG = BINNE)",
+      "Bedek met spiere en sagte liggaamsweefsel",
+      "Die bene is binne-in die vleis en vel"
+    ],
+    shared: ""
+  },
+  {
+    id: "groei", emoji: "📈", label: "Groei",
+    ekso: [
+      "Kan NIE saam met die dier groei nie",
+      "Die dier moet VERVEL — die ou dop bars oop",
+      "Die nuwe eksoskelet is eers sag en moet hard word"
+    ],
+    endo: [
+      "Groei SAAM met die dier",
+      "Vervelling vind NIE plaas nie",
+      "Bene is lewend — hulle kan groei en selfs aangroei as dit breek"
+    ],
+    shared: "Kalsium en minerale maak bene hard en sterk — daarom is melk en groente belangrik!"
+  },
+  {
+    id: "beskerming", emoji: "🛡️", label: "Beskerming",
+    ekso: [
+      "Beskerm die sagte interne dele baie goed",
+      "Waterdig — beskerm die dier teen uitdroging",
+      "Die harde dop is soos 'n pantser"
+    ],
+    endo: [
+      "Beskerm NIE so goed soos 'n eksoskelet nie",
+      "Maar die skedel beskerm die brein en ribbes beskerm hart en longe",
+      "Vel en spiere bied ook 'n mate van beskerming"
+    ],
+    shared: "Die ribbekas omhul en beskerm die belangrikste organe — hart en longe"
+  },
+  {
+    id: "grootte", emoji: "📏", label: "Grootte",
+    ekso: [
+      "Net KLEIN diere het eksoskelette",
+      "Die harde dop kan nie groot liggame ondersteun nie",
+      "Hoe groter die dop, hoe swaarder — te swaar om te dra"
+    ],
+    endo: [
+      "Kan GROOT liggame en meer gewig ondersteun",
+      "Olifante, walvisse en girafes het almal endoskelette",
+      "Die raamstruktuur van bene is sterk genoeg vir swaar liggame"
+    ],
+    shared: ""
+  },
+  {
+    id: "temperatuur", emoji: "🌡️", label: "Temperatuur",
+    ekso: [
+      "Meeste is koudbloedig — liggaamstemperatuur wissel met die omgewing",
+      "Hulle kan nie self hitte opwek nie",
+      "Baie is aktief in warm weer en stadig in koue weer"
+    ],
+    endo: [
+      "Soogdiere en voëls is warmbloedig",
+      "Hulle kan self hitte opwek en reguleer",
+      "Visse, reptiele en amfibieë is koudbloedig"
+    ],
+    shared: ""
+  },
+  {
+    id: "voorbeelde", emoji: "🐾", label: "Voorbeelde",
+    ekso: [
+      "🕷️ Spinnekoppe",
+      "🦀 Krappe en krewe",
+      "🪲 Tors en kakkerlakke",
+      "🦂 Skerpioene",
+      "🦗 Krieke en duisendpote",
+      "🦐 Garnale"
+    ],
+    endo: [
+      "🐕 Soogdiere — honde, katte, koeie, mense",
+      "🐦 Voëls — arende, loeries, pikkewyne",
+      "🐟 Visse — met vinne en vaartbelynde liggame",
+      "🐸 Amfibieë — paddas, salamanders",
+      "🦎 Reptiele — akkedisse, slange, krokodille"
+    ],
+    shared: "Diere met eksoskelette = ongewerweldes | Diere met endoskelette = gewerweldes"
+  }
+];
+
+const quizQuestions = [
+  { text: "Harde dop aan die buitekant van die liggaam", answer: "ekso" },
+  { text: "Groei saam met die dier", answer: "endo" },
+  { text: "Die dier moet vervel omdat die skelet nie groei nie", answer: "ekso" },
+  { text: "Bestaan uit been en kraakbeen", answer: "endo" },
+  { text: "Waterdig — beskerm teen uitdroging", answer: "ekso" },
+  { text: "Kan groot liggame en meer gewig ondersteun", answer: "endo" },
+  { text: "Spinnekoppe, krappe en insekte het hierdie soort skelet", answer: "ekso" },
+  { text: "Soogdiere, voëls en visse het hierdie soort skelet", answer: "endo" },
+  { text: "Die nuwe skelet is sag na vervelling — die dier is kwesbaar", answer: "ekso" },
+  { text: "Die skedel beskerm die brein en die ribbes beskerm die hart", answer: "endo" }
+];
+
+let currentCat = -1;
+let quizAnswered = 0;
+let quizCorrect = 0;
+
+/* ---- COMPARISON ---- */
+function buildCatBar() {
+  const bar = document.getElementById("cat-bar");
+  categories.forEach((cat, i) => {
+    const btn = document.createElement("button");
+    btn.className = "cat-btn";
+    btn.textContent = cat.emoji + " " + cat.label;
+    btn.onclick = () => selectCategory(i);
+    bar.appendChild(btn);
+    setTimeout(() => btn.classList.add("loaded"), 80 + i * 60);
+  });
+}
+
+function buildList(items) {
+  let html = '<ul class="fact-list">';
+  items.forEach(item => { html += "<li>" + item + "</li>"; });
+  html += "</ul>";
+  return html;
+}
+
+function selectCategory(idx) {
+  if (idx === currentCat) return;
+  currentCat = idx;
+  const cat = categories[idx];
+
+  document.querySelectorAll(".cat-btn").forEach((b, i) => {
+    b.classList.toggle("active", i === idx);
+  });
+
+  const eksoEl = document.getElementById("ekso-content");
+  const endoEl = document.getElementById("endo-content");
+  const sharedEl = document.getElementById("shared-card");
+
+  eksoEl.className = "side-content";
+  endoEl.className = "side-content";
+  sharedEl.classList.remove("visible");
+
+  const eksoEmoji = document.getElementById("ekso-emoji");
+  const endoEmoji = document.getElementById("endo-emoji");
+  eksoEmoji.classList.remove("bounce");
+  endoEmoji.classList.remove("bounce");
+  void eksoEmoji.offsetWidth;
+  eksoEmoji.classList.add("bounce");
+  endoEmoji.classList.add("bounce");
+
+  setTimeout(() => {
+    eksoEl.innerHTML = '<div class="cat-title">' + cat.emoji + " " + cat.label + '</div>' + buildList(cat.ekso);
+    endoEl.innerHTML = '<div class="cat-title">' + cat.emoji + " " + cat.label + '</div>' + buildList(cat.endo);
+
+    eksoEl.className = "side-content slide-left";
+    endoEl.className = "side-content slide-right";
+
+    if (cat.shared) {
+      sharedEl.innerHTML = '<span class="shared-emoji">💡</span> ' + cat.shared;
+      sharedEl.classList.add("visible");
+    } else {
+      sharedEl.innerHTML = "";
+      sharedEl.classList.remove("visible");
+    }
+  }, 200);
+}
+
+/* ---- QUIZ ---- */
+function buildQuiz() {
+  const body = document.getElementById("quiz-body");
+  body.innerHTML = "";
+  quizAnswered = 0;
+  quizCorrect = 0;
+  document.getElementById("quiz-score").classList.remove("show");
+  document.getElementById("quiz-reset").classList.remove("show");
+
+  quizQuestions.forEach((q, i) => {
+    const item = document.createElement("div");
+    item.className = "quiz-item";
+    item.id = "qi-" + i;
+    item.innerHTML =
+      '<div class="q-label">' + (i + 1) + '. ' + q.text + '</div>' +
+      '<div class="quiz-btns">' +
+        '<button class="quiz-btn btn-ekso" onclick="answerQuiz(' + i + ',\'ekso\')">🦀 Eksoskelet</button>' +
+        '<button class="quiz-btn btn-endo" onclick="answerQuiz(' + i + ',\'endo\')">🐕 Endoskelet</button>' +
+      '</div>' +
+      '<div class="quiz-feedback" id="qf-' + i + '"></div>';
+    body.appendChild(item);
+  });
+}
+
+function answerQuiz(idx, answer) {
+  const q = quizQuestions[idx];
+  const item = document.getElementById("qi-" + idx);
+  const fb = document.getElementById("qf-" + idx);
+  const btns = item.querySelectorAll(".quiz-btn");
+
+  if (item.dataset.answered) return;
+  item.dataset.answered = "true";
+  quizAnswered++;
+
+  btns.forEach(b => b.style.pointerEvents = "none");
+
+  if (answer === q.answer) {
+    quizCorrect++;
+    fb.textContent = "✅";
+    btns.forEach(b => {
+      if ((answer === "ekso" && b.classList.contains("btn-ekso")) ||
+          (answer === "endo" && b.classList.contains("btn-endo"))) {
+        b.classList.add("correct");
+      }
+    });
+    item.style.borderColor = "#2a7a4a";
+    item.style.background = "#e0f5e8";
+  } else {
+    fb.textContent = "❌";
+    btns.forEach(b => {
+      if ((answer === "ekso" && b.classList.contains("btn-ekso")) ||
+          (answer === "endo" && b.classList.contains("btn-endo"))) {
+        b.classList.add("wrong");
+      }
+      if ((q.answer === "ekso" && b.classList.contains("btn-ekso")) ||
+          (q.answer === "endo" && b.classList.contains("btn-endo"))) {
+        setTimeout(() => b.classList.add("correct"), 400);
+      }
+    });
+    item.style.borderColor = "#c03030";
+    item.style.background = "#fce8e8";
+  }
+
+  if (quizAnswered >= quizQuestions.length) {
+    showQuizScore();
+  }
+}
+
+function showQuizScore() {
+  const scoreEl = document.getElementById("quiz-score");
+  const pct = Math.round((quizCorrect / quizQuestions.length) * 100);
+  let msg = "";
+  if (pct === 100) msg = "🏆 Perfek! Jy ken die verskil tussen eksoskelette en endoskelette uitstekend!";
+  else if (pct >= 80) msg = "🌟 Baie goed! Jy verstaan die verskille!";
+  else if (pct >= 60) msg = "👍 Goeie poging! Hersien die vergelyking hierbo.";
+  else msg = "📖 Hou aan leer! Onthou: EKSO=EXIT=BUITE, ENDO=DOG=BINNE!";
+  scoreEl.textContent = quizCorrect + " / " + quizQuestions.length + " korrek (" + pct + "%) — " + msg;
+  scoreEl.classList.add("show");
+  document.getElementById("quiz-reset").classList.add("show");
+}
+
+function resetQuiz() {
+  buildQuiz();
+}
+
+/* ---- INIT ---- */
+buildCatBar();
+buildQuiz();
+
+setTimeout(() => {
+  const h = window.location.hash.slice(1);
+  const idx = h ? categories.findIndex(c => c.id === h) : -1;
+  selectCategory(idx >= 0 ? idx : 0);
+}, 600);
+</script>
+</body>
+</html>
