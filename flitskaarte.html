@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Graad 5 Natuurwetenskap — Flitskaarte · Kwartaal 1</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>@font-face{font-family:'Nunito';font-weight:400;src:local('Nunito Regular'),local('Nunito-Regular')}@font-face{font-family:'Nunito';font-weight:600;src:local('Nunito SemiBold'),local('Nunito-SemiBold')}@font-face{font-family:'Nunito';font-weight:700;src:local('Nunito Bold'),local('Nunito-Bold')}@font-face{font-family:'Nunito';font-weight:800;src:local('Nunito ExtraBold'),local('Nunito-ExtraBold')}</style>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
     background: #e8f4f0;
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Nunito', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     color: #1a2a3a;
     min-height: 100vh;
     overflow-x: hidden;
@@ -101,7 +101,7 @@
     border-radius: 8px;
     padding: 0.3rem 0.5rem;
     font-size: 0.75rem;
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Nunito', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-weight: 700;
     cursor: pointer;
     transition: background 0.2s;
@@ -175,7 +175,7 @@
   }
 
   .nav-btn {
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Nunito', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-size: 0.65rem;
     font-weight: 700;
     padding: 0.3rem 0.7rem;
@@ -230,7 +230,7 @@
   }
 
   .filter-btn {
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Nunito', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-size: 0.8rem;
     font-weight: 700;
     padding: 0.45rem 1rem;
@@ -260,6 +260,61 @@
   .filter-btn:disabled {
     opacity: 0.4;
     cursor: not-allowed;
+  }
+
+  /* SOURCE FILTER BAR (Alles / Handboek / Skoolnotas) */
+  #source-filter-bar {
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.4rem 1rem 0;
+    flex-wrap: wrap;
+  }
+
+  .source-btn {
+    font-family: 'Nunito', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.3rem 0.8rem;
+    border-radius: 8px;
+    border: 2px solid #b0c4b8;
+    background: white;
+    color: #1a3a5a;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .source-btn:hover { background: #eaf5f0; border-color: #6a9a7a; }
+
+  .source-btn.active-source {
+    background: #1a5a4a;
+    color: white;
+    border-color: #1a5a4a;
+  }
+
+  .source-btn.active-source:hover {
+    background: #1a6a5a;
+  }
+
+  /* SKOOLNOTAS BADGE ON CARD */
+  .skoolnotas-badge {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    font-size: 0.52rem;
+    font-weight: 800;
+    color: #a07010;
+    background: #fff8e8;
+    border: 1.5px solid #e8a020;
+    border-radius: 6px;
+    padding: 1px 6px;
+    letter-spacing: 0.04em;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .card-face.skoolnotas-card {
+    border-left: 4px solid #e8a020 !important;
   }
 
   .filter-btn .hard-badge {
@@ -510,7 +565,7 @@
   }
 
   .score-btn {
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Nunito', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-size: 0.9rem;
     font-weight: 800;
     padding: 0.6rem 1.5rem;
@@ -570,7 +625,7 @@
   }
 
   .arrow-btn {
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Nunito', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-size: 1.2rem;
     font-weight: 800;
     width: 40px;
@@ -682,7 +737,7 @@
   }
 
   .summary-btn {
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Nunito', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-size: 0.8rem;
     font-weight: 700;
     padding: 0.5rem 1.2rem;
@@ -757,7 +812,7 @@
   }
 
   .badge-toggle {
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Nunito', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-size: 0.75rem;
     font-weight: 700;
     background: #c8e8d8;
@@ -820,7 +875,7 @@
   }
 
   .reset-btn {
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Nunito', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-size: 0.7rem;
     font-weight: 700;
     background: transparent;
@@ -994,6 +1049,12 @@
 <main>
   <div id="section-title"></div>
 
+  <div id="source-filter-bar">
+    <button class="source-btn active-source" onclick="setSourceFilter('all')">📚 Alles</button>
+    <button class="source-btn" onclick="setSourceFilter('handboek')">📖 Handboek</button>
+    <button class="source-btn" onclick="setSourceFilter('skoolnotas')">📒 Skoolnotas</button>
+  </div>
+
   <div id="filter-bar">
     <button class="filter-btn" onclick="loadSection(currentSection)">🔁 Begin oor</button>
     <button class="filter-btn" id="hard-filter-btn" onclick="toggleHardOnly()" disabled>
@@ -1091,7 +1152,20 @@ const sections = [
       { q: "Wat bepaal die eienskappe van 'n organisme?", a: "Die <b>habitat</b> van die organisme bepaal sy eienskappe in daardie spesifieke habitat." },
       { q: "Watter spesiale eienskappe besit plante en diere?", a: "Hulle besit spesiale eienskappe om in 'n <b>spesifieke habitat</b> te oorleef." },
       { q: "Wat kry organismes in hulle habitats? (4 dinge)", a: "<ul><li>Kos</li><li>Water</li><li>Lug</li><li>Skuiling (beskerming teen roofdiere)</li></ul>" },
-      { q: "Wat is die verskil tussen land- en waterhabitats?", a: "Sommige organismes leef in <b>water</b> (visse, paddas) en ander op <b>land</b> (sebras, loeries). Elkeen het spesiale aanpassings vir sy habitat." }
+      { q: "Wat is die verskil tussen land- en waterhabitats?", a: "Sommige organismes leef in <b>water</b> (visse, paddas) en ander op <b>land</b> (sebras, loeries). Elkeen het spesiale aanpassings vir sy habitat." },
+      { q: "In watter twee hoofgroepe word habitatte geklassifiseer?", a: "<b>Landhabitatte:</b> Woestyn, Woud, Grasveld, Kaapse Blommeryk<br><b>Waterhabitatte:</b> Soutwater, Varswater", tag: "skoolnotas" },
+      { q: "Wat is die Kaapse Blommeryk ook bekend as?", a: "<b>Fynbos.</b> Dit is wêreldwyd bekend vir meer as <b>6 000 plantsoorte</b>. Dit kom voor langs die <b>Weskaapse Suidkus</b>.", tag: "skoolnotas" },
+      { q: "Wat is Suid-Afrika se nasionale blom?", a: "Die <b>Koningsprotea</b> (Koningprotea).", tag: "skoolnotas" },
+      { q: "Noem die 3 plantsoorte in die Kaapse Blommeryk.", a: "<ol><li>Erikas</li><li>Restio's</li><li>Proteas (bv. Koningprotea)</li></ol>", tag: "skoolnotas" },
+      { q: "Noem 3 inheemse dieresoorte in die Kaapse Blommeryk.", a: "<ol><li>Kaapse suikerbekkie (voël)</li><li>Suurpootjie (skilpad)</li><li>Dassies</li></ol>", tag: "skoolnotas" },
+      { q: "Noem die Groot Vyf van Suid-Afrika.", a: "Olifant, Leeu, Renoster, Buffel, Luiperd", tag: "skoolnotas" },
+      { q: "Noem die Klein Vyf van Suid-Afrika.", a: "<ol><li>Olifant-spitsmuis</li><li>Mier-leeu</li><li>Renoster-kewer</li><li>Buffel-wewer</li><li>Luiperd-skilpad (bergskilpad)</li></ol>", tag: "skoolnotas" },
+      { q: "Noem Suid-Afrika se 5 nasionale simbole.", a: "<ul><li><b>Vis:</b> Galjoen</li><li><b>Plant:</b> Protea</li><li><b>Dier:</b> Springbok</li><li><b>Boom:</b> Geelhoutboom</li><li><b>Voël:</b> Bloukransvoël</li></ul>", tag: "skoolnotas" },
+      { q: "Wat staan op die Suid-Afrikaanse Wapen?", a: "<ul><li>Leuse: <b>\"Diverse mense verenig\"</b> (Verskillende mense kan saam staan)</li><li>Geskryf in die <b>Khoisan-taal</b></li><li>Die blom in die middel is die <b>Protea</b></li><li>Agterop meeste SA munte</li></ul>", tag: "skoolnotas" },
+      { q: "Beskryf die Protea-plant se habitat, blare, blomme en wortels.", a: "<ul><li><b>Habitat:</b> Grasveld, klipperige grond in bergareas</li><li><b>Blare:</b> Lank, ovaalvormig, fyn haartjies, skerp punt, vaalgroen</li><li><b>Blomme:</b> Pienk en wit; groot blomme verseker bestuiwing</li><li><b>Wortels:</b> Dik wortels anker die plant; sywortels absorbeer water</li></ul>", tag: "skoolnotas" },
+      { q: "Beskryf die Denneboom se habitat, blare, blomme en wortels.", a: "<ul><li><b>Habitat:</b> Woud</li><li><b>Blare:</b> Lang, dun naalde; skerp punte; donkergroen</li><li><b>Blomme:</b> Dra NIE blomme nie — dra keëls (dennebolle); bruin kleur</li><li><b>Wortels:</b> Dik penwortel diep in grond (om hoë boom te anker); dik sywortels groei sywaarts vir water</li></ul>", tag: "skoolnotas" },
+      { q: "Hoe beskerm skolvisse hulself?", a: "Hulle swem saam in 'n groot groep om mekaar teen gevaar te waarsku.", tag: "skoolnotas" },
+      { q: "Hoe gebruik 'n slang kamoeflering om te jag?", a: "Die slang se kleur is dieselfde as die sand — die prooi sien die slang nie raak nie.", tag: "skoolnotas" }
     ]
   },
   {
@@ -1148,7 +1222,14 @@ const sections = [
       { q: "Wat het plante nodig om gesond te bly? (3 dinge)", a: "Plante het nie-lewende dinge nodig:<ul><li><b>Water</b></li><li><b>Lug</b></li><li><b>Sonskyn</b></li></ul>" },
       { q: "Wat is indringerplante en hoekom is hulle skadelik?", a: "Indringerplante gebruik <b>meer water</b> as wat die omgewing kan voorsien. Hulle groei baie vinnig en neem die <b>spasie</b> van inheemse plante in. Inheemse plante en diere het dan nie genoeg hulpbronne om te oorleef nie." },
       { q: "Hoekom moet uitheemse plante verwyder word?", a: "Sodat die <b>natuurlike habitat</b> van inheemse plante en diere <b>in stand gehou</b> word." },
-      { q: "Hoe gebruik diere nie-lewende dinge?", a: "Diere gebruik nie-lewende dinge vir <b>beskerming</b> en om <b>voort te plant</b>. Bv. 'n houtkapper bou sy nes hoog in 'n boomstam." }
+      { q: "Hoe gebruik diere nie-lewende dinge?", a: "Diere gebruik nie-lewende dinge vir <b>beskerming</b> en om <b>voort te plant</b>. Bv. 'n houtkapper bou sy nes hoog in 'n boomstam." },
+      { q: "Verduidelik die interafhanklikheid tussen Narvisse en Anemone.", a: "<ul><li>Narvis eet diertjies wat skadelik is vir die anemoon — kry kos</li><li>Narvis se afval gee voeding vir die anemoon</li><li>Anemoon het giftige steke wat die narvis beskerm teen roofdiere</li><li>Die gif is NIE skadelik vir die narvis nie</li></ul>", tag: "skoolnotas" },
+      { q: "Hoe werk die verhouding tussen die Ratel en Heuningwyservoël?", a: "<ul><li>Heuningwyservoël wys die ratel waar die byekorf is</li><li>Ratel het dik vel — bye kan hom nie steek nie</li><li>Ratel gebruik sterk kloue om korf oop te breek</li><li>Ratel eet die heuning; voël eet die larwes</li></ul>", tag: "skoolnotas" },
+      { q: "Hoe help die Plovervoëltjie die krokodil?", a: "<ul><li>Krokodil vang prooi; stukkies vleis sit tussen sy tande vas</li><li>Krokodil maak sy mond oop</li><li>Plovervoëltjie eet die stukkies kos tussen die tande</li><li>Voëltjie kry kos; krokodil se tande vrot nie</li></ul>", tag: "skoolnotas" },
+      { q: "Hoe is wildsbokke, luiperds, plante en miskruiers in die Kruger Nasionale Park interafhanklik?", a: "<ul><li>Bokke eet plante vir kos</li><li>Miskruier eet bokke en luiperd se mis</li><li>Bok se mis bemes die grond vir plante</li><li>Luiperd eet die bokke; skuil prooi in 'n boom</li><li>Wildsbokke beskerm mekaar in 'n groep</li></ul>", tag: "skoolnotas" },
+      { q: "Hoe help die erdwurm die grond?", a: "<ul><li>Erdwurm se mis (poep) maak grond vrugbaar vir plante</li><li>Erdwurm grawe in grond en gee die grond lug</li><li>Grond gee erdwurm 'n woonplek en hou hom vogtig</li></ul>", tag: "skoolnotas" },
+      { q: "Noem 5 negatiewe gevolge van indringerplante.", a: "<ol><li>Gebruik baie water</li><li>Neem spasie op waar inheemse plante moet groei</li><li>Veroorsaak erosie</li><li>Maak brande en vloede erger</li><li>Lei tot riviere wat opdroog</li></ol>", tag: "skoolnotas" },
+      { q: "Noem 4 indringerplante in die Wes-Kaap.", a: "<ol><li>Rooikrans</li><li>Swarthoutboom</li><li>Dennebome</li><li>Bloekombome</li></ol>", tag: "skoolnotas" }
     ]
   },
   {
@@ -1174,7 +1255,10 @@ const sections = [
       { q: "Noem 2 voordele van 'n eksoskelet.", a: "<ol><li>Dit <b>ondersteun en beskerm</b> die sagte interne dele van die dier.</li><li>Dit is <b>waterdig</b> — beskerm die dier teen uitdroging.</li></ol>" },
       { q: "Noem 2 nadele van 'n eksoskelet.", a: "<ol><li>Dit kan <b>nie groei</b> nie — die dier moet vervel.</li><li>Die nuwe eksoskelet is <b>sag</b> na vervelling — die dier kan maklik aangeval word.</li></ol>" },
       { q: "Noem 7 diere met eksoskelette.", a: "<ul><li>Insekte</li><li>Spinnekoppe</li><li>Bosluise</li><li>Krappe</li><li>Krewe</li><li>Garnale</li><li>Skerpioen, kriek, tor, duisendpoot, kakkerlak</li></ul>" },
-      { q: "Hoe onthou jy: EKSOSKELET = ?", a: "<b>EKSOSKELET = EXIT = BUITE</b><br>Die skelet is aan die buitekant van die dier." }
+      { q: "Hoe onthou jy: EKSOSKELET = ?", a: "<b>EKSOSKELET = EXIT = BUITE</b><br>Die skelet is aan die buitekant van die dier." },
+      { q: "Wat is die verskil tussen warmbloedige en koudbloedige diere?", a: "<b>Warmbloedig:</b> Liggaamstemperatuur bly konstant (soogdiere, voëls)<br><b>Koudbloedig:</b> Liggaamstemperatuur wissel/verander (amfibieë, visse, reptiele)", tag: "skoolnotas" },
+      { q: "Noem 5 ooreenkomste tussen gewerweldes en ongewerweldes.", a: "<ol><li>Almal behoort aan die diereryk</li><li>Almal kan voortplant</li><li>Almal kan beweeg</li><li>Almal het bloed binne hulle liggame</li><li>Almal leef in water of op die land</li></ol>", tag: "skoolnotas" },
+      { q: "Hoekom is diere met eksoskelette altyd klein?", a: "Eksoskelette kan nie groot diere ondersteun nie — die dier moet vervel om te groei, wat die grootte beperk.", tag: "skoolnotas" }
     ]
   },
   {
@@ -1221,7 +1305,14 @@ const sections = [
       { q: "Hoekom is bene hard en onbuigsaam?", a: "Sodat hulle die <b>gewig</b> van die gewerwelde kan dra. <b>Kalsium</b> en ander minerale maak hulle baie hard en sterk." },
       { q: "Wat gebeur as bene breek?", a: "Bene is lewend — hulle kan <b>groei en weer aangroei</b> na 'n breuk." },
       { q: "Hoekom is kalsium in jou dieet belangrik?", a: "Om jou bene <b>sterk en gesond</b> te hou. Jou bene stoor ook kalsium en ander minerale wat regdeur jou liggaam gebruik word." },
-      { q: "Is die ribbekas by alle diere dieselfde?", a: "Nee, die strukture van die ribbekas kan <b>verskil</b>, maar die <b>funksie bly dieselfde</b>. Bv. slange se ribbes bied ondersteuning vir die hele liggaam." }
+      { q: "Is die ribbekas by alle diere dieselfde?", a: "Nee, die strukture van die ribbekas kan <b>verskil</b>, maar die <b>funksie bly dieselfde</b>. Bv. slange se ribbes bied ondersteuning vir die hele liggaam." },
+      { q: "Wat is die koksiks (stuitjie)?", a: "Die sagte, stertagtige beentjie aan die einde van die ruggraat.", tag: "skoolnotas" },
+      { q: "Hoeveel bene is in die menslike skelet?", a: "<b>206 bene.</b> Die kleinste beentjie is in die oor.", tag: "skoolnotas" },
+      { q: "Wat sou gebeur sonder 'n skelet?", a: "Ons liggaam sou pap en vormloos gewees het, soos 'n jellievis.", tag: "skoolnotas" },
+      { q: "Wat is 'n ander naam vir die heupgordel?", a: "Die <b>bekkengordel</b>.", tag: "skoolnotas" },
+      { q: "Wat is die rugmurg se funksie?", a: "Die rugmurg is deel van die <b>sentrale senuweestelsel</b>. Dit stuur seine van die brein na ander liggaamsdele. Sonder die rugmurg kan gewerweldes nie beweeg nie.", tag: "skoolnotas" },
+      { q: "Hoekom het slange en visse nie skouergordels nie?", a: "Omdat hulle nie ledemate soos arms het nie. Hulle beweeg vorentoe deur te swem en te kruip.", tag: "skoolnotas" },
+      { q: "Wat is osteoporose?", a: "<ul><li>'n Siekte wanneer daar nie genoeg <b>kalsium</b> in die bene is nie</li><li>Vroue ouer as 50 kry dit meer dikwels</li><li><b>Kalsiumryke kos:</b> kaas, vis, volgraan</li><li>Hou bene sterk: oefening, Vitamien D, moenie rook nie</li></ul>", tag: "skoolnotas" }
     ]
   },
   {
@@ -1517,6 +1608,7 @@ let bestScores = {};
 let hardCards = {};
 let masterHardCards = {};
 let hardOnlyMode = false;
+let sourceFilter = "all"; // "all", "handboek", "skoolnotas"
 let masterTestMode = false;
 let fastAnswerCount = 0;
 let cardFlipTime = 0;
@@ -1585,6 +1677,9 @@ function initAdminReset() {
         fastAnswerCount = 0; cardFlipTime = 0;
         document.getElementById("master-test-btn").classList.remove("active");
         document.getElementById("filter-bar").style.display = "";
+        document.getElementById("source-filter-bar").style.display = "";
+        sourceFilter = "all";
+        document.querySelectorAll(".source-btn").forEach((b, i) => b.classList.toggle("active-source", i === 0));
         updateTopBar(); updateMasterCount();
         renderAnimalBar(); renderBadges(); buildNav();
         loadSection(0);
@@ -1784,10 +1879,18 @@ function loadSection(idx) {
   document.getElementById("filter-bar").style.display = "";
   const s = sections[idx];
   s.cards.forEach((_, ci) => { delete scores[s.id + "_" + ci]; });
-  deck = s.cards.map((c, i) => ({ ...c, origIdx: i }));
+  const filteredCards = getFilteredCards(s.cards);
+  deck = filteredCards.map((c) => { const origIdx = s.cards.indexOf(c); return { ...c, origIdx: origIdx }; });
   document.querySelectorAll(".nav-btn").forEach((b, i) => { b.classList.toggle("active", i === idx); });
-  document.getElementById("section-title").textContent = s.title;
+  const filterLabel = sourceFilter === "skoolnotas" ? " (Skoolnotas)" : sourceFilter === "handboek" ? " (Handboek)" : "";
+  document.getElementById("section-title").textContent = s.title + filterLabel;
   document.getElementById("summary").style.display = "none";
+  if (deck.length === 0) {
+    document.getElementById("card-area").style.display = "none";
+    const sumEl = document.getElementById("summary"); sumEl.style.display = "block";
+    sumEl.innerHTML = '<div class="summary-card"><h2>Geen kaarte</h2><div class="summary-detail">Hierdie afdeling het geen ' + (sourceFilter === "skoolnotas" ? "skoolnotas" : "handboek") + ' kaarte nie.</div><div class="summary-btns"><button class="summary-btn btn-retry" onclick="setSourceFilter(\'all\')">Wys alle kaarte</button></div></div>';
+    return;
+  }
   document.getElementById("card-area").style.display = "flex";
   fastAnswerCount = 0; cardFlipTime = 0;
   updateCard(); updateStats(); updateTopBar(); updateFilterButton();
@@ -1802,6 +1905,22 @@ function updateCard() {
   const c = deck[currentCard];
   document.getElementById("q-text").innerHTML = c.q;
   document.getElementById("a-text").innerHTML = c.a;
+  // Skoolnotas badge and border
+  const cardFront = document.querySelector(".card-front");
+  const cardBack = document.querySelector(".card-back");
+  const existingBadgeF = cardFront.querySelector(".skoolnotas-badge");
+  const existingBadgeB = cardBack.querySelector(".skoolnotas-badge");
+  if (existingBadgeF) existingBadgeF.remove();
+  if (existingBadgeB) existingBadgeB.remove();
+  if (c.tag === "skoolnotas") {
+    cardFront.classList.add("skoolnotas-card");
+    cardBack.classList.add("skoolnotas-card");
+    const badgeF = document.createElement("span"); badgeF.className = "skoolnotas-badge"; badgeF.textContent = "\uD83D\uDCD2 Skoolnotas"; cardFront.appendChild(badgeF);
+    const badgeB = document.createElement("span"); badgeB.className = "skoolnotas-badge"; badgeB.textContent = "\uD83D\uDCD2 Skoolnotas"; cardBack.appendChild(badgeB);
+  } else {
+    cardFront.classList.remove("skoolnotas-card");
+    cardBack.classList.remove("skoolnotas-card");
+  }
   document.getElementById("card-container").classList.remove("flipped");
   cardFlipTime = 0;
   document.getElementById("btn-know").disabled = true;
@@ -1890,13 +2009,14 @@ function showSummary() {
     masterTestMode = false;
     document.getElementById("master-test-btn").classList.remove("active");
     document.getElementById("filter-bar").style.display = "";
+    document.getElementById("source-filter-bar").style.display = "";
     updateMasterCount(); saveProgress();
     return;
   }
-  const total = sections[currentSection].cards.length;
+  const total = deck.length > 0 ? deck.length : sections[currentSection].cards.length;
   const pct = total > 0 ? Math.round((knowCount / total) * 100) : 0;
   const sectionId = sections[currentSection].id;
-  if (!bestScores[sectionId] || pct > bestScores[sectionId]) bestScores[sectionId] = pct;
+  if (sourceFilter === "all" && (!bestScores[sectionId] || pct > bestScores[sectionId])) bestScores[sectionId] = pct;
   let animalHTML = "";
   if (pct >= 70) {
     discoverAnimal(sectionId);
@@ -1947,10 +2067,25 @@ function updateFilterButton() {
   btn.classList.toggle("active-filter", hardOnlyMode);
 }
 
+// ===================== SOURCE FILTER =====================
+function setSourceFilter(filter) {
+  sourceFilter = filter;
+  document.querySelectorAll(".source-btn").forEach(b => b.classList.remove("active-source"));
+  const labels = { all: 0, handboek: 1, skoolnotas: 2 };
+  document.querySelectorAll(".source-btn")[labels[filter]].classList.add("active-source");
+  loadSection(currentSection);
+}
+
+function getFilteredCards(cards) {
+  if (sourceFilter === "all") return cards;
+  if (sourceFilter === "skoolnotas") return cards.filter(c => c.tag === "skoolnotas");
+  return cards.filter(c => !c.tag);
+}
+
 // ===================== MASTER TEST =====================
 function getMasterHardDeck() {
   const masterDeck = [];
-  sections.forEach((s, si) => { s.cards.forEach((c, ci) => { const key = s.id + "_" + ci; if (masterHardCards[key]) masterDeck.push({ q: c.q, a: c.a, origIdx: ci, sectionIdx: si, sectionId: s.id, sectionTitle: s.nav, masterKey: key }); }); });
+  sections.forEach((s, si) => { s.cards.forEach((c, ci) => { const key = s.id + "_" + ci; if (masterHardCards[key]) masterDeck.push({ q: c.q, a: c.a, tag: c.tag, origIdx: ci, sectionIdx: si, sectionId: s.id, sectionTitle: s.nav, masterKey: key }); }); });
   return masterDeck;
 }
 function loadMasterTest() {
@@ -1962,11 +2097,12 @@ function loadMasterTest() {
   document.getElementById("summary").style.display = "none";
   document.getElementById("card-area").style.display = "flex";
   document.getElementById("filter-bar").style.display = "none";
+  document.getElementById("source-filter-bar").style.display = "none";
   document.getElementById("master-test-btn").classList.add("active");
   updateCard(); updateStats();
   if (timerEnabled) startTimer();
 }
-function exitMasterTest() { masterTestMode = false; document.getElementById("master-test-btn").classList.remove("active"); document.getElementById("filter-bar").style.display = ""; loadSection(0); }
+function exitMasterTest() { masterTestMode = false; document.getElementById("master-test-btn").classList.remove("active"); document.getElementById("filter-bar").style.display = ""; document.getElementById("source-filter-bar").style.display = ""; loadSection(0); }
 function updateMasterCount() { document.getElementById("master-count").textContent = Object.keys(masterHardCards).length; }
 
 // ===================== KEYBOARD =====================
