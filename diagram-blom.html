@@ -448,6 +448,12 @@
         <path d="M360 280 Q410 265 490 245" stroke="#c06088" stroke-width="0.6" fill="none" opacity="0.4"/>
       </g>
 
+      <!-- STAMPER group: transparent rect behind individual pistil parts so they still intercept their own clicks;
+           clicking anywhere in the pistil area NOT covered by stempel/styl/vrugbeginsel triggers "stamper" -->
+      <g class="flower-part" data-part="stamper">
+        <rect x="320" y="252" width="60" height="135" fill="transparent" style="pointer-events:all;cursor:pointer;"/>
+      </g>
+
       <!-- VRUGBEGINSEL (Ovary) - at base of pistil -->
       <g class="flower-part" data-part="vrugbeginsel">
         <ellipse cx="350" cy="375" rx="22" ry="28" fill="url(#ovaryGrad)" stroke="#308030" stroke-width="1.5"/>
@@ -464,15 +470,15 @@
         <path d="M346 348 Q348 310 350 275 Q352 310 354 348" fill="url(#stylGrad)" stroke="#5a9a4a" stroke-width="1"/>
       </g>
 
-      <!-- STEMPEL (Stigma) - sticky top part -->
+      <!-- STEMPEL (Stigma) - sticky top part, slightly larger ellipse for easier tapping -->
       <g class="flower-part" data-part="stempel">
-        <ellipse cx="350" cy="268" rx="14" ry="8" fill="url(#stigmaGrad)" stroke="#aa8800" stroke-width="1.2"/>
+        <ellipse cx="350" cy="268" rx="18" ry="11" fill="url(#stigmaGrad)" stroke="#aa8800" stroke-width="1.2"/>
         <!-- Sticky texture dots -->
-        <circle cx="344" cy="266" r="1.5" fill="#ddc040" opacity="0.7"/>
-        <circle cx="350" cy="264" r="1.5" fill="#ddc040" opacity="0.7"/>
-        <circle cx="356" cy="266" r="1.5" fill="#ddc040" opacity="0.7"/>
-        <circle cx="347" cy="270" r="1.2" fill="#ddc040" opacity="0.6"/>
-        <circle cx="353" cy="270" r="1.2" fill="#ddc040" opacity="0.6"/>
+        <circle cx="343" cy="266" r="1.8" fill="#ddc040" opacity="0.7"/>
+        <circle cx="350" cy="264" r="1.8" fill="#ddc040" opacity="0.7"/>
+        <circle cx="357" cy="266" r="1.8" fill="#ddc040" opacity="0.7"/>
+        <circle cx="346" cy="271" r="1.5" fill="#ddc040" opacity="0.6"/>
+        <circle cx="354" cy="271" r="1.5" fill="#ddc040" opacity="0.6"/>
       </g>
 
       <!-- HELMDRADE (Filaments) - clickable as helmdraad -->
@@ -497,12 +503,6 @@
         <circle cx="404" cy="258" r="2" fill="#fff080" opacity="0.8"/>
       </g>
 
-      <!-- STAMPER group (for quiz: stamper = stempel + styl + vrugbeginsel combined) -->
-      <g class="flower-part" data-part="stamper" style="display:none;">
-        <!-- This is an invisible overlay for the stamper quiz question -->
-        <rect x="326" y="260" width="48" height="120" fill="transparent"/>
-      </g>
-
       <!-- LEADER LINES AND LABELS -->
       <!-- Kroonblare -->
       <line class="svg-leader" data-label="kroonblare" x1="280" y1="200" x2="130" y2="140"/>
@@ -515,7 +515,7 @@
       <text class="svg-label" data-label="kelkblare" x="87" y="442" text-anchor="middle">Kelkblare</text>
 
       <!-- Stempel -->
-      <line class="svg-leader" data-label="stempel" x1="364" y1="268" x2="560" y2="140"/>
+      <line class="svg-leader" data-label="stempel" x1="368" y1="268" x2="560" y2="140"/>
       <rect class="svg-label-bg" data-label="stempel" x="520" y="125" width="80" height="22" rx="4"/>
       <text class="svg-label" data-label="stempel" x="560" y="140" text-anchor="middle">Stempel</text>
 
@@ -664,10 +664,11 @@ function getLabelEls(partKey) {
   return svgEl.querySelectorAll(`[data-label="${partKey}"]`);
 }
 
-// Show/hide the stamper invisible overlay based on mode
+// Stamper overlay is always in DOM (transparent rect). This function is kept for quiz
+// logic where we want stamper clickable as a whole-pistil target.
 function setStamperOverlay(show) {
   const el = svgEl.querySelector('.flower-part[data-part="stamper"]');
-  if (el) el.style.display = show ? "block" : "none";
+  if (el) el.style.pointerEvents = show ? "all" : "none";
 }
 
 // ── MODE SWITCHING ──
@@ -688,8 +689,8 @@ function setMode(mode) {
   // Labels visibility
   setLabelsVisible(mode !== "quiz" || quizFinished);
 
-  // Stamper overlay: show only in quiz mode
-  setStamperOverlay(mode === "quiz" && !quizFinished);
+  // Stamper overlay: always keep visible as click target (it's transparent)
+  if (!quizFinished) setStamperOverlay(true);
 
   if (mode === "explore") {
     progressBar.classList.remove("hidden");
@@ -827,12 +828,16 @@ function handleQuizClick(partKey) {
   quizAnswered = true;
   const correctKey = shuffledQuiz[quizIndex];
   const clickedEl = svgEl.querySelector(`.flower-part[data-part="${partKey}"]`);
+  // Clicking any pistil part counts when question asks for "stamper"
+  const stamperParts = ['stempel', 'styl', 'vrugbeginsel', 'stamper'];
+  const isCorrect = partKey === correctKey ||
+    (correctKey === 'stamper' && stamperParts.includes(partKey));
 
-  if (partKey === correctKey) {
+  if (isCorrect) {
     quizScore++;
-    clickedEl.classList.add("correct-flash");
+    if (clickedEl) clickedEl.classList.add("correct-flash");
   } else {
-    clickedEl.classList.add("wrong-flash");
+    if (clickedEl) clickedEl.classList.add("wrong-flash");
     // Also highlight the correct one
     const correctEl = svgEl.querySelector(`.flower-part[data-part="${correctKey}"]`);
     if (correctEl) correctEl.classList.add("highlight");
